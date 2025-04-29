@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Register Customer</title>
-    <script src="../../assets/cdn/tailwindcss.com"></script>
     <link href="../../assets/cdn/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-[#EFE9E2] min-h-screen flex">
@@ -106,7 +106,7 @@
                     </div>
 
                     <button type="submit" value="registerCustomer" name="registerCustomer"
-                        class="w-full py-3 px-4 bg-[#8b5c2c] hover:bg-[#6f451e] text-white rounded-lg font-semibold text-lg transition">
+                        class="w-full py-3 px-4 bg-[#8b5c2c] hover:bg-[#6f451e] text-white rounded-lg font-sm text-lg transition">
                         Register
                     </button>
                 </form>

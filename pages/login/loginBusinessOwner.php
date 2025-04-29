@@ -63,11 +63,11 @@
                             <input type="checkbox" class="mr-2 accent-amber-800" checked />
                             Remember Me
                         </label>
-                        <a href="#" class="text-sm text-[#c0a080] hover:underline">Forgot Password?</a>
+                        <a href="forgotPassword.php" class="text-sm text-[#c0a080] hover:underline">Forgot Password?</a>
                     </div>
 
                     <button type="submit"
-                        class="w-full py-3 px-4 bg-[#8b5c2c] hover:bg-[#6f451e] text-white rounded-lg font-semibold text-lg transition">
+                        class="w-full py-3 px-4 bg-[#8b5c2c] hover:bg-[#6f451e] text-white rounded-lg font-sm text-lg transition">
                         Login
                     </button>
                 </form>
