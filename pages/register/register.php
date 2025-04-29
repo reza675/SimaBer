@@ -6,6 +6,7 @@
     <title>Register Customer</title>
     <link href="../../assets/cdn/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="../../assets/gambar/icon.png">
 </head>
 
 <body class="bg-[#EFE9E2] min-h-screen flex">

@@ -16,6 +16,7 @@ if (!isset($_SESSION['otp_verified'])) {
     <title>New Password</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="../../assets/cdn/flowbite.min.css" rel="stylesheet" />
+    <link rel="icon" href="../../assets/gambar/icon.png">
 
 </head>
 

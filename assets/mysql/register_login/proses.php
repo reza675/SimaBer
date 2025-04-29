@@ -35,6 +35,7 @@ if (isset($_POST['forgotPassword'])) {
 
     if ($check->num_rows > 0) {
         $_SESSION['reset_email'] = $email;
+        $_SESSION['changePass'] = true;
 
         $otp = rand(100000, 999999);
         $expired = date("Y-m-d H:i:s", strtotime("+10 minutes"));

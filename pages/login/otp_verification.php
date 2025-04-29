@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['changePass'])) {
+    header("Location:forgotPassword.php");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,6 +16,7 @@
     <title>Verifikasi OTP</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="../../assets/cdn/flowbite.min.css" rel="stylesheet" />
+    <link rel="icon" href="../../assets/gambar/icon.png">
 </head>
 
 <body class="bg-[#EFE9E2] min-h-screen flex">
