@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <title>Register Pelanggan</title>
     <script src="../../assets/cdn/tailwindcss.com"></script>
-    <link href="../../assets/cdn/flowbite.min.css" rel="stylesheet" />
+    <link href="../../assets/cdn/flowbite.min.css" rel="stylesheet"/>
+    
 </head>
 
 <body class="bg-[#EFE9E2] min-h-screen flex">
@@ -18,11 +19,11 @@
 
         <div class="flex flex-col justify-center md:w-1/2 p-8 overflow-y-auto">
             <div class="max-w-md w-full mx-auto">
-                <a href="loginPelanggan.php" class="mt-6 text-gray-600 hover:text-gray-900 text-lg block">
+                <a href="../login/loginCustomer.php" class="mt-6 text-gray-600 hover:text-gray-900 text-lg block">
                     <p class="text-base">&#8592; Back</p>
                 </a>
 
-                <h2 class="text-3xl font-bold text-gray-800 mb-2 mt-2">Register Pelanggan</h2>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2 mt-2">Register Customer</h2>
                 <p class="text-gray-500 mb-6">Please fill in your personal data correctly.</p>
 
                 <form action="register_process.php" method="POST" class="space-y-4">
@@ -32,6 +33,7 @@
                             class="w-full bg-[#fef9f4] border border-[#c0a080] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#c0a080] text-gray-800"
                             required>
                     </div>
+                    
                     <div>
                         <label for="password" class="block mb-1 text-sm font-semibold text-gray-700">Password</label>
                         <div class="relative">
