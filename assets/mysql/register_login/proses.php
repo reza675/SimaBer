@@ -19,7 +19,8 @@ if (isset($_POST["registerCustomer"])) {
         }
     }
 
-    $query = mysqli_query($conn, "INSERT INTO pelanggan VALUES ('','$email','$password','$fullname','$telephone','$address','$zipcode')");
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    $query = mysqli_query($conn, "INSERT INTO pelanggan VALUES ('','$email','$hashedPassword','$fullname','$telephone','$address','$zipcode')");
     header("Location:../../../pages/register/register.php?register=berhasil");
     exit();
 }
@@ -46,8 +47,8 @@ if (isset($_POST['forgotPassword'])) {
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = 'simaber.ep@gmail.com'; // Email pengirim
-            $mail->Password = 'gavb aqty faac uyhj';   // App Password Gmail
+            $mail->Username = 'simaber.ep@gmail.com';
+            $mail->Password = 'gavb aqty faac uyhj';
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
@@ -64,7 +65,7 @@ if (isset($_POST['forgotPassword'])) {
             echo "Failed to send email. Error: {$mail->ErrorInfo}";
         }
     } else {
-      header("Location:../../../pages/login/forgotPassword.php?error=errorEmail");
+        header("Location:../../../pages/login/forgotPassword.php?error=errorEmail");
     }
 }
 
@@ -100,21 +101,42 @@ if (isset($_POST["verifyOTP"])) {
 
 // New Password
 if (isset($_POST["newPassword"])) {
-  if (!isset($_SESSION['reset_email'])) {
-      header("Location: forgotPassword.php");
-      exit();
-  }
+    if (!isset($_SESSION['reset_email'])) {
+        header("Location: forgotPassword.php");
+        exit();
+    }
 
-  $email = $_SESSION['reset_email'];
-  $newPassword = $_POST['newPasswordUser'];
+    $email = $_SESSION['reset_email'];
+    $newPassword = $_POST['newPasswordUser'];
+    $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
 
-  $updateQuery = mysqli_query($conn, "UPDATE pelanggan SET passwordPelanggan = '$newPassword' WHERE emailPelanggan = '$email'");
+    $updateQuery = mysqli_query($conn, "UPDATE pelanggan SET passwordPelanggan = '$hashedPassword' WHERE emailPelanggan = '$email'");
 
-  if ($updateQuery) {
-      header("Location: ../../../pages/login/newPassword.php?newPassword=berhasil");
-      exit();
-  } else {
-      echo "Error updating password.";
-  }
+    if ($updateQuery) {
+        header("Location: ../../../pages/login/newPassword.php?newPassword=berhasil");
+        exit();
+    } else {
+        echo "Error updating password.";
+    }
+}
+
+if (isset($_POST['loginCustomer'])) {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    
+    $query = mysqli_query($conn, "SELECT * FROM pelanggan WHERE emailPelanggan = '$email'");
+    $data = mysqli_fetch_assoc($query);
+    
+    if ($data) {
+        $hashedPassword = $data['passwordPelanggan'];
+        if (password_verify($password, $hashedPassword)) {
+            $_SESSION['user_id'] = $data['id'];
+            $_SESSION['nama'] = $data['namaPelanggan'];
+            header("Location:../../../pages/pelanggan/dashboardCustomer.php?login=berhasil");
+            exit();
+        }
+    }
+    header("Location:../../../pages/login/loginCustomer.php?login=gagal");
+    exit();
 }
 ?>

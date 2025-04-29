@@ -15,7 +15,7 @@
         if (isset($_GET['register']) && $_GET['register'] == "berhasil"){
         echo "<div id='successPopup' class='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden'>
             <div class='bg-white rounded-2xl p-8 max-w-md text-center shadow-xl'>
-                <div class='mb-4'><img src='../../assets/gambar/register/sucess.webp' alt='success' class='w-24 h-24 mx-auto mix-blend-multiply'></div>
+                <div class='mb-4'><img src='../../assets/gambar/register/success.webp' alt='success' class='w-24 h-24 mx-auto mix-blend-multiply'></div>
                 <h3 class='text-xl font-bold mb-2'>Account Created Successfully</h3>
                 <p class='text-gray-600 mb-6'>Welcome aboard! Your account has been successfully created.</p>
                 <a href='../login/loginCustomer.php'
