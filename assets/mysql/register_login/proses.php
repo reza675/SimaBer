@@ -105,13 +105,11 @@ if (isset($_POST["newPassword"])) {
   }
 
   $email = $_SESSION['reset_email'];
-  $newPassword = $_POST['newPassword'];
+  $newPassword = $_POST['newPasswordUser'];
 
   $updateQuery = mysqli_query($conn, "UPDATE pelanggan SET passwordPelanggan = '$newPassword' WHERE emailPelanggan = '$email'");
 
   if ($updateQuery) {
-      unset($_SESSION['reset_email']);
-      unset($_SESSION['otp_verified']);
       header("Location: ../../../pages/login/newPassword.php?newPassword=berhasil");
       exit();
   } else {

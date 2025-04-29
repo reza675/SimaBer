@@ -22,17 +22,20 @@ if (!isset($_SESSION['otp_verified'])) {
 <body class="bg-[#EFE9E2] min-h-screen flex">
     <?php
         if (isset($_GET['newPassword']) && $_GET['newPassword'] == "berhasil"){
+            unset($_SESSION['reset_email']);
+            unset($_SESSION['otp_verified']);
         echo "<div id='successPopup' class='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden'>
             <div class='bg-white rounded-2xl p-8 max-w-md text-center shadow-xl'>
-                <div class='mb-4'><img src='../../assets/gambar/register/sucess.webp' alt='success' class='w-24 h-24 mx-auto mix-blend-multiply'></div>
-                <h3 class='text-xl font-bold mb-2'>Account Created Successfully</h3>
-                <p class='text-gray-600 mb-6'>Welcome aboard! Your account has been successfully created.</p>
+                <div class='mb-4'><img src='../../assets/gambar/register/success.webp' alt='success' class='w-24 h-24 mx-auto mix-blend-multiply'></div>
+                <h3 class='text-xl font-bold mb-2'>Password Update Successfully</h3>
+                <p class='text-gray-600 mb-6'>Your password has been update successfully</p>
                 <a href='../login/loginCustomer.php'
                     class='inline-block px-6 py-2 bg-[#8b5c2c] hover:bg-[#6f451e] text-white rounded-lg font-medium'>
                     Back to Login
                 </a>
             </div>
         </div>";
+        
         }
     ?>
     <div class="flex flex-col md:flex-row w-full h-screen overflow-hidden">
@@ -59,7 +62,8 @@ if (!isset($_SESSION['otp_verified'])) {
                     <div>
                         <label for="password" class="block mb-1 text-sm font-semibold text-gray-700">New
                             Password</label>
-                        <input type="password" name="password" id="password" placeholder="Enter your new password"
+                        <input type="password" name="newPasswordUser" id="password"
+                            placeholder="Enter your new password"
                             class="w-full bg-[#fef9f4] border border-[#c0a080] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#c0a080] text-gray-800"
                             required />
                     </div>

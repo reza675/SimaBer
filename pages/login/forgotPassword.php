@@ -41,7 +41,7 @@
                     </div>
 
                     <?php if (isset($_GET['error']) && $_GET['error'] == 'errorEmail'): ?>
-                        <p class="text-red-500 text-sm mb-4">Email unregisted.</p>
+                        <p class="text-red-500 text-sm mb-4">Email unregisted.`</p>
                     <?php endif; ?>
 
                     <button type="submit" value="forgotPassword" name="forgotPassword"
