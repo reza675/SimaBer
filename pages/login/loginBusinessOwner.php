@@ -33,7 +33,7 @@
 
 
 
-                <form action="login_process.php" method="POST" class="space-y-4">
+                <form action="../../assets/mysql/register_login/proses.php" method="POST" class="space-y-4">
                     <div>
                         <label for="email" class="block mb-1 text-sm font-semibold text-gray-700">Email Address</label>
                         <input type="email" name="email" id="email" placeholder="Enter your email address"
@@ -59,6 +59,10 @@
                         </div>
                     </div>
 
+                    <?php if (isset($_GET['login']) && $_GET['login'] == 'gagal'): ?>
+                    <p class="text-red-500 text-sm mb-4">Email or Password is wrong</p>
+                    <?php endif; ?>
+
                     <div class="flex items-center justify-between">
                         <label class="flex items-center text-sm text-gray-700">
                             <input type="checkbox" class="mr-2 accent-amber-800" checked />
@@ -67,7 +71,7 @@
                         <a href="forgotPassword.php" class="text-sm text-[#c0a080] hover:underline">Forgot Password?</a>
                     </div>
 
-                    <button type="submit"
+                    <button type="submit" value="loginBusinessOwner" name="loginBusinessOwner"
                         class="w-full py-3 px-4 bg-[#8b5c2c] hover:bg-[#6f451e] text-white rounded-lg font-sm text-lg transition">
                         Login
                     </button>

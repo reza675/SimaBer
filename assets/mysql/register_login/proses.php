@@ -119,7 +119,7 @@ if (isset($_POST["newPassword"])) {
         echo "Error updating password.";
     }
 }
-
+//login customer
 if (isset($_POST['loginCustomer'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -137,6 +137,47 @@ if (isset($_POST['loginCustomer'])) {
         }
     }
     header("Location:../../../pages/login/loginCustomer.php?login=gagal");
+    exit();
+}
+//login business owner
+if (isset($_POST['loginBusinessOwner'])) {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    
+    $query = mysqli_query($conn, "SELECT * FROM pemilikusaha WHERE emailPemilik = '$email'");
+    $data = mysqli_fetch_assoc($query);
+    
+    if ($data) {
+        $hashedPassword = $data['passwordPemilik'];
+        if (password_verify($password, $hashedPassword)) {
+            $_SESSION['user_id'] = $data['id'];
+            $_SESSION['nama'] = $data['namaPemilik'];
+            header("Location:../../../pages/pemilikUsaha/dashboardBusinessOwner.php?login=berhasil");
+            exit();
+        }
+    }
+    header("Location:../../../pages/login/loginBusinessOwner.php?login=gagal");
+    exit();
+}
+
+//login Supplier
+if (isset($_POST['loginSupplier'])) {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    
+    $query = mysqli_query($conn, "SELECT * FROM pemasok WHERE emailPemasok = '$email'");
+    $data = mysqli_fetch_assoc($query);
+    
+    if ($data) {
+        $hashedPassword = $data['passwordPemilik'];
+        if (password_verify($password, $hashedPassword)) {
+            $_SESSION['user_id'] = $data['id'];
+            $_SESSION['nama'] = $data['namaPemasok'];
+            header("Location:../../../pages/pemasok/dashboardSupplier.php?login=berhasil");
+            exit();
+        }
+    }
+    header("Location:../../../pages/login/loginSupplier.php?login=gagal");
     exit();
 }
 ?>
