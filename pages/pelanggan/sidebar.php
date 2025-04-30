@@ -1,4 +1,4 @@
-<button class="absolute top-4 left-4 z-50 text-black focus:outline-none" type="button" id="hamburgerBtn"
+<button class="absolute top-8 left-5 z-50 text-black focus:outline-none" type="button" id="hamburgerBtn"
     data-drawer-target="drawer-navigation" data-drawer-show="drawer-navigation" aria-controls="drawer-navigation">
     <svg class="w-8 h-8" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
         <path fill-rule="evenodd"
@@ -88,6 +88,17 @@
         </ul>
     </div>
 </div>
+<style>
+
+[drawer-backdrop] {
+    display: none !important;
+}
+
+body {
+    overflow: auto !important;
+    padding-right: 0 !important;
+}
+</style>
 
 <script>
 const drawer = document.getElementById("drawer-navigation");
@@ -95,15 +106,16 @@ const hamburgerBtn = document.getElementById("hamburgerBtn");
 
 const observer = new MutationObserver(() => {
     const isOpen = !drawer.classList.contains("-translate-x-full");
-    if (isOpen) {
-        hamburgerBtn.classList.add("hidden");
-    } else {
-        hamburgerBtn.classList.remove("hidden");
-    }
+    hamburgerBtn.classList.toggle("hidden", isOpen);
 });
 
 observer.observe(drawer, {
     attributes: true,
     attributeFilter: ['class']
+});
+
+// Inisialisasi drawer tanpa backdrop
+new Drawer(document.getElementById('drawer-navigation'), {
+    backdrop: false
 });
 </script>
