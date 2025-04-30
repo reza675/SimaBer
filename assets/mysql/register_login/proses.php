@@ -131,7 +131,7 @@ if (isset($_POST['loginCustomer'])) {
         $hashedPassword = $data['passwordPelanggan'];
         if (password_verify($password, $hashedPassword)) {
             $_SESSION['user_id'] = $data['id'];
-            $_SESSION['nama'] = $data['namaPelanggan'];
+            $_SESSION['namaPelanggan'] = $data['namaPelanggan'];
             header("Location:../../../pages/pelanggan/dashboardCustomer.php?login=berhasil");
             exit();
         }
@@ -151,7 +151,7 @@ if (isset($_POST['loginBusinessOwner'])) {
         $hashedPassword = $data['passwordPemilik'];
         if (password_verify($password, $hashedPassword)) {
             $_SESSION['user_id'] = $data['id'];
-            $_SESSION['nama'] = $data['namaPemilik'];
+            $_SESSION['namaPemilik'] = $data['namaPemilik'];
             header("Location:../../../pages/pemilikUsaha/dashboardBusinessOwner.php?login=berhasil");
             exit();
         }
@@ -172,7 +172,7 @@ if (isset($_POST['loginSupplier'])) {
         $hashedPassword = $data['passwordPemilik'];
         if (password_verify($password, $hashedPassword)) {
             $_SESSION['user_id'] = $data['id'];
-            $_SESSION['nama'] = $data['namaPemasok'];
+            $_SESSION['namaPemasok'] = $data['namaPemasok'];
             header("Location:../../../pages/pemasok/dashboardSupplier.php?login=berhasil");
             exit();
         }

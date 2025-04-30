@@ -56,6 +56,8 @@
 
                     <?php if (isset($_GET['login']) && $_GET['login'] == 'gagal'): ?>
                     <p class="text-red-500 text-sm mb-4">Email or Password is wrong</p>
+                    <?php elseif (isset($_GET['login']) && $_GET['login'] == 'error'): ?>
+                    <p class="text-red-500 text-sm mb-4">Please login first</p>
                     <?php endif; ?>
 
                     <div class="flex items-center justify-between">

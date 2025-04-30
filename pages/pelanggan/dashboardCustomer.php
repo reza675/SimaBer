@@ -1,3 +1,10 @@
+<?php
+session_start();
+if (!isset($_SESSION['namaPelanggan'])) {
+    header("Location:../login/loginCustomer.php?login=error");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

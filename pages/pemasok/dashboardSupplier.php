@@ -1,3 +1,11 @@
+<?php
+session_start();
+if (!isset($_SESSION['namaPemasok'])) {
+    header("Location:../login/loginSupplier.php?login=error");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

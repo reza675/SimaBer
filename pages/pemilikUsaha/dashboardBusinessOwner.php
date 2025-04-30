@@ -1,3 +1,10 @@
+<?php
+session_start();
+if (!isset($_SESSION['namaPemilik'])) {
+    header("Location:../login/loginBusinessOwner.php?login=error");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
