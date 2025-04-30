@@ -12,6 +12,9 @@ if (!isset($_SESSION['namaPemasok'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard SimaBer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../../assets/cdn/flowbite.min.css" rel="stylesheet" />
+    <link rel="icon" href="../../assets/gambar/icon.png">
 </head>
 <body>
     hello
