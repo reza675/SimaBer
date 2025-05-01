@@ -43,7 +43,7 @@ $currentPage = 'dashboardCustomer.php';
                 </button>
 
                 <div id="dropdownProfile"
-                    class="hidden absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-md z-50">
+                    class="hidden absolute right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-md z-50" style="width: 210px;">
                     <a href="settings.php" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
                     <a href="../../assets/mysql/pelanggan/proses.php?logout=true"
                         class="block px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600 rounded-b-lg text-center">Log

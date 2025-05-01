@@ -27,7 +27,7 @@
             <li>
                 <a href="dashboardCustomer.php" class="flex items-center p-2 rounded-lg group
                         <?php echo $currentPage === 'dashboardCustomer.php' 
-                            ? 'bg-[#FFEEDB] font-semibold text-black' 
+                            ? 'bg-[#FFEEDB] font-semibold text-black border-l-4 border-black rounded-l-none' 
                             : 'text-gray-900 hover:bg-gray-100 dark:hover:bg-[#FFEEDB]'; ?>">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" clip-rule="evenodd"
@@ -42,7 +42,7 @@
             <li>
                 <a href="orderCustomer.php" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-black hover:bg-gray-100 dark:hover:bg-[#FFEEDB] group
                         <?php echo $currentPage === 'orderCustomer.php' 
-                            ? 'bg-[#FFEEDB] font-semibold text-black' 
+                            ? 'bg-[#FFEEDB] font-semibold text-black border-l-4 border-black rounded-l-none' 
                             : 'text-gray-900 hover:bg-gray-100 dark:hover:bg-[#FFEEDB]'; ?>">
                     <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -56,7 +56,7 @@
             <li>
                 <a href="OrderStatusCustomer.php" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-black hover:bg-gray-100 dark:hover:bg-[#FFEEDB] group
                         <?php echo $currentPage === 'orderStatusCustomer.php' 
-                            ? 'bg-[#FFEEDB] font-semibold text-black' 
+                            ? 'bg-[#FFEEDB] font-semibold text-black border-l-4 border-black rounded-l-none' 
                             : 'text-gray-900 hover:bg-gray-100 dark:hover:bg-[#FFEEDB]'; ?>">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -74,7 +74,7 @@
             <li>
                 <a href="orderHistoryCustomer.php" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-black hover:bg-gray-100 dark:hover:bg-[#FFEEDB] group
                         <?php echo $currentPage === 'orderHistoryCustomer.php' 
-                            ? 'bg-[#FFEEDB] font-semibold text-black' 
+                            ? 'bg-[#FFEEDB] font-semibold text-black border-l-4 border-black rounded-l-none' 
                             : 'text-gray-900 hover:bg-gray-100 dark:hover:bg-[#FFEEDB]'; ?>">
                     <svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" clip-rule="evenodd"
