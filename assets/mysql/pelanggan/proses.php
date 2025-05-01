@@ -1,4 +1,5 @@
 <?php
+include "../connect.php";
 //customer logout
 if (isset($_GET['logout'])) {
     session_start();
