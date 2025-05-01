@@ -89,7 +89,7 @@ while ($data = mysqli_fetch_array($query)) {
         <div class="flex justify-between mb-2 mx-12 mt-4">
             <div>
                 <h1 class="font-semibold text-3xl text-[#3D3D3D]">Featured Product</h1>
-                <p class="font-reguler text-reguler text-[#3D3D3D]">Check out our best-selling and most recommended rice
+                <p class="font-reguler text-sm text-[#3D3D3D]">Check out our best-selling and most recommended rice
                     products, carefully selected <br>for your daily needs.</p>
             </div>
             <div class="relative inline-block text-left">
@@ -111,12 +111,14 @@ while ($data = mysqli_fetch_array($query)) {
                 $diskon = rand(1, 9);
                 ?>
             <div>
-                <div class="relative max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm">
-                    <button class="absolute left-2 top-2 z-1000 bg-[#3D3D3D] w-12 h-8 rounded-full text-white"> -<?= $diskon ?>%
+                <div class="relative max-w-sm bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                    <button class="absolute left-2 top-2 z-1000 bg-[#3D3D3D] w-12 h-8 rounded-full text-white">
+                        -<?= $diskon ?>%
 
                     </button>
                     <a href="#">
-                        <img class="rounded-t-lg" src="../../assets/gambar/beras/<?= $beras['gambarBeras']?>" alt="" />
+                        <img class="w-full h-auto object-cover"
+                            src="../../assets/gambar/beras/<?= $beras['gambarBeras']?>" alt="" />
 
                     </a>
                 </div>
@@ -125,7 +127,8 @@ while ($data = mysqli_fetch_array($query)) {
                         <?= $beras['namaBeras'] ?></h5>
 
                     <div class="flex justify-between mb-3 items-center">
-                        <p class="font-normal text-black">Rp <?= number_format($beras['hargaJualBeras'], 2, ',', '.') ?></p>
+                        <p class="font-normal text-black">Rp <?= number_format($beras['hargaJualBeras'], 2, ',', '.') ?>
+                        </p>
                         <div class="flex items-center gap-2 font-normal text-black">
                             <span><?= $beras['beratBeras'] ?> kg</span>
                             <svg width="21" height="22" viewBox="0 0 21 22" fill="none"
@@ -144,10 +147,87 @@ while ($data = mysqli_fetch_array($query)) {
 
             </div>
             <?php endforeach; ?>
-
-
-
         </div>
+        <div class="flex justify-center items-center flex-col mt-12 py-4">
+            <h1 class="font-semibold text-3xl text-[#3D3D3D] text-center">Find the Perfect Rice for Every Need</h1>
+            <p class="font-reguler text- text-[#3D3D3D] text-center">Whether you're cooking for family or preparing
+                something special, we've got the<br>perfect rice to match every moment.</p>
+        </div>
+
+        <div class="mx-[150px] mt-4 mb-12 grid grid-cols-3 auto-rows-[200px] gap-6">
+            <div class="relative row-span-2 rounded-lg overflow-hidden">
+                <a href="#">
+                    <img src="../../assets/gambar/pelanggan/UI4.avif" class="w-full h-full object-cover" />
+                    <span class="absolute bottom-4 left-4 text-white text-lg font-semibold">Premium Rice</span>
+                </a>
+            </div>
+
+            <div class="relative rounded-lg overflow-hidden">
+                <a href="#">
+                    <img src="../../assets/gambar/pelanggan/UI1.jpg" class="w-full h-full object-cover" />
+                    <span class="absolute bottom-4 left-4 text-white text-lg font-semibold">Daily Rice</span>
+                </a>
+            </div>
+
+            <div class="relative row-span-2 rounded-lg overflow-hidden">
+                <a href="#">
+                    <img src="../../assets/gambar/pelanggan/UI3.webp" class="w-full h-full object-cover" />
+                    <span class="absolute bottom-4 left-4 text-white text-lg font-semibold">Specialty Rice</span>
+                </a>
+            </div>
+
+            <div class="relative rounded-lg overflow-hidden">
+                <a href="#">
+                    <img src="../../assets/gambar/pelanggan/UI2.jpeg" class="w-full h-full object-cover" />
+                    <span class="absolute bottom-4 left-4 text-white text-lg font-semibold">Organic Rice</span>
+                </a>
+            </div>
+        </div>
+        <div class="bg-[#A2845E] pt-24 mt-24">
+            <div class="container mx-auto px-6 lg:px-12 
+              flex flex-col lg:flex-row items-start gap-[600px]">
+
+                <div class="flex-shrink-0 space-y-4">
+                    <h2 class="text-2xl font-semibold text-white">Why Choose SimaBer?</h2>
+                    <a href="#" class="inline-flex items-center bg-black text-white font-semibold 
+                py-3 px-6 rounded-full hover:bg-gray-800 transition">
+                        Get Started
+                        <svg class="ml-2" width="10" height="12" viewBox="0 0 10 16" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M0.72013 15.5455C0.28079 15.1062 0.28079 14.3938 0.72013 13.9545L6.67463 8L0.72013 2.04549C0.28079 1.60616 0.28079 0.893845 0.72013 0.454506C1.15947 0.0151653 1.87178 0.0151653 2.31112 0.454506L9.06112 7.2045C9.50046 7.64384 9.50046 8.35616 9.06112 8.7955L2.31112 15.5455C1.87178 15.9848 1.15947 15.9848 0.72013 15.5455Z"
+                                fill="white" />
+                        </svg>
+                    </a>
+                    <img src="../../assets/gambar/pelanggan/Dashboard1_pelanggan.png" alt="Thinking Person"
+                        class="mt-8 w-36 lg:w-64 mx-auto lg:mx-0" />
+                </div>
+
+                <div class="flex-1 space-y-8 text-white">
+                    <p class="text-sm lg:text-base">
+                        SimaBer is committed to delivering the finest rice — fresh, clean, and full of natural taste.
+                        Trusted by families and culinary businesses alike.
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-5xl font-bold">99%</h3>
+                            <p class="mt-2 text-sm">
+                                Of our customers are satisfied with the freshness, texture, and aroma of our rice.
+                            </p>
+                        </div>
+                        <div>
+                            <h3 class="text-5xl font-bold">100%</h3>
+                            <p class="mt-2 text-sm">
+                                Quality-checked and hygienically packaged rice, ready to be delivered to your doorstep.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 <script src="../../assets/cdn/flowbite.min.js"></script>
 <script>
