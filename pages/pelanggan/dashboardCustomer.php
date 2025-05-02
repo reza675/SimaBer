@@ -191,8 +191,8 @@ while ($data2 = mysqli_fetch_array($query2)) {
             </div>
         </div>
         <div class="bg-[#A2845E] pt-6 mt-6 mb-6">
-            <div class="container mx-auto px-6 lg:px-12 
-              flex flex-col lg:flex-row items-start gap-[600px]">
+            <div class="container mx-auto px-6 lg:px-36 
+              flex flex-col lg:flex-row items-start gap-[300px]">
 
                 <div class="flex-shrink-0 space-y-4">
                     <h2 class="text-2xl font-semibold text-white mx-6">Why Choose SimaBer?</h2>
