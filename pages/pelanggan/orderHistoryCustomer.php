@@ -19,7 +19,7 @@ $currentPage = 'orderHistoryCustomer.php';
 </head>
 
 <body class="bg-[#EFE9E2] min-h-screen flex">
-<?php include 'sidebar.php'; ?>
+<?php include '../../layout/sidebarCustomer.php'; ?>
 
 </body>
 

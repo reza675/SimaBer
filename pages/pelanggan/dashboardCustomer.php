@@ -33,7 +33,7 @@ while ($data2 = mysqli_fetch_array($query2)) {
 </head>
 
 <body class="bg-[#EFE9E2] min-h-screen">
-    <?php include 'sidebar.php'; ?>
+    <?php include '../../layout/sidebarCustomer.php'; ?>
     <div class="main-container">
         <div class="flex justify-between items-center p-4 bg-[#A2845E] text-white">
             <div class="ml-12">
@@ -200,7 +200,7 @@ while ($data2 = mysqli_fetch_array($query2)) {
 
                 <div class="flex-shrink-0 space-y-4">
                     <h2 class="text-2xl font-semibold text-white mx-6">Why Choose SimaBer?</h2>
-                    <a href="#" class="inline-flex items-center bg-black text-white font-semibold 
+                    <a href="OrderCustomer.php" class="inline-flex items-center bg-black text-white font-semibold 
                 py-3 px-6 rounded-full hover:bg-gray-800 transition mx-6">
                         Get Started
                         <svg class="ml-2" width="10" height="12" viewBox="0 0 10 16" fill="none"
@@ -238,7 +238,8 @@ while ($data2 = mysqli_fetch_array($query2)) {
             </div>
         </div>
         <div class="pt-6 mt-6 mx-auto max-w-4xl grid grid-cols-1 sm:grid-cols-2 auto-rows-[100px] gap-6">
-            <div class="relative row-span-2 bg-[#FFF1CB] rounded-lg overflow-hidden flex flex-col p-6">
+            <div
+                class="relative row-span-2 bg-[#FFF1CB] rounded-lg overflow-hidden flex flex-col p-6 transition duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
                 <p class="text-[#383E49] text-xl font-semibold mb-4">Total Transaction</p>
                 <div class="flex-1 flex items-center justify-center">
                     <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -251,10 +252,11 @@ while ($data2 = mysqli_fetch_array($query2)) {
                     </svg>
                 </div>
             </div>
-            <div class="relative row-span-2 bg-[#FFF1CB] rounded-lg overflow-hidden flex flex-col p-6">
+            <div
+                class="relative row-span-2 bg-[#FFF1CB] rounded-lg overflow-hidden flex flex-col p-6 transition duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
                 <p class="text-[#383E49] text-xl font-semibold mb-4">Purchased Rice</p>
                 <div class="flex-1 flex items-center justify-center">
-                    <svg  width="65" height="61" viewBox="0 0 65 61" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="65" height="61" viewBox="0 0 65 61" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M53.9873 0.900391L54.2461 0.908203C55.4477 0.982866 56.5694 1.57402 57.3564 2.52441L57.5205 2.7334V2.73438L63.9756 11.6963L64.0898 11.8545H64.0488C64.0622 11.8872 64.0764 11.92 64.085 11.9541C64.1057 12.0368 64.107 12.1267 64.0693 12.2188V56.1162L64.0645 56.3164C63.9586 58.3749 62.229 60.0996 60.0664 60.0996H4.90332C2.67175 60.0996 0.900391 58.3374 0.900391 56.1162V12.2031C0.900391 12.0253 0.98854 11.8533 1.06055 11.71L1.06348 11.7031L1.06836 11.6963L7.52344 2.73438C8.29449 1.58613 9.67645 0.900497 11.0566 0.900391H53.9873ZM2.60059 56.1162C2.60072 57.3325 3.60949 58.4062 4.90332 58.4062H60.1416C61.3652 58.4062 62.4432 57.4024 62.4434 56.1162V13.0488H41.6279L41.6289 25.7207L41.6143 25.9297C41.5464 26.4141 41.2499 26.8716 40.834 27.1475L40.8262 27.1523L40.8174 27.1562C40.2769 27.3865 39.7158 27.4714 39.1523 27.1514V27.1504L32.5225 23.5918L25.8984 27.1475L25.8037 27.2041C25.576 27.3276 25.304 27.3887 25.0918 27.3887C24.8167 27.3886 24.5366 27.329 24.3066 27.2051L24.2109 27.1475C23.7374 26.8337 23.4161 26.3569 23.416 25.7207V13.0488H2.60059V56.1162ZM25.1172 12.3662V25.7695H25.1406L32.4746 21.749L32.5225 21.7227L32.5693 21.748L39.9023 25.6943H39.9277V12.29L37.1748 2.59375H27.9453L25.1172 12.3662ZM41.4551 11.3555H61.6738L56.1602 3.6748V3.67578C55.6836 3.06656 54.9533 2.64845 54.1494 2.59863L53.9873 2.59375H38.96L41.4551 11.3555ZM11.0576 2.59375C10.185 2.59375 9.39231 2.95469 8.8877 3.67188H8.88672L3.37207 11.3555H23.666L26.1611 2.59375H11.0576Z"
                             fill="#DBA362" stroke="#DBA362" stroke-width="0.2" />
@@ -263,7 +265,8 @@ while ($data2 = mysqli_fetch_array($query2)) {
                     </svg>
                 </div>
             </div>
-            <div class="relative row-span-2 bg-[#FFF1CB] rounded-lg overflow-hidden flex flex-col p-6">
+            <div
+                class="relative row-span-2 bg-[#FFF1CB] rounded-lg overflow-hidden flex flex-col p-6 transition duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
                 <p class="text-[#383E49] text-xl font-semibold mb-4">Total Product</p>
                 <div class="flex-1 flex items-center justify-center">
                     <svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -277,7 +280,8 @@ while ($data2 = mysqli_fetch_array($query2)) {
                     <p class="text-[#383E49] text-lg font-bold mb-4 mt-5 text-center"><?= $stockBeras; ?> Rice</p>
                 </div>
             </div>
-            <div class="relative row-span-2 bg-[#FFF1CB] rounded-lg overflow-hidden flex flex-col p-6">
+            <div
+                class="relative row-span-2 bg-[#FFF1CB] rounded-lg overflow-hidden flex flex-col p-6 transition duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
                 <p class="text-[#383E49] text-xl font-semibold mb-4">Status Account</p>
                 <div class="flex-1 flex items-center justify-center">
                     <svg width="101" height="101" viewBox="0 0 101 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -285,7 +289,7 @@ while ($data2 = mysqli_fetch_array($query2)) {
                             d="M33.6667 29.4583C33.6667 24.9939 35.4402 20.7122 38.597 17.5554C41.7539 14.3985 46.0355 12.625 50.5 12.625C54.9645 12.625 59.2461 14.3985 62.403 17.5554C65.5598 20.7122 67.3333 24.9939 67.3333 29.4583C67.3333 33.9228 65.5598 38.2044 62.403 41.3613C59.2461 44.5182 54.9645 46.2917 50.5 46.2917C46.0355 46.2917 41.7539 44.5182 38.597 41.3613C35.4402 38.2044 33.6667 33.9228 33.6667 29.4583ZM33.6667 54.7083C28.0861 54.7083 22.734 56.9252 18.788 60.8713C14.8419 64.8174 12.625 70.1694 12.625 75.75C12.625 79.0984 13.9551 82.3096 16.3228 84.6772C18.6904 87.0449 21.9016 88.375 25.25 88.375H75.75C79.0984 88.375 82.3096 87.0449 84.6772 84.6772C87.0449 82.3096 88.375 79.0984 88.375 75.75C88.375 70.1694 86.1581 64.8174 82.212 60.8713C78.266 56.9252 72.9139 54.7083 67.3333 54.7083H33.6667Z"
                             fill="#DBA362" />
                     </svg>
-                    
+
                 </div>
                 <div>
                     <p class="text-[#383E49] text-lg font-bold mb-4 mt-4 text-center">Customer</p>
@@ -295,10 +299,144 @@ while ($data2 = mysqli_fetch_array($query2)) {
             </div>
         </div>
 
+        <div class="relativ h-[600px] isolate overflow-hidden bg-custom">
+            <div class="py-24 max-w-6xl mx-auto flex flex-col md:flex-row gap-12">
+                <div class="flex flex-col text-left basis-1/2 relative h-[420px]">
+                    <p class="sm:text-4xl text-3xl font-semibold text-[#3D3D3D]">Frequently Asked Questions</p>
+                    <p class="mt-4 text-lg text-[#666666]">Find quick answers to common questions about our rice
+                        products, delivery, and services.</p>
 
+                    <img src="../../assets/gambar/pelanggan/Dashboard2_pelanggan.png" alt="faq"
+                        class="absolute bottom-4 left-1/2 -translate-x-1/2 object-cover w-[300px] h-[350px]">
+                </div>
+
+
+                <ul class="basis-1/2">
+                    <li class='group relative'>
+                        <button
+                            class="relative  flex gap-2 items-center w-full py-5 text-base font-semibold text-left border-t md:text-lg border-base-content/10"
+                            aria-expanded="false">
+                            <span class="flex-1 text-md font-regular">What types of rice does SimaBer offer?</span>
+                            <svg class="flex-shrink-0 w-4 h-4  ml-auto fill-current" viewBox="0 0 16 16"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect y="7" width="16" height="2" rx="1"
+                                    class="transform origin-center transition duration-200 ease-out false"></rect>
+                                <rect y="7" width="16" height="2" rx="1"
+                                    class="block group-hover:opacity-0 origin-center rotate-90 transition duration-200 ease-out false">
+                                </rect>
+                            </svg>
+                        </button>
+                        <div class="transition-all duration-300 ease-in-out group-hover:max-h-60 max-h-0 overflow-hidden"
+                            style={{ transition: "max-height 0.3s ease-in-out 0s"}}>
+                            <div class="pb-5 leading-relaxed">
+                                <div class="space-y-2 leading-relaxed text-md font-regular text-[#666666]"> We offer a
+                                    wide variety of rice including premium white rice, <br> organic rice, daily rice,
+                                    organic rice, and specialty regional varieties <br> tailored to your needs.</div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class='group'>
+                        <button
+                            class="relative flex gap-2 items-center w-full py-5 text-base font-semibold text-left border-t md:text-lg border-base-content/10"
+                            aria-expanded="false">
+                            <span class="flex-1 font-regular">Is the rice at SimaBer hygienically processed?</span>
+                            <svg class="flex-shrink-0 w-4 h-4 ml-auto fill-current" viewBox="0 0 16 16"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect y="7" width="16" height="2" rx="1"
+                                    class="transform origin-center transition duration-200 ease-out false"></rect>
+                                <rect y="7" width="16" height="2" rx="1"
+                                    class="group-hover:opacity-0 transform origin-center rotate-90 transition-all duration-200 ease-out false">
+                                </rect>
+                            </svg>
+                        </button>
+                        <div class="transition-all duration-300 ease-in-out group-hover:max-h-60 max-h-0 overflow-hidden"
+                            style={{ transition: "max-height 0.3s ease-in-out 0s" }}>
+                            <div class="pb-5 leading-relaxed">
+                                <div class="space-y-2 leading-relaxed text-md font-regular text-[#666666]"> Yes, the
+                                    rice we sell is hygienically processed. We work directly with <br> trusted farmers
+                                    and ensure the rice is cleaned and packaged properly <br> before reaching our
+                                    customers.</div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class='group'>
+                        <button
+                            class="relative flex gap-2 items-center w-full py-5 text-base font-semibold text-left border-t md:text-lg border-base-content/10"
+                            aria-expanded="false">
+                            <span class="flex-1 font-regular">How long does delivery usually take?</span>
+                            <svg class="flex-shrink-0 w-4 h-4 ml-auto fill-current" viewBox="0 0 16 16"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect y="7" width="16" height="2" rx="1"
+                                    class="transform origin-center transition duration-200 ease-out false"></rect>
+                                <rect y="7" width="16" height="2" rx="1"
+                                    class="group-hover:opacity-0 transform origin-center rotate-90 transition duration-200 ease-out false">
+                                </rect>
+                            </svg>
+                        </button>
+                        <div class="transition-all duration-300 ease-in-out group-hover:max-h-60 max-h-0 overflow-hidden"
+                            style={{ transition: "max-height 0.3s ease-in-out 0s" }}>
+                            <div class="pb-5 leading-relaxed">
+                                <div class="space-y-2 leading-relaxed text-md font-regular text-[#666666]"> Delivery
+                                    usually takes 1–2 working days, depending on your location. <br> We’ll provide
+                                    tracking info as soon as your order is shipped.</div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class='group'>
+                        <button
+                            class="relative flex gap-2 items-center w-full py-5 text-base font-semibold text-left border-t md:text-lg border-base-content/10"
+                            aria-expanded="false">
+                            <span class="flex-1 font-regular">Can I order in bulk for business or events?</span>
+                            <svg class="flex-shrink-0 w-4 h-4 ml-auto fill-current" viewBox="0 0 16 16"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect y="7" width="16" height="2" rx="1"
+                                    class="transform origin-center transition duration-200 ease-out false"></rect>
+                                <rect y="7" width="16" height="2" rx="1"
+                                    class="group-hover:opacity-0 transform origin-center rotate-90 transition duration-200 ease-out false">
+                                </rect>
+                            </svg>
+                        </button>
+                        <div class="transition-all duration-300 ease-in-out group-hover:max-h-60 max-h-0 overflow-hidden"
+                            style={{ transition: "max-height 0.3s ease-in-out 0s" }}>
+                            <div class="pb-5 leading-relaxed">
+                                <div class="space-y-2 leading-relaxed text-md font-regular text-[#666666]"> Yes, we
+                                    accept bulk orders for businesses, events, or community needs. <br> Contact our team
+                                    for special pricing and delivery arrangements tailored <br>to large quantities.
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class='group'>
+                        <button
+                            class="relative flex gap-2 items-center w-full py-5 text-base font-semibold text-left border-t md:text-lg border-base-content/10"
+                            aria-expanded="false">
+                            <span class="flex-1 font-regular">Is SimaBer's rice tested for quality and safety?</span>
+                            <svg class="flex-shrink-0 w-4 h-4 ml-auto fill-current" viewBox="0 0 16 16"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect y="7" width="16" height="2" rx="1"
+                                    class="transform origin-center transition duration-200 ease-out false"></rect>
+                                <rect y="7" width="16" height="2" rx="1"
+                                    class="group-hover:opacity-0 transform origin-center rotate-90 transition duration-200 ease-out false">
+                                </rect>
+                            </svg>
+                        </button>
+                        <div class="transition-all duration-300 ease-in-out group-hover:max-h-60 max-h-0 overflow-hidden"
+                            style={{ transition: "max-height 0.3s ease-in-out 0s" }}>
+                            <div class="pb-5 leading-relaxed">
+                                <div class="space-y-2 leading-relaxed text-md font-regular text-[#666666]"> Absolutely.
+                                    Every batch of rice is carefully inspected and tested <br> to ensure it meets high
+                                    standards of hygiene, moisture content, <br> and grain quality. We follow strict
+                                    food safety protocols from <br>sourcing to packaging.</div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
-
 </body>
+<?php include '../../layout/footer.php'; ?>
+
 <script src="../../assets/cdn/flowbite.min.js"></script>
 <script>
 function toggleDropdown() {
