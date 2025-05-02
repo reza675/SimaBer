@@ -132,6 +132,11 @@ if (isset($_POST['loginCustomer'])) {
         if (password_verify($password, $hashedPassword)) {
             $_SESSION['user_id'] = $data['id'];
             $_SESSION['namaPelanggan'] = $data['namaPelanggan'];
+            if (isset($_POST['remember'])) {
+                setcookie("remember_email", $email, time() + (7 * 24 * 60 * 60), "/");
+            } else {
+                setcookie("remember_email", "", time() - 3600, "/");
+            }
             header("Location:../../../pages/pelanggan/dashboardCustomer.php?login=berhasil");
             exit();
         }
@@ -152,6 +157,11 @@ if (isset($_POST['loginBusinessOwner'])) {
         if (password_verify($password, $hashedPassword)) {
             $_SESSION['user_id'] = $data['id'];
             $_SESSION['namaPemilik'] = $data['namaPemilik'];
+            if (isset($_POST['remember'])) {
+                setcookie("remember_email", $email, time() + (7 * 24 * 60 * 60), "/");
+            } else {
+                setcookie("remember_email", "", time() - 3600, "/");
+            }
             header("Location:../../../pages/pemilikUsaha/dashboardBusinessOwner.php?login=berhasil");
             exit();
         }
@@ -173,6 +183,11 @@ if (isset($_POST['loginSupplier'])) {
         if (password_verify($password, $hashedPassword)) {
             $_SESSION['user_id'] = $data['id'];
             $_SESSION['namaPemasok'] = $data['namaPemasok'];
+            if (isset($_POST['remember'])) {
+                setcookie("remember_email", $email, time() + (7 * 24 * 60 * 60), "/");
+            } else {
+                setcookie("remember_email", "", time() - 3600, "/");
+            }
             header("Location:../../../pages/pemasok/dashboardSupplier.php?login=berhasil");
             exit();
         }

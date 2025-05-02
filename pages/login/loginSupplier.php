@@ -38,6 +38,7 @@
                         <label for="email" class="block mb-1 text-sm font-semibold text-gray-700">Email Address</label>
                         <input type="email" name="email" id="email" placeholder="Enter your email address"
                             class="w-full bg-[#fef9f4] border border-[#c0a080] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#c0a080] text-gray-800"
+                            value="<?php echo isset($_COOKIE['remember_email']) ? $_COOKIE['remember_email'] : ''; ?>"
                             required />
                     </div>
 
@@ -67,7 +68,8 @@
 
                     <div class="flex items-center justify-between">
                         <label class="flex items-center text-sm text-gray-700">
-                            <input type="checkbox" class="mr-2 accent-amber-800" checked />
+                            <input type="checkbox" name="remember" class="mr-2 accent-[##8b5c2c]"
+                                <?php echo isset($_COOKIE['remember_email']) ? 'checked' : ''; ?> />
                             Remember Me
                         </label>
                         <a href="forgotPassword.php" class="text-sm text-[#c0a080] hover:underline">Forgot Password?</a>
