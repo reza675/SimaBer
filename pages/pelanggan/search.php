@@ -5,6 +5,7 @@ if (!isset($_SESSION['namaPelanggan'])) {
     exit();
 }
 $nama = $_SESSION['namaPelanggan'];
+$currentPage = 'search.php';
 
 include '../../assets/mysql/connect.php';
 
