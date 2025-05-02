@@ -75,19 +75,20 @@ while ($data2 = mysqli_fetch_array($query2)) {
                 fair prices.<br>Experience quality, freshness, and trust in every grain.</p>
             <div class="w-full max-w-sm min-w-[200px] mx-auto mt-6">
                 <div class="relative">
-                    <input type="text"
-                        class="w-full bg-black bg-opacity-30 placeholder:text-[#CECCCC] text-[#CECCCC] text-sm border border-slate-200 rounded-full py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
-                        placeholder="Search an Item" />
-
-                    <button
-                        class="absolute right-1 top-1 rounded bg-slate-800 p-1.5 border border-transparent rounded-full text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                        type="button">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4">
-                            <path fill-rule="evenodd"
-                                d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                    </button>
+                    <form action="search.php" method="get">
+                        <input type="text" name="inputSearch"
+                            class="w-full bg-black bg-opacity-30 placeholder:text-[#CECCCC] text-[#CECCCC] text-sm border border-slate-200 rounded-full py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                            placeholder="Search an Item">
+                        <button
+                            class="absolute right-1 top-1 rounded bg-slate-800 p-1.5 border border-transparent rounded-full text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                            type="submit" name="search">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4">
+                                <path fill-rule="evenodd"
+                                    d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -113,16 +114,11 @@ while ($data2 = mysqli_fetch_array($query2)) {
             </div>
         </div>
         <div class="mx-12 mt-4 grid grid-cols-4 gap-6">
-            <?php foreach ($dataBeras as $beras) :
-                $diskon = rand(1, 9);
-                ?>
+            <?php foreach ($dataBeras as $beras) :?>
             <div>
                 <div
                     class="relative max-w-sm bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden transition duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
-                    <button class="absolute left-2 top-2 z-1000 bg-[#3D3D3D] w-12 h-8 rounded-full text-white">
-                        -<?= $diskon ?>%
-
-                    </button>
+                    
                     <a href="#">
                         <img class="w-full h-auto object-cover"
                             src="../../assets/gambar/beras/<?= $beras['gambarBeras']?>" alt="" />

@@ -7,5 +7,4 @@ if (isset($_GET['logout'])) {
     header("Location:../../../pages/login/loginCustomer.php?logout=true");
     exit();
 }
-
 ?>
