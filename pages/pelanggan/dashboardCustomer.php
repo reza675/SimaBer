@@ -160,7 +160,7 @@ while ($data2 = mysqli_fetch_array($query2)) {
         <div class="mx-[150px] mt-4 mb-12 grid grid-cols-3 auto-rows-[200px] gap-6 ">
             <div
                 class="relative row-span-2 rounded-lg overflow-hidden transition duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
-                <a href="#">
+                <a href="detailProduct.php?id=1M&from=dashboard">
                     <img src="../../assets/gambar/pelanggan/UI4.avif" class="w-full h-full object-cover" />
                     <span class="absolute bottom-4 left-4 text-white text-lg font-semibold">Premium Rice</span>
                 </a>
@@ -168,7 +168,7 @@ while ($data2 = mysqli_fetch_array($query2)) {
 
             <div
                 class="relative rounded-lg overflow-hidden transition duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
-                <a href="#">
+                <a href="detailProduct.php?id=2M&from=dashboard">
                     <img src="../../assets/gambar/pelanggan/UI1.jpg" class="w-full h-full object-cover" />
                     <span class="absolute bottom-4 left-4 text-white text-lg font-semibold">Daily Rice</span>
                 </a>
@@ -176,7 +176,7 @@ while ($data2 = mysqli_fetch_array($query2)) {
 
             <div
                 class="relative row-span-2 rounded-lg overflow-hidden transition duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
-                <a href="#">
+                <a href="detailProduct.php?id=3M&from=dashboard">
                     <img src="../../assets/gambar/pelanggan/UI3.webp" class="w-full h-full object-cover" />
                     <span class="absolute bottom-4 left-4 text-white text-lg font-semibold">Specialty Rice</span>
                 </a>
@@ -184,7 +184,7 @@ while ($data2 = mysqli_fetch_array($query2)) {
 
             <div
                 class="relative rounded-lg overflow-hidden transition duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
-                <a href="#">
+                <a href="detailProduct.php?id=4SP&from=dashboard">
                     <img src="../../assets/gambar/pelanggan/UI2.jpeg" class="w-full h-full object-cover" />
                     <span class="absolute bottom-4 left-4 text-white text-lg font-semibold">Organic Rice</span>
                 </a>
