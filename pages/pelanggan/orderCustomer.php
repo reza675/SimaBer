@@ -4,6 +4,8 @@ if (!isset($_SESSION['namaPelanggan'])) {
     header("Location:../login/loginCustomer.php?login=error");
     exit();
 }
+
+
 $currentPage = 'orderCustomer.php';
 $nama = $_SESSION['namaPelanggan'];
 ?>

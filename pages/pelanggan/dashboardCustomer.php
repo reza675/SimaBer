@@ -119,13 +119,13 @@ while ($data2 = mysqli_fetch_array($query2)) {
                 <div
                     class="relative max-w-sm bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden transition duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
                     
-                    <a href="#">
+                    <a href="detailProduct.php?id=<?= $beras['id']?>&from=dashboard">
                         <img class="w-full h-auto object-cover"
                             src="../../assets/gambar/beras/<?= $beras['gambarBeras']?>" alt="" />
 
                     </a>
                 </div>
-                <a href="#">
+                <a href="detailProduct.php?id=<?= $beras['id'] ?>">
                     <h5 class="mb-2 text-2xl font-regular tracking-tight text-[#404040] text-center">
                         <?= $beras['namaBeras'] ?></h5>
 
