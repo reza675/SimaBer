@@ -1,14 +1,16 @@
 <?php
 session_start();
-if (!isset($_SESSION['namaPelanggan'])) {
-    header("Location: ../../login/loginCustomer.php?login=error");
+if (!isset($_SESSION['namaPelanggan']) || !isset($_SESSION['idPelanggan'])) {
+    header("Location:../login/loginCustomer.php?login=error");
     exit();
 }
 $nama = $_SESSION['namaPelanggan'];
+$idPelanggan = $_SESSION['idPelanggan'];
 $currentPage = 'search.php';
 
 include '../../assets/mysql/connect.php';
-
+$q = mysqli_query($conn, "SELECT fotoProfil FROM pelanggan WHERE id = '$idPelanggan'");
+$dataPelanggan = mysqli_fetch_assoc($q);
 $search = $_GET['inputSearch'];
 $query = "SELECT * FROM stokberas WHERE namaBeras LIKE ?";
 $stmt = $conn->prepare($query);
@@ -45,7 +47,7 @@ while ($row = $result->fetch_assoc()) {
             <div class="relative inline-block text-left">
                 <button onclick="toggleDropdown()"
                     class="flex border-2 border-solid items-center bg-[#A2845E] rounded-xl px-4 py-2 shadow hover:ring-2 hover:ring-gray-500 transition space-x-4">
-                    <img src="../../assets/gambar/pelanggan/photoProfile/profil.jpeg" alt="User"
+                    <img src="../../assets/gambar/pelanggan/photoProfile/<?= $dataPelanggan['fotoProfil'] ?? 'profil.jpeg' ?>" alt="User"
                         class="w-14 h-14 rounded-xl object-cover mix-blend-multiply" />
                     <div class="text-left hidden sm:block">
                         <span class="block text-lg font-bold text-black leading-5"><?= $nama; ?></span>

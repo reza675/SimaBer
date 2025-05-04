@@ -1,11 +1,15 @@
 <?php
 session_start();
-if (!isset($_SESSION['namaPelanggan'])) {
+if (!isset($_SESSION['namaPelanggan']) || !isset($_SESSION['idPelanggan'])) {
     header("Location:../login/loginCustomer.php?login=error");
     exit();
 }
-$currentPage = 'orderHistoryCustomer.php';
 $nama = $_SESSION['namaPelanggan'];
+$idPelanggan = $_SESSION['idPelanggan'];
+$currentPage = 'orderHistoryCustomer.php';
+include '../../assets/mysql/connect.php';
+$q = mysqli_query($conn, "SELECT fotoProfil FROM pelanggan WHERE id = '$idPelanggan'");
+$dataPelanggan = mysqli_fetch_assoc($q);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,7 +60,7 @@ $nama = $_SESSION['namaPelanggan'];
         <div class="relative inline-block text-left">
             <button onclick="toggleDropdown()"
                 class="flex border-2 border-solid items-center bg-none rounded-xl px-4 py-2 shadow hover:ring-2 hover:ring-gray-500 transition space-x-4">
-                <img src="../../assets/gambar/pelanggan/photoProfile/profil.jpeg" alt="User"
+                <img src="../../assets/gambar/pelanggan/photoProfile/<?= $dataPelanggan['fotoProfil'] ?? 'profil.jpeg' ?>" alt="User"
                     class="w-14 h-14 rounded-xl object-cover mix-blend-multiply" />
                 <div class="text-left hidden sm:block">
                     <span class="block text-lg font-bold text-black leading-5"><?= $nama; ?></span>

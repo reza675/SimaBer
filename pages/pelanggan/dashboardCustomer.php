@@ -20,6 +20,8 @@ $stockBeras = 0;
 while ($data2 = mysqli_fetch_array($query2)) {
     $stockBeras += $data2['stokBeras'];
 }
+$q = mysqli_query($conn, "SELECT fotoProfil FROM pelanggan WHERE id = '$idPelanggan'");
+$dataPelanggan = mysqli_fetch_assoc($q);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -45,8 +47,8 @@ while ($data2 = mysqli_fetch_array($query2)) {
             <div class="relative inline-block text-left">
                 <button onclick="toggleDropdown()"
                     class="flex border-2 border-solid items-center bg-[#A2845E] rounded-xl px-4 py-2 shadow hover:ring-2 hover:ring-gray-200 transition space-x-4">
-                    <img src="../../assets/gambar/pelanggan/photoProfile/profil.jpeg" alt="User"
-                        class="w-14 h-14 rounded-xl object-cover mix-blend-multiply" />
+                    <img src="../../assets/gambar/pelanggan/photoProfile/<?= $dataPelanggan['fotoProfil'] ?? 'profil.jpeg' ?>"
+                        alt="User" class="w-14 h-14 rounded-xl object-cover mix-blend-multiply" />
                     <div class="text-left hidden sm:block">
                         <span class="block text-lg font-bold text-black leading-5"><?= $nama; ?></span>
                         <span class="block text-sm text-white leading-4">Pelanggan</span>
