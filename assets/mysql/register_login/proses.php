@@ -20,7 +20,7 @@ if (isset($_POST["registerCustomer"])) {
     }
 
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-    $query = mysqli_query($conn, "INSERT INTO pelanggan VALUES ('','$email','$hashedPassword','$fullname','$telephone','$address','$zipcode')");
+    $query = mysqli_query($conn, "INSERT INTO pelanggan VALUES ('','$email','$hashedPassword','$fullname','$telephone','$address','$zipcode','profil.jpeg')");
     header("Location:../../../pages/register/register.php?register=berhasil");
     exit();
 }
@@ -130,7 +130,7 @@ if (isset($_POST['loginCustomer'])) {
     if ($data) {
         $hashedPassword = $data['passwordPelanggan'];
         if (password_verify($password, $hashedPassword)) {
-            $_SESSION['user_id'] = $data['id'];
+            $_SESSION['idPelanggan'] = $data['id'];
             $_SESSION['namaPelanggan'] = $data['namaPelanggan'];
             if (isset($_POST['remember'])) {
                 setcookie("remember_email", $email, time() + (7 * 24 * 60 * 60), "/");

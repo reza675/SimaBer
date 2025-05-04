@@ -55,12 +55,12 @@ $nama = $_SESSION['namaPelanggan'];
 
         <div class="relative inline-block text-left">
             <button onclick="toggleDropdown()"
-                class="flex border-2 border-solid items-center bg-none rounded-xl px-4 py-2 shadow hover:ring-2 hover:ring-gray-300 transition space-x-4">
-                <img src="../../assets/gambar/pelanggan/profil.jpeg" alt="User"
+                class="flex border-2 border-solid items-center bg-none rounded-xl px-4 py-2 shadow hover:ring-2 hover:ring-gray-500 transition space-x-4">
+                <img src="../../assets/gambar/pelanggan/photoProfile/profil.jpeg" alt="User"
                     class="w-14 h-14 rounded-xl object-cover mix-blend-multiply" />
                 <div class="text-left hidden sm:block">
                     <span class="block text-lg font-bold text-black leading-5"><?= $nama; ?></span>
-                    <span class="block text-sm text-[#A2A1A8] leading-4">Pelanggan</span>
+                    <span class="block font-semibold text-sm text-[#A2A1A8] leading-4">Pelanggan</span>
                 </div>
                 <svg class="w-5 h-5 text-black ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -69,7 +69,7 @@ $nama = $_SESSION['namaPelanggan'];
 
             <div id="dropdownProfile"
                 class="hidden absolute right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-md z-50 w-48">
-                <a href="settings.php" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+                <a href="settingsCustomer.php" class="block font-semibold px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-center">Settings</a>
                 <a href="../../assets/mysql/pelanggan/proses.php?logout=true"
                     class="block px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600 text-center rounded-b-lg">Log
                     Out</a>
