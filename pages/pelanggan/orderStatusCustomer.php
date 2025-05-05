@@ -8,7 +8,7 @@ $nama = $_SESSION['namaPelanggan'];
 $idPelanggan = $_SESSION['idPelanggan'];
 $currentPage = 'orderStatusCustomer.php';
 include '../../assets/mysql/connect.php';
-$q = mysqli_query($conn, "SELECT fotoProfil FROM pelanggan WHERE id = '$idPelanggan'");
+$q = mysqli_query($conn, "SELECT fotoProfil FROM pelanggan WHERE idPelanggan = '$idPelanggan'");
 $dataPelanggan = mysqli_fetch_assoc($q);
 ?>
 <!DOCTYPE html>

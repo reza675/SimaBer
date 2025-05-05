@@ -22,7 +22,7 @@ while ($data = mysqli_fetch_array($query)) {
 }
 $start = $offset + 1;
 $end = min($offset + $itemsPerPage, $totalData);
-$q = mysqli_query($conn, "SELECT fotoProfil FROM pelanggan WHERE id = '$idPelanggan'");
+$q = mysqli_query($conn, "SELECT fotoProfil FROM pelanggan WHERE idPelanggan = '$idPelanggan'");
 $dataPelanggan = mysqli_fetch_assoc($q);
 ?>
 <!DOCTYPE html>
@@ -155,7 +155,7 @@ $dataPelanggan = mysqli_fetch_assoc($q);
                         <?php foreach ($dataBeras as $index => $beras) : ?>
                         <tr class="<?= $index % 2 === 0 ? 'bg-[#FFEEDB]' : 'bg-[#E7DDD3]' ?> hover:bg-[#D1BEAB]">
                             <td class="px-4 py-3 text-center"><?= $index + 1 ?></td>
-                            <td class="px-4 py-3 text-center"><?= $beras['id'] ?></td>
+                            <td class="px-4 py-3 text-center"><?= $beras['idBeras'] ?></td>
                             <td class="px-4 py-3"><?= $beras['namaBeras'] ?></td>
                             <td class="px-4 py-3 text-center">
                                 <img src="../../assets/gambar/beras/<?= $beras['gambarBeras'] ?>"
@@ -168,7 +168,7 @@ $dataPelanggan = mysqli_fetch_assoc($q);
                             </td>
                             <td class="px-4 py-3 text-center"><?= $beras['stokBeras'] ?></td>
                             <td class="px-4 py-3 text-center">
-                                <a href="detailProduct.php?id=<?= $beras['id'] ?>&from=orderCustomer"
+                                <a href="detailProduct.php?id=<?= $beras['idBeras'] ?>&from=orderCustomer"
                                     class="bg-[#A2845E] text-white px-4 py-2 rounded-full hover:bg-[#5C4E3F] transition-colors duration-200">
                                     Buy
                                 </a>

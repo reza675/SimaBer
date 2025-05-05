@@ -15,11 +15,11 @@ if ($from === 'dashboard') {
     $backURL = 'orderCustomer.php';
 }
 include '../../assets/mysql/connect.php';
-$query = mysqli_query($conn, "SELECT * FROM stokberas WHERE id = '$idBeras'");
+$query = mysqli_query($conn, "SELECT * FROM stokberas WHERE idBeras = '$idBeras'");
 $product = mysqli_fetch_assoc($query);
 $namaBeras = $product['namaBeras'];
 $queryWeights = mysqli_query($conn, "SELECT * FROM stokberas WHERE namaBeras = '$namaBeras'");
-$q = mysqli_query($conn, "SELECT fotoProfil FROM pelanggan WHERE id = '$idPelanggan'");
+$q = mysqli_query($conn, "SELECT fotoProfil FROM pelanggan WHERE idPelanggan = '$idPelanggan'");
 $dataPelanggan = mysqli_fetch_assoc($q);
 ?>
 <!DOCTYPE html>
@@ -121,8 +121,8 @@ $dataPelanggan = mysqli_fetch_assoc($q);
                     <p class="text-sm font-medium text-gray-800">Weight</p>
                     <div class="flex gap-3 mt-2">
                         <?php while ($weightProduct = mysqli_fetch_assoc($queryWeights)) : ?>
-                        <a href="detailProduct.php?id=<?= $weightProduct['id'] ?>&from=<?= $from ?>"
-                            class="px-4 py-2 border border-black hover:border-[#A2845E] transition <?= ($idBeras == $weightProduct['id'] ? 'bg-[#A2845E] text-white' : '' )?>">
+                        <a href="detailProduct.php?id=<?= $weightProduct['idBeras'] ?>&from=<?= $from ?>"
+                            class="px-4 py-2 border border-black hover:border-[#A2845E] transition <?= ($idBeras == $weightProduct['idBeras'] ? 'bg-[#A2845E] text-white' : '' )?>">
                             <?= $weightProduct['beratBeras'] ?> kg
                         </a>
                         <?php endwhile; ?>
@@ -135,7 +135,8 @@ $dataPelanggan = mysqli_fetch_assoc($q);
                     <form action="../../assets/mysql/pelanggan/proses.php" method="post" class="w-full">
                         <input type="hidden" name="idBeras" value="<?= $idBeras ?>">
                         <input type="hidden" name="quantity" id="formQuantity" value="1">
-                        <button type="submit"
+                        <input type="hidden" name="harga" value="<?= $product['hargaJualBeras'] ?>">
+                        <button type="submit" name="beliBeras"
                             class="w-full px-6 py-3 mt-7 bg-[#8C5E3C] text-white font-medium rounded-lg shadow hover:bg-[#79513a] transition">
                             Add to Cart Rp <span
                                 id="totalPrice"><?= number_format($product['hargaJualBeras'], 2, ',', '.') ?></span>

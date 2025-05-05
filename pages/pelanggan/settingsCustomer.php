@@ -9,7 +9,7 @@ $nama = $_SESSION['namaPelanggan'];
 $idPelanggan = $_SESSION['idPelanggan'];
 
 include '../../assets/mysql/connect.php';
-$query = mysqli_query($conn, "SELECT * FROM pelanggan WHERE id = '$idPelanggan'");
+$query = mysqli_query($conn, "SELECT * FROM pelanggan WHERE idPelanggan= '$idPelanggan'");
 $dataPelanggan = mysqli_fetch_assoc($query);
 
 $success = $_SESSION['success'] ?? null;

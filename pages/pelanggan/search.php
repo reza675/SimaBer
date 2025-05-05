@@ -9,7 +9,7 @@ $idPelanggan = $_SESSION['idPelanggan'];
 $currentPage = 'search.php';
 
 include '../../assets/mysql/connect.php';
-$q = mysqli_query($conn, "SELECT fotoProfil FROM pelanggan WHERE id = '$idPelanggan'");
+$q = mysqli_query($conn, "SELECT fotoProfil FROM pelanggan WHERE idPelanggan= '$idPelanggan'");
 $dataPelanggan = mysqli_fetch_assoc($q);
 $search = $_GET['inputSearch'];
 $query = "SELECT * FROM stokberas WHERE namaBeras LIKE ?";

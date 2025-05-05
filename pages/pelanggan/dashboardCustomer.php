@@ -9,7 +9,7 @@ $idPelanggan = $_SESSION['idPelanggan'];
 $currentPage = 'dashboardCustomer.php';
 
 include '../../assets/mysql/connect.php';
-$query = mysqli_query($conn, "SELECT * FROM stokberas WHERE id = '1M' or id = '2M' or id = '3M' or id = '4SP' AND stokBeras > 0 AND beratBeras = 5 or beratBeras = 10");
+$query = mysqli_query($conn, "SELECT * FROM stokberas WHERE idBeras = '1M' or idBeras = '2M' or idBeras = '3M' or idBeras = '4SP' AND stokBeras > 0 AND beratBeras = 5 or beratBeras = 10");
 $dataBeras = [];
 while ($data = mysqli_fetch_array($query)) {
     $dataBeras[] = $data;
@@ -20,7 +20,7 @@ $stockBeras = 0;
 while ($data2 = mysqli_fetch_array($query2)) {
     $stockBeras += $data2['stokBeras'];
 }
-$q = mysqli_query($conn, "SELECT fotoProfil FROM pelanggan WHERE id = '$idPelanggan'");
+$q = mysqli_query($conn, "SELECT fotoProfil FROM pelanggan WHERE idPelanggan = '$idPelanggan'");
 $dataPelanggan = mysqli_fetch_assoc($q);
 ?>
 <!DOCTYPE html>
@@ -122,13 +122,13 @@ $dataPelanggan = mysqli_fetch_assoc($q);
                 <div
                     class="relative max-w-sm bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden transition duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
                     
-                    <a href="detailProduct.php?id=<?= $beras['id']?>&from=dashboard">
+                    <a href="detailProduct.php?id=<?= $beras['idBeras']?>&from=dashboard">
                         <img class="w-full h-auto object-cover"
                             src="../../assets/gambar/beras/<?= $beras['gambarBeras']?>" alt="" />
 
                     </a>
                 </div>
-                <a href="detailProduct.php?id=<?= $beras['id'] ?>">
+                <a href="detailProduct.php?id=<?= $beras['idBeras'] ?>">
                     <h5 class="mb-2 text-2xl font-regular tracking-tight text-[#404040] text-center">
                         <?= $beras['namaBeras'] ?></h5>
 

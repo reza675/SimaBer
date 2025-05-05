@@ -10,9 +10,9 @@ if (isset($_GET['logout'])) {
 }
 
 
-$id = $_POST['idPelanggan'];
-// 1) Cek apakah ini request upload foto saja
+//edit foto profil
 if (isset($_FILES['photo']) && $_FILES['photo']['name'] != '') {
+    $id = $_POST['idPelanggan'];
     $fotoProfil = $_FILES['photo']['name'];
     $targetDir = "../../gambar/pelanggan/photoProfile/";
     $targetFile = $targetDir . basename($fotoProfil);
@@ -20,7 +20,7 @@ if (isset($_FILES['photo']) && $_FILES['photo']['name'] != '') {
     if (!in_array($ext, ['jpg','jpeg','png'])) {
         $_SESSION['error'] = "Hanya file JPG, JPEG, PNG yang diperbolehkan.";
     } elseif (move_uploaded_file($_FILES['photo']['tmp_name'], $targetFile)) {
-        $q = "UPDATE pelanggan SET fotoProfil='$fotoProfil' WHERE id='$id'";
+        $q = "UPDATE pelanggan SET fotoProfil='$fotoProfil' WHERE idPelanggan='$id'";
         if (mysqli_query($conn, $q)) {
             $_SESSION['success'] = "Foto profil berhasil diubah!";
             $_SESSION['fotoProfil'] = $fotoProfil;
@@ -33,19 +33,19 @@ if (isset($_FILES['photo']) && $_FILES['photo']['name'] != '') {
     header("Location:../../../pages/pelanggan/settingsCustomer.php");
     exit();
 }
-
-// 2) Kalau bukan upload foto, berarti update data profil
+//edit data customer
 if (isset($_POST['submitEdit'])) {
-    $nama   = mysqli_real_escape_string($conn, $_POST['nama']);
-    $telepon= mysqli_real_escape_string($conn, $_POST['telepon']);
-    $alamat = mysqli_real_escape_string($conn, $_POST['alamat']);
-    $kodepos= mysqli_real_escape_string($conn, $_POST['kodepos']);
+    $id = $_POST['idPelanggan'];
+    $nama = $_POST['nama'];
+    $telepon= $_POST['telepon'];
+    $alamat = $_POST['alamat'];
+    $kodepos= $_POST['kodepos'];
     $q = "UPDATE pelanggan SET
           namaPelanggan='$nama',
           teleponPelanggan='$telepon',
           alamatPelanggan='$alamat',
           kodeposPelanggan='$kodepos'
-          WHERE id='$id'";
+          WHERE idPelanggan='$id'";
     if (mysqli_query($conn, $q)) {
         $_SESSION['success'] = "Data profil berhasil diperbarui!";
         $_SESSION['namaPelanggan'] = $nama;
@@ -56,4 +56,19 @@ if (isset($_POST['submitEdit'])) {
     exit();
 }
 
+//beli Beras
+if(isset($_POST['submitBeli'])) {
+    $idPelanggan = $_POST['idPelanggan'];
+    $idBeras = $_POST['idBeras'];
+    $jumlahBeras = $_POST['quantity'];
+    $hargaBeras = $_POST['harga'];
+    $q = "INSERT INTO transaksi (idPelanggan, idBeras, jumlah) VALUES ('$idPelanggan', '$idBeras', '$jumlah')";
+    if (mysqli_query($conn, $q)) {
+        $_SESSION['success'] = "Beras berhasil dibeli!";
+    } else {
+        $_SESSION['error'] = "Error: ".mysqli_error($conn);
+    }
+    header("Location:../../../pages/pelanggan/orderCustomer.php");
+    exit();
+}
 ?>

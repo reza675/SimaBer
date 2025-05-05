@@ -130,7 +130,7 @@ if (isset($_POST['loginCustomer'])) {
     if ($data) {
         $hashedPassword = $data['passwordPelanggan'];
         if (password_verify($password, $hashedPassword)) {
-            $_SESSION['idPelanggan'] = $data['id'];
+            $_SESSION['idPelanggan'] = $data['idPelanggan'];
             $_SESSION['namaPelanggan'] = $data['namaPelanggan'];
             if (isset($_POST['remember'])) {
                 setcookie("remember_email", $email, time() + (7 * 24 * 60 * 60), "/");
@@ -155,7 +155,7 @@ if (isset($_POST['loginBusinessOwner'])) {
     if ($data) {
         $hashedPassword = $data['passwordPemilik'];
         if (password_verify($password, $hashedPassword)) {
-            $_SESSION['user_id'] = $data['id'];
+            $_SESSION['user_id'] = $data['idPemilik'];
             $_SESSION['namaPemilik'] = $data['namaPemilik'];
             if (isset($_POST['remember'])) {
                 setcookie("remember_email", $email, time() + (7 * 24 * 60 * 60), "/");
@@ -181,7 +181,7 @@ if (isset($_POST['loginSupplier'])) {
     if ($data) {
         $hashedPassword = $data['passwordPemilik'];
         if (password_verify($password, $hashedPassword)) {
-            $_SESSION['user_id'] = $data['id'];
+            $_SESSION['user_id'] = $data['idPemasok'];
             $_SESSION['namaPemasok'] = $data['namaPemasok'];
             if (isset($_POST['remember'])) {
                 setcookie("remember_email", $email, time() + (7 * 24 * 60 * 60), "/");
