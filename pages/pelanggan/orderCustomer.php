@@ -8,14 +8,22 @@ $nama = $_SESSION['namaPelanggan'];
 $idPelanggan = $_SESSION['idPelanggan'];
 $currentPage = 'orderCustomer.php';
 include '../../assets/mysql/connect.php';
-$q = mysqli_query($conn, "SELECT fotoProfil FROM pelanggan WHERE id = '$idPelanggan'");
-$dataPelanggan = mysqli_fetch_assoc($q);
 
-$query = mysqli_query($conn, "SELECT * FROM stokberas");
+$itemsPerPage = isset($_GET['show']) ? (int)$_GET['show'] : 10;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $itemsPerPage;
+$totalQuery = mysqli_query($conn, "SELECT COUNT(*) as total FROM stokberas");
+$totalData = mysqli_fetch_assoc($totalQuery)['total'];
+$totalPages = ceil($totalData / $itemsPerPage);
+$query = mysqli_query($conn, "SELECT * FROM stokberas LIMIT $itemsPerPage OFFSET $offset");
 $dataBeras = [];
 while ($data = mysqli_fetch_array($query)) {
     $dataBeras[] = $data;
 }
+$start = $offset + 1;
+$end = min($offset + $itemsPerPage, $totalData);
+$q = mysqli_query($conn, "SELECT fotoProfil FROM pelanggan WHERE id = '$idPelanggan'");
+$dataPelanggan = mysqli_fetch_assoc($q);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -104,7 +112,7 @@ while ($data = mysqli_fetch_array($query)) {
                 <div class="flex items-center gap-4">
                     <button type="button" class="flex items-center gap-2 px-4 py-2 border border-slate-400 rounded-md
                    hover:bg-[#A2845E] focus:outline-none transition">
-                        <svg  width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M3.5 6H10.5" stroke="#16151C" stroke-width="1.5" stroke-linecap="round"
                                 stroke-linejoin="round" />
                             <path d="M3.5 12H12.5" stroke="#16151C" stroke-width="1.5" stroke-linecap="round"
@@ -127,17 +135,99 @@ while ($data = mysqli_fetch_array($query)) {
 
                 </div>
             </div>
-                <?php foreach ($dataBeras as $beras) :?>
-                <div class="mt-4">
-                    <table>  </table>
-                <?php endforeach; ?>
-            
 
+            <div class="mt-6 overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-[#A2845E] text-black">
+                        <tr>
+                            <th class="px-4 py-3">No</th>
+                            <th class="px-4 py-3">ID</th>
+                            <th class="px-4 py-3">Item Name</th>
+                            <th class="px-4 py-3">Image</th>
+                            <th class="px-4 py-3">Type</th>
+                            <th class="px-4 py-3">Weight(kg)</th>
+                            <th class="px-4 py-3">Price</th>
+                            <th class="px-4 py-3">Stock</th>
+                            <th class="px-4 py-3">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <?php foreach ($dataBeras as $index => $beras) : ?>
+                        <tr class="<?= $index % 2 === 0 ? 'bg-[#FFEEDB]' : 'bg-[#E7DDD3]' ?> hover:bg-[#D1BEAB]">
+                            <td class="px-4 py-3 text-center"><?= $index + 1 ?></td>
+                            <td class="px-4 py-3 text-center"><?= $beras['id'] ?></td>
+                            <td class="px-4 py-3"><?= $beras['namaBeras'] ?></td>
+                            <td class="px-4 py-3 text-center">
+                                <img src="../../assets/gambar/beras/<?= $beras['gambarBeras'] ?>"
+                                    class="w-16 h-16 object-cover mx-auto">
+                            </td>
+                            <td class="px-4 py-3 text-center"><?= $beras['jenisBeras'] ?></td>
+                            <td class="px-4 py-3 text-center"><?= $beras['beratBeras'] ?></td>
+                            <td class="px-4 py-3 text-center">Rp
+                                <?= number_format($beras['hargaJualBeras'], 2, ',', '.') ?>
+                            </td>
+                            <td class="px-4 py-3 text-center"><?= $beras['stokBeras'] ?></td>
+                            <td class="px-4 py-3 text-center">
+                                <a href="detailProduct.php?id=<?= $beras['id'] ?>&from=orderCustomer"
+                                    class="bg-[#A2845E] text-white px-4 py-2 rounded-full hover:bg-[#5C4E3F] transition-colors duration-200">
+                                    Buy
+                                </a>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <div class="flex justify-between items-center mb-4 mt-4">
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <span>Showing</span>
+                    <select id="showEntries" class="border bg-[#EFE9E2] rounded-md px-2 py-1"
+                        onchange="window.location.href = '?show='+this.value+'&page=1'">
+                        <option value="5" <?= $itemsPerPage == 5 ? 'selected' : '' ?>>5</option>
+                        <option value="10" <?= $itemsPerPage == 10 ? 'selected' : '' ?>>10</option>
+                        <option value="20" <?= $itemsPerPage == 20 ? 'selected' : '' ?>>20</option>
+                    </select>
+                </div>
+
+                <div class="text-sm text-gray-600">
+                    Showing <?= $start ?> to <?= $end ?> of <?= $totalData ?> records
+                </div>
+            </div>
+            <div class="flex justify-center mt-6 gap-2 border[#7C4D16]">
+                <?php if($page > 1): ?>
+                <a href="?page=<?= $page-1 ?>&show=<?= $itemsPerPage ?>"
+                    class="px-4 py-2 border rounded-md bg-none hover:bg-[#D1BEAB]">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M14.4685 17.5856C14.7919 17.3269 14.8444 16.8549 14.5856 16.5315L10.9604 12L14.5856 7.46849C14.8444 7.14505 14.7919 6.67308 14.4685 6.41432C14.145 6.15556 13.6731 6.208 13.4143 6.53145L9.41432 11.5315C9.19519 11.8054 9.19519 12.1946 9.41432 12.4685L13.4143 17.4685C13.6731 17.7919 14.145 17.8444 14.4685 17.5856Z"
+                            fill="#16151C" />
+                    </svg>
+
+
+                </a>
+                <?php endif; ?>
+
+                <?php for($i = 1; $i <= $totalPages; $i++): ?>
+                <a href="?page=<?= $i ?>&show=<?= $itemsPerPage ?>"
+                    class="px-4 py-2 border rounded-md <?= $i == $page ? 'bg-none border-[#7C4D16] border-2 text-[#7C4D16] font-semibold' : 'bg-none hover:bg-[#D1BEAB]' ?>">
+                    <?= $i ?>
+                </a>
+                <?php endfor; ?>
+
+                <?php if($page < $totalPages): ?>
+                <a href="?page=<?= $page+1 ?>&show=<?= $itemsPerPage ?>"
+                    class="px-4 py-2 border rounded-md bg-none hover:bg-[#D1BEAB]">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M9.53151 17.5856C9.20806 17.3269 9.15562 16.8549 9.41438 16.5315L13.0396 12L9.41438 7.46849C9.15562 7.14505 9.20806 6.67308 9.53151 6.41432C9.85495 6.15556 10.3269 6.208 10.5857 6.53145L14.5857 11.5315C14.8048 11.8054 14.8048 12.1946 14.5857 12.4685L10.5857 17.4685C10.3269 17.7919 9.85495 17.8444 9.53151 17.5856Z"
+                            fill="#16151C" />
+                    </svg>
+
+                </a>
+                <?php endif; ?>
+            </div>
 
         </div>
-
-
-    </div>
 
 </body>
 
