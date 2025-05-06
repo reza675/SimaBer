@@ -18,17 +18,17 @@ if (isset($_FILES['photo']) && $_FILES['photo']['name'] != '') {
     $targetFile = $targetDir . basename($fotoProfil);
     $ext = strtolower(pathinfo($fotoProfil, PATHINFO_EXTENSION));
     if (!in_array($ext, ['jpg','jpeg','png'])) {
-        $_SESSION['error'] = "Hanya file JPG, JPEG, PNG yang diperbolehkan.";
+        $_SESSION['error'] = "Only JPG, JPEG, PNG files are allowed.";
     } elseif (move_uploaded_file($_FILES['photo']['tmp_name'], $targetFile)) {
         $q = "UPDATE pelanggan SET fotoProfil='$fotoProfil' WHERE idPelanggan='$id'";
         if (mysqli_query($conn, $q)) {
-            $_SESSION['success'] = "Foto profil berhasil diubah!";
+            $_SESSION['success'] = "Profile photo successfully changed!";
             $_SESSION['fotoProfil'] = $fotoProfil;
         } else {
             $_SESSION['error'] = "Error DB: " . mysqli_error($conn);
         }
     } else {
-        $_SESSION['error'] = "Gagal mengunggah file.";
+        $_SESSION['error'] = "Failed to upload file.";
     }
     header("Location:../../../pages/pelanggan/settingsCustomer.php");
     exit();
@@ -36,18 +36,20 @@ if (isset($_FILES['photo']) && $_FILES['photo']['name'] != '') {
 //edit data customer
 if (isset($_POST['submitEdit'])) {
     $id = $_POST['idPelanggan'];
+    $email = $_POST['email'];
     $nama = $_POST['nama'];
     $telepon= $_POST['telepon'];
     $alamat = $_POST['alamat'];
     $kodepos= $_POST['kodepos'];
     $q = "UPDATE pelanggan SET
+          emailPelanggan='$email',
           namaPelanggan='$nama',
           teleponPelanggan='$telepon',
           alamatPelanggan='$alamat',
           kodeposPelanggan='$kodepos'
           WHERE idPelanggan='$id'";
     if (mysqli_query($conn, $q)) {
-        $_SESSION['success'] = "Data profil berhasil diperbarui!";
+        $_SESSION['success'] = "Profile data successfully updated!";
         $_SESSION['namaPelanggan'] = $nama;
     } else {
         $_SESSION['error'] = "Error: ".mysqli_error($conn);

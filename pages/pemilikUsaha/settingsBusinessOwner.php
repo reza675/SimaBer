@@ -1,16 +1,16 @@
 <?php
 session_start();
-if (!isset($_SESSION['namaPelanggan'])) {
-    header("Location:../login/loginCustomer.php?login=error");
+if (!isset($_SESSION['namaPemilik']) || !isset($_SESSION['idPemilik'])) {
+    header("Location:../login/loginBusinessOwner.php?login=error");
     exit();
 }
-$currentPage = 'settingsCustomer.php';
-$nama = $_SESSION['namaPelanggan'];
-$idPelanggan = $_SESSION['idPelanggan'];
+$nama = $_SESSION['namaPemilik'];
+$idPemilik = $_SESSION['idPemilik'];
+$currentPage = 'settingsBusinessOwner.php';
 
 include '../../assets/mysql/connect.php';
-$query = mysqli_query($conn, "SELECT * FROM pelanggan WHERE idPelanggan= '$idPelanggan'");
-$dataPelanggan = mysqli_fetch_assoc($query);
+$query = mysqli_query($conn, "SELECT * FROM pemilikusaha WHERE idPemilik= '$idPemilik'");
+$dataPemilikUsaha = mysqli_fetch_assoc($query);
 
 $success = $_SESSION['success'] ?? null;
 $error = $_SESSION['error'] ?? null;
@@ -22,14 +22,14 @@ unset($_SESSION['success'], $_SESSION['error']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings Customer</title>
+    <title>Settings Business Owner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="../../assets/cdn/flowbite.min.css" rel="stylesheet" />
     <link rel="icon" href="../../assets/gambar/icon.png">
 </head>
 
 <body class="bg-[#EFE9E2] min-h-screen">
-    <?php include '../../layout/sidebarCustomer.php'; ?>
+    <?php include '../../layout/sidebarBusinessOwner.php'; ?>
 
     <div class="main-container ml-[300px] mt-4 mr-12 overflow-visible">
         <div class="flex justify-between items-center gap-6">
@@ -40,11 +40,11 @@ unset($_SESSION['success'], $_SESSION['error']);
             <div class="relative inline-block text-left">
                 <button onclick="toggleDropdown()"
                     class="flex items-center gap-4 border-2 rounded-xl px-4 py-2 hover:ring-2 hover:ring-gray-500 transition">
-                    <img src="../../assets/gambar/pelanggan/photoProfile/<?= $dataPelanggan['fotoProfil'] ?? 'profil.jpeg' ?>"
+                    <img src="../../assets/gambar/pemilikUsaha/photoProfile/<?= $dataPemilikUsaha['fotoProfil'] ?? 'profil.jpeg' ?>"
                         alt="User" class="w-14 h-14 rounded-xl object-cover">
                     <div class="hidden sm:block text-left">
                         <span class="block text-lg font-bold"><?= $nama; ?></span>
-                        <span class="block text-sm text-[#A2A1A8]">Pelanggan</span>
+                        <span class="block text-sm text-[#A2A1A8]">Business Owner</span>
                     </div>
                     <svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -53,9 +53,9 @@ unset($_SESSION['success'], $_SESSION['error']);
                 <div id="dropdownProfile"
                     class="hidden absolute right-0 mt-2 bg-white border rounded-t-lg rounded-b-lg shadow-md z-50 w-48">
                     <a href="settingsCustomer.php"
-                        class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100">Settings</a>
-                    <a href="../../assets/mysql/pelanggan/proses.php?logout=true"
-                        class="block px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600 rounded-b-lg">Log Out</a>
+                        class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 text-center">Settings</a>
+                    <a href="../../assets/mysql/pemilikUsaha/proses.php?logout=true"
+                        class="block px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600 rounded-b-lg text-center">Log Out</a>
                 </div>
             </div>
         </div>
@@ -72,12 +72,12 @@ unset($_SESSION['success'], $_SESSION['error']);
         <?php endif; ?>
         <div class="rounded-2xl border border-[#A2845E] shadow-lg p-8 mt-4">
             <div class="bg-[#EFE9E2] p-8">
-                <form id="photoForm" action="../../assets/mysql/pelanggan/proses.php" method="POST"
+                <form id="photoForm" action="../../assets/mysql/pemilikUsaha/proses.php" method="POST"
                     enctype="multipart/form-data">
-                    <input type="hidden" name="idPelanggan" value="<?= $idPelanggan ?>">
+                    <input type="hidden" name="idPemilik" value="<?= $idPemilik ?>">
                     <div class="flex items-center gap-6">
                         <label class="relative cursor-pointer">
-                            <img src="../../assets/gambar/pelanggan/photoProfile/<?= $dataPelanggan['fotoProfil'] ?? 'profil.jpeg' ?>"
+                            <img src="../../assets/gambar/pemilikUsaha/photoProfile/<?= $dataPemilikUsaha['fotoProfil'] ?? 'profil.jpeg' ?>"
                                 alt="Profile" class="w-32 h-32 rounded-full border-4 border-[#A2845E] object-cover">
                             <input type="file" name="photo" class="absolute inset-0 opacity-0" accept="image/*"
                                 onchange="this.form.submit()">
@@ -90,35 +90,20 @@ unset($_SESSION['success'], $_SESSION['error']);
                 </form>
             </div>
             <div class="bg-[#EFE9E2] p-8">
-                <form id="profileForm" action="../../assets/mysql/pelanggan/proses.php" method="POST">
-                    <input type="hidden" name="idPelanggan" value="<?= $idPelanggan ?>">
+                <form id="profileForm" action="../../assets/mysql/pemilikUsaha/proses.php" method="POST">
+                    <input type="hidden" name="idPemilik" value="<?= $idPemilik ?>">
                     <input type="hidden" name="submitEdit" value="1">
 
-                    <div class="grid grid-cols-2 gap-6">
+                    <div class="grid gap-6">
                         <div class="space-y-2">
                             <label class="text-sm font-semibold text-[#3D3D3D]">Email</label>
-                            <input type="email" name="email" value="<?= $dataPelanggan['emailPelanggan'] ?>" disabled
+                            <input type="email" name="email" value="<?= $dataPemilikUsaha['emailPemilik'] ?>" disabled
                                 class="w-full p-3 border rounded-lg bg-gray-100">
                         </div>
                         <div class="space-y-2">
                             <label class="text-sm font-semibold text-[#3D3D3D]">Full Name</label>
-                            <input type="text" name="nama" value="<?= $dataPelanggan['namaPelanggan'] ?>" disabled
+                            <input type="text" name="nama" value="<?= $dataPemilikUsaha['namaPemilik'] ?>" disabled
                                 class="w-full p-3 border rounded-lg bg-gray-100">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-sm font-semibold text-[#3D3D3D]">Zip Code</label>
-                            <input type="text" name="kodepos" value="<?= $dataPelanggan['kodeposPelanggan'] ?>" disabled
-                                class="w-full p-3 border rounded-lg bg-gray-100">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-sm font-semibold text-[#3D3D3D]">Telephone Number</label>
-                            <input type="tel" name="telepon" value="<?= $dataPelanggan['teleponPelanggan'] ?>" disabled
-                                class="w-full p-3 border rounded-lg bg-gray-100">
-                        </div>
-                        <div class="space-y-2 col-span-2">
-                            <label class="text-sm font-semibold text-[#3D3D3D]">Home Address</label>
-                            <textarea name="alamat" disabled
-                                class="w-full p-3 border rounded-lg bg-gray-100 h-24"><?= $dataPelanggan['alamatPelanggan'] ?></textarea>
                         </div>
                     </div>
 

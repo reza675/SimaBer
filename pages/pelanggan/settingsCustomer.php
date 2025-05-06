@@ -53,9 +53,9 @@ unset($_SESSION['success'], $_SESSION['error']);
                 <div id="dropdownProfile"
                     class="hidden absolute right-0 mt-2 bg-white border rounded-t-lg rounded-b-lg shadow-md z-50 w-48">
                     <a href="settingsCustomer.php"
-                        class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100">Settings</a>
+                        class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 text-center">Settings</a>
                     <a href="../../assets/mysql/pelanggan/proses.php?logout=true"
-                        class="block px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600 rounded-b-lg">Log Out</a>
+                        class="block px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600 rounded-b-lg text-center">Log Out</a>
                 </div>
             </div>
         </div>
