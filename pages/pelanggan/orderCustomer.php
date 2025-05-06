@@ -9,19 +9,35 @@ $idPelanggan = $_SESSION['idPelanggan'];
 $currentPage = 'orderCustomer.php';
 include '../../assets/mysql/connect.php';
 
+//paginasi
 $itemsPerPage = isset($_GET['show']) ? (int)$_GET['show'] : 10;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $itemsPerPage;
-$totalQuery = mysqli_query($conn, "SELECT COUNT(*) as total FROM stokberas");
-$totalData = mysqli_fetch_assoc($totalQuery)['total'];
-$totalPages = ceil($totalData / $itemsPerPage);
-$query = mysqli_query($conn, "SELECT * FROM stokberas LIMIT $itemsPerPage OFFSET $offset");
-$dataBeras = [];
-while ($data = mysqli_fetch_array($query)) {
-    $dataBeras[] = $data;
+
+//parameter search
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$where  = '';
+if ($search !== '') {
+    $escSearch = mysqli_real_escape_string($conn, $search); //cegah sql injection
+    $where = "WHERE namaBeras LIKE '%{$escSearch}%'";
 }
+
+//Hitung total data & total halaman
+$totalQ = mysqli_query($conn, "SELECT COUNT(*) AS total FROM stokberas {$where}");
+$totalData = mysqli_fetch_assoc($totalQ)['total'];
+$totalPages = ceil($totalData / $itemsPerPage);
+
+//Ambil data stok dengan filter & paginasi
+$sql   = "SELECT * FROM stokberas {$where} LIMIT {$itemsPerPage} OFFSET {$offset}";
+$query = mysqli_query($conn, $sql);
+$dataBeras = [];
+while ($row = mysqli_fetch_assoc($query)) {
+    $dataBeras[] = $row;
+}
+
+//Hitung range tampilan
 $start = $offset + 1;
-$end = min($offset + $itemsPerPage, $totalData);
+$end   = min($offset + $itemsPerPage, $totalData);
 $q = mysqli_query($conn, "SELECT fotoProfil FROM pelanggan WHERE idPelanggan = '$idPelanggan'");
 $dataPelanggan = mysqli_fetch_assoc($q);
 ?>
@@ -99,41 +115,18 @@ $dataPelanggan = mysqli_fetch_assoc($q);
         <div class="rounded-2xl border border-[#A2A1A8] shadow-lg p-8 mt-4">
             <div class="relative flex justify-between items-center gap-4">
                 <div class="relative flex-grow">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                        class="absolute w-5 h-5 top-2.5 left-2.5 text-slate-600">
-                        <path fill-rule="evenodd"
-                            d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    <input name="inputSearch"
-                        class="w-64 bg-transparent placeholder:text-[#16151C] text-[#16151C] text-sm border border-slate-400 rounded-md pl-10 pr-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
-                        placeholder="Search Item" />
-                </div>
-                <div class="flex items-center gap-4">
-                    <button type="button" class="flex items-center gap-2 px-4 py-2 border border-slate-400 rounded-md
-                   hover:bg-[#A2845E] focus:outline-none transition">
-                        <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M3.5 6H10.5" stroke="#16151C" stroke-width="1.5" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                            <path d="M3.5 12H12.5" stroke="#16151C" stroke-width="1.5" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                            <path d="M19.5 12H21.5" stroke="#16151C" stroke-width="1.5" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                            <path d="M14.5 6L21.5 6" stroke="#16151C" stroke-width="1.5" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                            <path d="M13.5 18H20.5" stroke="#16151C" stroke-width="1.5" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                            <path d="M3.5 18H6.5" stroke="#16151C" stroke-width="1.5" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                            <circle cx="8.5" cy="18" r="2" stroke="#16151C" stroke-width="1.5" />
-                            <circle cx="17.5" cy="12" r="2" stroke="#16151C" stroke-width="1.5" />
-                            <circle cx="12.5" cy="6" r="2" stroke="#16151C" stroke-width="1.5" />
+                    <form action="orderCustomer.php" method="get" class="relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                            class="absolute w-5 h-5 top-2.5 left-2.5 text-slate-600">
+                            <path fill-rule="evenodd"
+                                d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
+                                clip-rule="evenodd" />
                         </svg>
-                        <span>
-                            Filter
-                        </span></button>
-
+                        <input type="text" name="search" value="<?= $search ?>" placeholder="Search Item"
+                            class="w-64 bg-transparent placeholder:text-[#16151C] text-[#16151C] text-sm border border-slate-400 rounded-md pl-10 pr-3 py-2 transition focus:outline-none focus:border-slate-400" />
+                    </form>
                 </div>
+                
             </div>
 
             <div class="mt-6 overflow-x-auto">
@@ -152,6 +145,11 @@ $dataPelanggan = mysqli_fetch_assoc($q);
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
+                        <?php if(empty($dataBeras)): ?>
+                        <tr>
+                            <td colspan="9" class="px-4 py-3 text-center">No data found</td>
+                        </tr>
+                        <?php else: ?>
                         <?php foreach ($dataBeras as $index => $beras) : ?>
                         <tr class="<?= $index % 2 === 0 ? 'bg-[#FFEEDB]' : 'bg-[#E7DDD3]' ?> hover:bg-[#D1BEAB]">
                             <td class="px-4 py-3 text-center"><?= $index + 1 ?></td>
@@ -175,6 +173,7 @@ $dataPelanggan = mysqli_fetch_assoc($q);
                             </td>
                         </tr>
                         <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -195,7 +194,7 @@ $dataPelanggan = mysqli_fetch_assoc($q);
             </div>
             <div class="flex justify-center mt-6 gap-2 border[#7C4D16]">
                 <?php if($page > 1): ?>
-                <a href="?page=<?= $page-1 ?>&show=<?= $itemsPerPage ?>"
+                <a href="?page=<?= $page-1 ?>&show=<?= $itemsPerPage ?>&search=<?= $search ?>"
                     class="px-4 py-2 border rounded-md bg-none hover:bg-[#D1BEAB]">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" clip-rule="evenodd"
@@ -208,14 +207,14 @@ $dataPelanggan = mysqli_fetch_assoc($q);
                 <?php endif; ?>
 
                 <?php for($i = 1; $i <= $totalPages; $i++): ?>
-                <a href="?page=<?= $i ?>&show=<?= $itemsPerPage ?>"
+                <a href="?page=<?= $i ?>&show=<?= $itemsPerPage ?>&search=<?= $search ?>"
                     class="px-4 py-2 border rounded-md <?= $i == $page ? 'bg-none border-[#7C4D16] border-2 text-[#7C4D16] font-semibold' : 'bg-none hover:bg-[#D1BEAB]' ?>">
                     <?= $i ?>
                 </a>
                 <?php endfor; ?>
 
                 <?php if($page < $totalPages): ?>
-                <a href="?page=<?= $page+1 ?>&show=<?= $itemsPerPage ?>"
+                <a href="?page=<?= $page+1 ?>&show=<?= $itemsPerPage ?>&search=<?= $search ?>"
                     class="px-4 py-2 border rounded-md bg-none hover:bg-[#D1BEAB]">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" clip-rule="evenodd"

@@ -53,4 +53,110 @@ if (isset($_POST['submitEdit'])) {
     exit();
 }
 
+//edit data beras
+if(isset($_POST['editBeras'])) {
+    $idBeras = $_POST['idBeras'];
+    $namaBeras = $_POST['namaBeras'];
+    $tipeBeras = $_POST['jenisBeras'];
+    $beratBeras = $_POST['beratBeras'];
+    $hargaJualBeras = $_POST['hargaJualBeras'];
+    $hargaBeliBeras = $_POST['hargaBeliBeras'];
+    $stokBeras = $_POST['stokBeras'];
+    $idPemasok = $_POST['supplierBeras'];
+
+    $queryGetGambar = "SELECT gambarBeras FROM stokberas WHERE idBeras = '$idBeras'";
+    $result = mysqli_query($conn, $queryGetGambar);
+    $row = mysqli_fetch_assoc($result);
+    $gambarLama = $row['gambarBeras'];
+    
+    $gambarBaru = $gambarLama;
+    if(!empty($_FILES['gambarBeras']['name'])) {
+        $targetDir = "../../gambar/beras/";
+        $namaFile = basename($_FILES['gambarBeras']['name']);
+        $targetFile = $targetDir . uniqid() . '_' . $namaFile;
+        $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+        // Validasi gambar
+        $check = getimagesize($_FILES['gambarBeras']['tmp_name']);
+        if($check === false) {
+            $_SESSION['error'] = "File is not an image!";
+            header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+            exit();
+        }
+        // Cek ukuran file (contoh: maks 5MB)
+        if($_FILES['gambarBeras']['size'] > 5000000) {
+            $_SESSION['error'] = "Ukuran file terlalu besar (Maks 5MB)!";
+            header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+            exit();
+        }
+        // Cek ekstensi file
+        $allowed = ['jpg', 'jpeg', 'png'];
+        if(!in_array($fileType, $allowed)) {
+            $_SESSION['error'] = "Only JPG, JPEG and PNG formats are allowed!";
+            header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+            exit();
+        }
+        if(move_uploaded_file($_FILES['gambarBeras']['tmp_name'], $targetFile)) {
+            $gambarBaru = $targetFile;
+            if(file_exists($gambarLama)) {
+                unlink($gambarLama);
+            }
+        } else {
+            $_SESSION['error'] = "Failed to upload image!";
+            header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+            exit();
+        }
+    }
+    $q = "UPDATE stokberas SET
+          namaBeras='$namaBeras',
+          jenisBeras='$tipeBeras',
+          beratBeras='$beratBeras',
+          hargaJualBeras='$hargaJualBeras',
+          hargaBeliBeras='$hargaBeliBeras',
+          stokBeras='$stokBeras',
+          idPemasok='$idPemasok',
+          gambarBeras='$gambarBaru' 
+          WHERE idBeras='$idBeras'";
+    if(mysqli_query($conn, $q)) {
+        $_SESSION['success'] = "Rice data successfully updated!";
+    } else {
+        $_SESSION['error'] = "Error: " . mysqli_error($conn);
+    }
+    
+    header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+    exit();
+}
+
+//delete beras
+if(isset($_POST['deleteBeras'])) {
+    $idBeras = $_POST['idBeras'];
+    $query = "SELECT gambarBeras FROM stokberas WHERE idBeras = '$idBeras'";
+    $result = mysqli_query($conn, $query);
+    
+    if(mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        $gambarBeras = $row['gambarBeras'];
+        $deleteQuery = "DELETE FROM stokberas WHERE idBeras = '$idBeras'";
+        if(mysqli_query($conn, $deleteQuery)) {
+            $checkQuery = "SELECT COUNT(*) AS total FROM stokberas WHERE gambarBeras = '$gambarBeras'";
+            $checkResult = mysqli_query($conn, $checkQuery);
+            $checkData = mysqli_fetch_assoc($checkResult);
+            if($checkData['total'] == 0) {
+                $gambarPath = "../../gambar/beras/" . $gambarBeras;
+                if(file_exists($gambarPath) && is_file($gambarPath)) {
+                    if(!unlink($gambarPath)) {
+                        $_SESSION['error'] = "Failed to delete image!";
+                    }
+                }
+            }
+            
+            $_SESSION['success'] = "Rice data successfully deleted!";
+        } else {
+            $_SESSION['error'] = "Failed to delete data: " . mysqli_error($conn);
+        }
+    } else {
+        $_SESSION['error'] = "Data not found!";
+    }
+    header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+    exit();
+}
 ?>
