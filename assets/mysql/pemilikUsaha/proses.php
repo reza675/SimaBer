@@ -53,6 +53,93 @@ if (isset($_POST['submitEdit'])) {
     exit();
 }
 
+//add data beras
+if(isset($_POST['addBeras'])) {
+    $idBeras = $_POST['idBeras'];
+    $namaBeras = $_POST['namaBeras'];
+    $tipeBeras = $_POST['jenisBeras'];
+    $beratBeras = $_POST['beratBeras'];
+    $hargaJualBeras = $_POST['hargaJualBeras'];
+    $hargaBeliBeras = $_POST['hargaBeliBeras'];
+    $stokBeras = $_POST['stokBeras'];
+    $idPemasok = $_POST['idPemasok'];
+    $deskripsiBeras = $_POST['deskripsiBeras'];
+
+    $gambarBeras = '';
+    if(isset($_FILES['gambarBeras'])) {
+        $file = $_FILES['gambarBeras'];
+        $fileName = $file['name'];
+        $fileTmp = $file['tmp_name'];
+        $fileError = $file['error'];
+        $fileSize = $file['size'];
+
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+        $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        
+        if($fileError === 0) {
+            if(in_array($fileExtension, $allowedExtensions)) {
+                if($fileSize < 5000000) {
+                    $newFileName = uniqid('IMG-', true).'.'.$fileExtension;
+                    $uploadPath = '../../gambar/beras/'.$newFileName;
+                    
+                    if(move_uploaded_file($fileTmp, $uploadPath)) {
+                        $gambarBeras = $newFileName;
+                    } else {
+                        $_SESSION['error'] = "Failed to upload image";
+                        header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+                        exit();
+                    }
+                } else {
+                    $_SESSION['error'] = "Image size is too large (Max 5MB))";
+                    header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+                    exit();
+                }
+            } else {
+                $_SESSION['error'] = "Unsupported file formats (JPG, JPEG, PNG, WEBP only)";
+                header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+                exit();
+            }
+        } else {
+            $_SESSION['error'] = "An error occurred while uploading the image";
+            header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+            exit();
+        }
+    }
+
+    // 3. Query insert ke database
+    $query = "INSERT INTO stokberas (
+        idBeras, 
+        namaBeras, 
+        jenisBeras, 
+        beratBeras, 
+        hargaJualBeras, 
+        hargaBeliBeras, 
+        stokBeras, 
+        idPemasok, 
+        deskripsiBeras, 
+        gambarBeras
+    ) VALUES (
+        '$idBeras',
+        '$namaBeras',
+        '$tipeBeras',
+        '$beratBeras',
+        '$hargaJualBeras',
+        '$hargaBeliBeras',
+        '$stokBeras',
+        '$idPemasok',
+        '$deskripsiBeras',
+        '$gambarBeras'
+    )";
+
+    if(mysqli_query($conn, $query)) {
+        $_SESSION['success'] = "Rice data successfully added";
+    } else {
+        $_SESSION['error'] = "Failed to add data: " . mysqli_error($conn);
+    }
+    header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+    exit();
+}
+
 //edit data beras
 if(isset($_POST['editBeras'])) {
     $idBeras = $_POST['idBeras'];
