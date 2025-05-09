@@ -9,6 +9,28 @@ $idPemilik = $_SESSION['idPemilik'];
 $currentPage = 'riceStock.php';
 include '../../assets/mysql/connect.php';
 
+if (isset($_POST['applyFilter'])) {
+    $selectedColumns = isset($_POST['columns']) ? $_POST['columns'] : [];
+    $_SESSION['selectedColumns'] = $selectedColumns;
+} elseif (isset($_POST['resetFilter'])) {
+    unset($_SESSION['selectedColumns']);
+}
+
+// Default columns
+$defaultColumns = [
+    'no' => true,
+    'id' => true,
+    'name' => true,
+    'image' => true,
+    'type' => true,
+    'weight' => true,
+    'selling_price' => true,
+    'buying_price' => true,
+    'stock' => true,
+    'supplier_id' => true,
+    'action' => true
+];
+$activeColumns = isset($_SESSION['selectedColumns']) ? array_fill_keys($_SESSION['selectedColumns'], true) : $defaultColumns;
 //paginasi
 $itemsPerPage = isset($_GET['show']) ? (int)$_GET['show'] : 10;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -165,7 +187,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                     </button>
                 </div>
                 <div class="flex items-center gap-4">
-                    <button type="button" class="flex items-center gap-2 px-4 py-2 border border-slate-400 rounded-md
+                    <button onclick="openFilterModal()" type="button" class="flex items-center gap-2 px-4 py-2 border border-slate-400 rounded-md
                    hover:bg-[#A2845E] focus:outline-none transition">
                         <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M3.5 6H10.5" stroke="#16151C" stroke-width="1.5" stroke-linecap="round"
@@ -195,44 +217,105 @@ unset($_SESSION['success'], $_SESSION['error']);
                 <table class="w-full">
                     <thead class="bg-[#A2845E] text-black">
                         <tr>
+                            <?php if (isset($activeColumns['no'])): ?>
                             <th class="px-4 py-3">No</th>
+                            <?php endif; ?>
+
+                            <?php if (isset($activeColumns['id'])): ?>
                             <th class="px-4 py-3">ID</th>
+                            <?php endif; ?>
+
+                            <?php if (isset($activeColumns['name'])): ?>
                             <th class="px-4 py-3">Item Name</th>
+                            <?php endif; ?>
+
+                            <?php if (isset($activeColumns['image'])): ?>
                             <th class="px-4 py-3">Image</th>
+                            <?php endif; ?>
+
+                            <?php if (isset($activeColumns['type'])): ?>
                             <th class="px-4 py-3">Type</th>
+                            <?php endif; ?>
+
+                            <?php if (isset($activeColumns['weight'])): ?>
                             <th class="px-4 py-3">Weight(kg)</th>
+                            <?php endif; ?>
+
+                            <?php if (isset($activeColumns['selling_price'])): ?>
                             <th class="px-4 py-3">Selling Price</th>
+                            <?php endif; ?>
+
+                            <?php if (isset($activeColumns['buying_price'])): ?>
                             <th class="px-4 py-3">Buying Price</th>
+                            <?php endif; ?>
+
+                            <?php if (isset($activeColumns['stock'])): ?>
                             <th class="px-4 py-3">Stock</th>
+                            <?php endif; ?>
+
+                            <?php if (isset($activeColumns['supplier_id'])): ?>
                             <th class="px-4 py-3">IDSupplier</th>
+                            <?php endif; ?>
+
+                            <?php if (isset($activeColumns['action'])): ?>
                             <th class="px-4 py-3">Action</th>
+                            <?php endif; ?>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         <?php if(empty($dataBeras)): ?>
                         <tr>
-                            <td colspan="9" class="px-4 py-3 text-center">No data found</td>
+                            <td colspan="<?= count($activeColumns) ?>" class="px-4 py-3 text-center">No data found</td>
                         </tr>
                         <?php else: ?>
                         <?php foreach ($dataBeras as $index => $beras) : ?>
                         <tr class="<?= $index % 2 === 0 ? 'bg-[#FFEEDB]' : 'bg-[#E7DDD3]' ?> hover:bg-[#D1BEAB]">
+                            <?php if (isset($activeColumns['no'])): ?>
                             <td class="px-4 py-3 text-center"><?= $index + 1 ?></td>
+                            <?php endif; ?>
+
+                            <?php if (isset($activeColumns['id'])): ?>
                             <td class="px-4 py-3 text-center"><?= $beras['idBeras'] ?></td>
+                            <?php endif; ?>
+
+                            <?php if (isset($activeColumns['name'])): ?>
                             <td class="px-4 py-3"><?= $beras['namaBeras'] ?></td>
+                            <?php endif; ?>
+
+                            <?php if (isset($activeColumns['image'])): ?>
                             <td class="px-4 py-3 text-center">
                                 <img src="../../assets/gambar/beras/<?= $beras['gambarBeras'] ?>"
                                     class="w-16 h-16 object-cover mx-auto">
                             </td>
+                            <?php endif; ?>
+
+                            <?php if (isset($activeColumns['type'])): ?>
                             <td class="px-4 py-3 text-center"><?= $beras['jenisBeras'] ?></td>
+                            <?php endif; ?>
+
+                            <?php if (isset($activeColumns['weight'])): ?>
                             <td class="px-4 py-3 text-center"><?= $beras['beratBeras'] ?></td>
+                            <?php endif; ?>
+
+                            <?php if (isset($activeColumns['selling_price'])): ?>
                             <td class="px-4 py-3 text-center">Rp
-                                <?= number_format($beras['hargaJualBeras'], 2, ',', '.') ?>
-                            </td>
+                                <?= number_format($beras['hargaJualBeras'], 2, ',', '.') ?></td>
+                            <?php endif; ?>
+
+                            <?php if (isset($activeColumns['buying_price'])): ?>
                             <td class="px-4 py-3 text-center">Rp
-                                <?= number_format($beras['hargaBeliBeras'], 2, ',', '.') ?>
-                            </td>
+                                <?= number_format($beras['hargaBeliBeras'], 2, ',', '.') ?></td>
+                            <?php endif; ?>
+
+                            <?php if (isset($activeColumns['stock'])): ?>
                             <td class="px-4 py-3 text-center"><?= $beras['stokBeras'] ?></td>
+                            <?php endif; ?>
+
+                            <?php if (isset($activeColumns['supplier_id'])): ?>
                             <td class="px-4 py-3 text-center"><?= $beras['idPemasok'] ?></td>
+                            <?php endif; ?>
+
+                            <?php if (isset($activeColumns['action'])): ?>
                             <td class="px-4 py-3 text-center">
                                 <div class="inline-flex space-x-3 justify-center">
                                     <a href="#" onclick='showDetailModal(<?= json_encode($beras) ?>)'
@@ -246,16 +329,15 @@ unset($_SESSION['success'], $_SESSION['error']);
                                         </svg>
                                     </a>
                                     <button onclick="openEditModal(
-                                            '<?= $beras['idBeras'] ?>',
-                                            '<?= $beras['namaBeras'] ?>',
-                                            '<?= $beras['jenisBeras'] ?>',
-                                            '<?= $beras['beratBeras'] ?>',
-                                            '<?= $beras['hargaJualBeras'] ?>',
-                                            '<?= $beras['hargaBeliBeras'] ?>',
-                                            '<?= $beras['stokBeras'] ?>',
-                                            '<?= $beras['idPemasok'] ?>'
-                                        )"
-                                        class="w-8 h-8 bg-blue-500 hover:bg-blue-600 text-white rounded-lg flex items-center justify-center transition">
+                            '<?= $beras['idBeras'] ?>',
+                            '<?= $beras['namaBeras'] ?>',
+                            '<?= $beras['jenisBeras'] ?>',
+                            '<?= $beras['beratBeras'] ?>',
+                            '<?= $beras['hargaJualBeras'] ?>',
+                            '<?= $beras['hargaBeliBeras'] ?>',
+                            '<?= $beras['stokBeras'] ?>',
+                            '<?= $beras['idPemasok'] ?>'
+                        )" class="w-8 h-8 bg-blue-500 hover:bg-blue-600 text-white rounded-lg flex items-center justify-center transition">
                                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <path
@@ -274,11 +356,10 @@ unset($_SESSION['success'], $_SESSION['error']);
                                                 stroke="white" stroke-width="1" stroke-linecap="round"
                                                 stroke-linejoin="round" />
                                         </svg>
-
                                     </button>
                                 </div>
                             </td>
-
+                            <?php endif; ?>
                         </tr>
                         <?php endforeach; ?>
                         <?php endif; ?>
@@ -334,6 +415,123 @@ unset($_SESSION['success'], $_SESSION['error']);
                 <?php endif; ?>
             </div>
 
+        </div>
+        <!-- Filter Modal -->
+        <div id="filterModal"
+            class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-lg p-6 w-full max-w-md">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold">Column Filter</h3>
+                    <button onclick="closeFilterModal()" class="text-gray-500 hover:text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <form action="" method="POST">
+                    <p class="text-sm text-gray-600 mb-2">Select columns to display:</p>
+                    <div class="space-y-3 max-h-[500px] overflow-y-auto grid grid-cols-3">
+                        <div class="flex items-center mb-1">
+                            <input id="filter-no" type="checkbox" name="columns[]" value="no"
+                                class="w-4 h-4 mt-4 text-[#A2845E] focus:ring-[#A2845E] border-gray-300 rounded"
+                                <?= isset($activeColumns['no']) ? 'checked' : '' ?>>
+                            <label for="filter-no" class="ml-2 mt-4 text-sm font-medium text-gray-700">No</label>
+                        </div>
+
+                        <div class="flex items-center mt-2">
+                            <input id="filter-id" type="checkbox" name="columns[]" value="id"
+                                class="w-4 h-4 text-[#A2845E] focus:ring-[#A2845E] border-gray-300 rounded"
+                                <?= isset($activeColumns['id']) ? 'checked' : '' ?>>
+                            <label for="filter-id" class="ml-2 text-sm font-medium text-gray-700">ID</label>
+                        </div>
+
+                        <div class="flex items-center mb-1">
+                            <input id="filter-name" type="checkbox" name="columns[]" value="name"
+                                class="w-4 h-4 text-[#A2845E] focus:ring-[#A2845E] border-gray-300 rounded"
+                                <?= isset($activeColumns['name']) ? 'checked' : '' ?>>
+                            <label for="filter-name" class="ml-2 text-sm font-medium text-gray-700">Item Name</label>
+                        </div>
+
+                        <div class="flex items-center mb-1">
+                            <input id="filter-image" type="checkbox" name="columns[]" value="image"
+                                class="w-4 h-4 text-[#A2845E] focus:ring-[#A2845E] border-gray-300 rounded"
+                                <?= isset($activeColumns['image']) ? 'checked' : '' ?>>
+                            <label for="filter-image" class="ml-2 text-sm font-medium text-gray-700">Image</label>
+                        </div>
+
+                        <div class="flex items-center mb-1">
+                            <input id="filter-type" type="checkbox" name="columns[]" value="type"
+                                class="w-4 h-4 text-[#A2845E] focus:ring-[#A2845E] border-gray-300 rounded"
+                                <?= isset($activeColumns['type']) ? 'checked' : '' ?>>
+                            <label for="filter-type" class="ml-2 text-sm font-medium text-gray-700">Type</label>
+                        </div>
+
+                        <div class="flex items-center mb-1">
+                            <input id="filter-weight" type="checkbox" name="columns[]" value="weight"
+                                class="w-4 h-4 text-[#A2845E] focus:ring-[#A2845E] border-gray-300 rounded"
+                                <?= isset($activeColumns['weight']) ? 'checked' : '' ?>>
+                            <label for="filter-weight" class="ml-2 text-sm font-medium text-gray-700">Weight
+                                (kg)</label>
+                        </div>
+
+                        <div class="flex items-center mb-1">
+                            <input id="filter-selling-price" type="checkbox" name="columns[]" value="selling_price"
+                                class="w-4 h-4 text-[#A2845E] focus:ring-[#A2845E] border-gray-300 rounded"
+                                <?= isset($activeColumns['selling_price']) ? 'checked' : '' ?>>
+                            <label for="filter-selling-price" class="ml-2 text-sm font-medium text-gray-700">Selling
+                                Price</label>
+                        </div>
+
+                        <div class="flex items-center mb-1">
+                            <input id="filter-buying-price" type="checkbox" name="columns[]" value="buying_price"
+                                class="w-4 h-4 text-[#A2845E] focus:ring-[#A2845E] border-gray-300 rounded"
+                                <?= isset($activeColumns['buying_price']) ? 'checked' : '' ?>>
+                            <label for="filter-buying-price" class="ml-2 text-sm font-medium text-gray-700">Buying
+                                Price</label>
+                        </div>
+
+                        <div class="flex items-center mb-1">
+                            <input id="filter-stock" type="checkbox" name="columns[]" value="stock"
+                                class="w-4 h-4 text-[#A2845E] focus:ring-[#A2845E] border-gray-300 rounded"
+                                <?= isset($activeColumns['stock']) ? 'checked' : '' ?>>
+                            <label for="filter-stock" class="ml-2 text-sm font-medium text-gray-700">Stock</label>
+                        </div>
+
+                        <div class="flex items-center mb-1">
+                            <input id="filter-supplier-id" type="checkbox" name="columns[]" value="supplier_id"
+                                class="w-4 h-4 text-[#A2845E] focus:ring-[#A2845E] border-gray-300 rounded"
+                                <?= isset($activeColumns['supplier_id']) ? 'checked' : '' ?>>
+                            <label for="filter-supplier-id" class="ml-2 text-sm font-medium text-gray-700">ID
+                                Supplier</label>
+                        </div>
+
+                        <div class="flex items-center mb-1">
+                            <input id="filter-action" type="checkbox" name="columns[]" value="action"
+                                class="w-4 h-4 text-[#A2845E] focus:ring-[#A2845E] border-gray-300 rounded"
+                                <?= isset($activeColumns['action']) ? 'checked' : '' ?>>
+                            <label for="filter-action" class="ml-2 text-sm font-medium text-gray-700">Action</label>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between mt-6">
+                        <button type="submit" name="resetFilter"
+                            class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
+                            Reset
+                        </button>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="closeFilterModal()"
+                                class="px-4 py-2 border rounded-md hover:bg-gray-100">
+                                Cancel
+                            </button>
+                            <button type="submit" name="applyFilter"
+                                class="px-4 py-2 bg-[#A2845E] text-white rounded-md hover:bg-[#8C6B42] transition">
+                                Apply
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
         <!-- Add Modal -->
         <div id="addModal"
@@ -565,7 +763,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                         <div class="col-span-2">
                             <label class="block mb-2 text-sm font-semibold">Image</label>
                             <input type="file" name="gambarBeras" required
-                                class="block w-full text-sm text-gray-900 border rounded-md p-2 cursor-pointer bg-gray-50 focus:ring-2 focus:ring-[#A2845E]">
+                                class="block w-full text-sm text-gray-900 border rounded-md cursor-pointer bg-gray-50 focus:ring-2 focus:ring-[#A2845E]">
                         </div>
                     </div>
 
@@ -605,6 +803,26 @@ unset($_SESSION['success'], $_SESSION['error']);
 <script src="../../assets/cdn/flowbite.min.js"></script>
 <script src="../../assets/cdn/flowbite.bundle.js"></script>
 <script>
+function openFilterModal() {
+    document.getElementById('filterModal').classList.remove('hidden');
+}
+
+function closeFilterModal() {
+    document.getElementById('filterModal').classList.add('hidden');
+}
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('filterModal');
+    if (event.target === modal) {
+        closeFilterModal();
+    }
+});
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButton = document.querySelector('button[type="button"].flex.items-center.gap-2.px-4.py-2.border');
+    if (filterButton) {
+        filterButton.addEventListener('click', openFilterModal);
+    }
+});
+
 function toggleDropdown() {
     const dropdown = document.getElementById("dropdownProfile");
     dropdown.classList.toggle("hidden");
