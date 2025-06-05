@@ -82,7 +82,16 @@ $dataPemilikUsaha = mysqli_fetch_assoc($q);
                 </div>
 
             </div>
+
+           
         </div>
+         <?php 
+    if (isset($_GET['search']) && $_GET['search'] === 'notfound') :?>
+         <div class="mt-4 mb-4 px-4 py-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            <p>Keyword not found</p>
+        </div>
+    
+    <?php endif; ?>
         <div class="grid grid-cols-1 grid-rows-2 gap-6 mt-8 px-12">
             <a href="riceStock.php" class="block">
                 <div
@@ -161,13 +170,13 @@ $dataPemilikUsaha = mysqli_fetch_assoc($q);
 
                         </div>
                         <div class="bg-white rounded-lg p-4 shadow-inner">
-                            <p class = " mb-2 mx-auto text-2xl text-black font-semibold">Order Detail</p>
-                            <p class = " mx-auto text-lg text-black font-regular">Item name :</p>
-                            <p class = " mx-auto text-lg text-black font-regular">Weight:</p>
-                            <p class = " mx-auto text-lg text-black font-regular">Much:</p>
-                            <p class = " mb-2 mx-auto text-2xl text-black font-semibold">Shipping to</p>
-                            <p class = " mx-auto text-lg text-black font-regular">Name:</p>
-                            <p class = " mx-auto text-lg text-black font-regular">Address:</p>
+                            <p class=" mb-2 mx-auto text-2xl text-black font-semibold">Order Detail</p>
+                            <p class=" mx-auto text-lg text-black font-regular">Item name :</p>
+                            <p class=" mx-auto text-lg text-black font-regular">Weight:</p>
+                            <p class=" mx-auto text-lg text-black font-regular">Much:</p>
+                            <p class=" mb-2 mx-auto text-2xl text-black font-semibold">Shipping to</p>
+                            <p class=" mx-auto text-lg text-black font-regular">Name:</p>
+                            <p class=" mx-auto text-lg text-black font-regular">Address:</p>
                         </div>
                     </div>
                 </div>
