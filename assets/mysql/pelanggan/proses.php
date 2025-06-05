@@ -22,7 +22,7 @@ if (isset($_FILES['photo']) && $_FILES['photo']['name'] != '') {
     } elseif (move_uploaded_file($_FILES['photo']['tmp_name'], $targetFile)) {
         $q = "UPDATE pelanggan SET fotoProfil='$fotoProfil' WHERE idPelanggan='$id'";
         if (mysqli_query($conn, $q)) {
-            $_SESSION['success'] = "Profile photo successfully changed!";
+            $_SESSION['success'] = "Photo profile successfully changed!";
             $_SESSION['fotoProfil'] = $fotoProfil;
         } else {
             $_SESSION['error'] = "Error DB: " . mysqli_error($conn);

@@ -179,7 +179,7 @@ if (isset($_POST['loginSupplier'])) {
     $data = mysqli_fetch_assoc($query);
     
     if ($data) {
-        $hashedPassword = $data['passwordPemilik'];
+        $hashedPassword = $data['passwordPemasok'];
         if (password_verify($password, $hashedPassword)) {
             $_SESSION['idPemasok'] = $data['idPemasok'];
             $_SESSION['namaPemasok'] = $data['namaPemasok'];

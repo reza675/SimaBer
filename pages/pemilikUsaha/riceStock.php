@@ -570,7 +570,7 @@ unset($_SESSION['success'], $_SESSION['error']);
 
                         <div>
                             <label class="block text-sm font-semibold mb-2">Weight (kg)</label>
-                            <input type="text" name="beratBeras" id="editBerat" placeholder="Item Weight" required
+                            <input type="text" name="beratBeras" placeholder="Item Weight" required
                                 class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
                         </div>
 
@@ -733,7 +733,7 @@ unset($_SESSION['success'], $_SESSION['error']);
 
                         <div>
                             <label class="block text-sm font-semibold mb-2">Weight (kg)</label>
-                            <input type="text" name="beratBeras" id="editBerat"
+                            <input type="text" name="beratBeras" id="editBerat" 
                                 class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
                         </div>
 
@@ -762,7 +762,7 @@ unset($_SESSION['success'], $_SESSION['error']);
 
                         <div class="col-span-2">
                             <label class="block mb-2 text-sm font-semibold">Image</label>
-                            <input type="file" name="gambarBeras" required
+                            <input type="file" name="gambarBeras"
                                 class="block w-full text-sm text-gray-900 border rounded-md cursor-pointer bg-gray-50 focus:ring-2 focus:ring-[#A2845E]">
                         </div>
                     </div>
@@ -860,7 +860,7 @@ function showDetailModal(beras) {
     document.getElementById('detail-hargaJual').textContent = 'Rp ' +
         new Intl.NumberFormat('id-ID').format(beras.hargaJualBeras);
     document.getElementById('detail-hargaBeli').textContent = 'Rp ' +
-        new Intl.NumberFormat('id-ID').format(beras.hargaJualBeras);
+        new Intl.NumberFormat('id-ID').format(beras.hargaBeliBeras);
     document.getElementById('detail-stok').textContent = beras.stokBeras;
     document.getElementById('detail-supplierName').textContent = beras.supplierName;
     document.getElementById('detail-gambar').src = '../../assets/gambar/beras/' + beras.gambarBeras;

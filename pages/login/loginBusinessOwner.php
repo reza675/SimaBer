@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login Pelanggan</title>
+    <title>Login Business Owner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="../../assets/cdn/flowbite.min.css" rel="stylesheet" />
     <link rel="icon" href="../../assets/gambar/icon.png">

@@ -21,7 +21,7 @@ if (isset($_FILES['photo']) && $_FILES['photo']['name'] != '') {
     } elseif (move_uploaded_file($_FILES['photo']['tmp_name'], $targetFile)) {
         $q = "UPDATE pemilikusaha SET fotoProfil='$fotoProfil' WHERE idPemilik='$id'";
         if (mysqli_query($conn, $q)) {
-            $_SESSION['success'] = "Profile photo successfully changed!";
+            $_SESSION['success'] = "Photo profile successfully changed!";
             $_SESSION['fotoProfil'] = $fotoProfil;
         } else {
             $_SESSION['error'] = "Error DB: " . mysqli_error($conn);
@@ -107,7 +107,7 @@ if(isset($_POST['addBeras'])) {
     }
 
     // 3. Query insert ke database
-    $query = "INSERT INTO stokberas (
+    $query = "INSERT INTO stokberas  (
         idBeras, 
         namaBeras, 
         jenisBeras, 
