@@ -70,7 +70,7 @@
                     </ul>
                 </li>
                 <li>
-                    <button data-dropdown-target="relationship-dropdown" class="flex items-center justify-between w-full p-2 text-gray-900 rounded-lg dark:hover:bg-[#FFEEDB] group">
+                    <button data-dropdown-target="relationship-dropdown" class="flex items-center justify-between w-full p-2 text-gray-900 rounded-lg dark:hover:bg-[#FFEEDB] group <?php echo $currentPage === 'supplier.php' || $currentPage === 'customer.php' || $currentPage === 'orderSupplier.php' ? 'bg-[#FFEEDB] font-semibold text-black border-l-4 border-black rounded-l-none' : 'text-gray-900 dark:hover:bg-[#FFEEDB]'; ?>">
                         <div class="flex items-center">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M10.8333 12.0832C13.2266 12.0832 15.1667 10.1431 15.1667 7.74984C15.1667 5.3566 13.2266 3.4165 10.8333 3.4165C8.4401 3.4165 6.5 5.3566 6.5 7.74984C6.5 10.1431 8.4401 12.0832 10.8333 12.0832ZM10.8333 22.9165C15.0215 22.9165 18.4167 20.9764 18.4167 18.5832C18.4167 16.1899 15.0215 14.2498 10.8333 14.2498C6.64517 14.2498 3.25 16.1899 3.25 18.5832C3.25 20.9764 6.64517 22.9165 10.8333 22.9165Z" fill="#28303F" />
