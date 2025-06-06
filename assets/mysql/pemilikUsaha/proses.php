@@ -107,7 +107,7 @@ if(isset($_POST['addBeras'])) {
     }
 
     // 3. Query insert ke database
-    $query = "INSERT INTO stokberas  (
+    $query = "INSERT INTO stokberaspemilik  (
         idBeras, 
         namaBeras, 
         jenisBeras, 
@@ -149,9 +149,10 @@ if(isset($_POST['editBeras'])) {
     $hargaJualBeras = $_POST['hargaJualBeras'];
     $hargaBeliBeras = $_POST['hargaBeliBeras'];
     $stokBeras = $_POST['stokBeras'];
+    $deskripsiBeras = $_POST['deskripsiBeras'];
     $idPemasok = $_POST['supplierBeras'];
 
-    $queryGetGambar = "SELECT gambarBeras FROM stokberas WHERE idBeras = '$idBeras'";
+    $queryGetGambar = "SELECT gambarBeras FROM stokberaspemilik WHERE idBeras = '$idBeras'";
     $result = mysqli_query($conn, $queryGetGambar);
     $row = mysqli_fetch_assoc($result);
     $gambarLama = $row['gambarBeras'];
@@ -193,7 +194,7 @@ if(isset($_POST['editBeras'])) {
             exit();
         }
     }
-    $q = "UPDATE stokberas SET
+    $q = "UPDATE stokberaspemilik SET
           namaBeras='$namaBeras',
           jenisBeras='$tipeBeras',
           beratBeras='$beratBeras',
@@ -201,6 +202,7 @@ if(isset($_POST['editBeras'])) {
           hargaBeliBeras='$hargaBeliBeras',
           stokBeras='$stokBeras',
           idPemasok='$idPemasok',
+          deskripsiBeras='$deskripsiBeras',
           gambarBeras='$gambarBaru' 
           WHERE idBeras='$idBeras'";
     if(mysqli_query($conn, $q)) {
@@ -216,15 +218,15 @@ if(isset($_POST['editBeras'])) {
 //delete beras
 if(isset($_POST['deleteBeras'])) {
     $idBeras = $_POST['idBeras'];
-    $query = "SELECT gambarBeras FROM stokberas WHERE idBeras = '$idBeras'";
+    $query = "SELECT gambarBeras FROM stokberaspemilik WHERE idBeras = '$idBeras'";
     $result = mysqli_query($conn, $query);
     
     if(mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
         $gambarBeras = $row['gambarBeras'];
-        $deleteQuery = "DELETE FROM stokberas WHERE idBeras = '$idBeras'";
+        $deleteQuery = "DELETE FROM stokberaspemilik WHERE idBeras = '$idBeras'";
         if(mysqli_query($conn, $deleteQuery)) {
-            $checkQuery = "SELECT COUNT(*) AS total FROM stokberas WHERE gambarBeras = '$gambarBeras'";
+            $checkQuery = "SELECT COUNT(*) AS total FROM stokberaspemilik WHERE gambarBeras = '$gambarBeras'";
             $checkResult = mysqli_query($conn, $checkQuery);
             $checkData = mysqli_fetch_assoc($checkResult);
             if($checkData['total'] == 0) {
@@ -405,7 +407,7 @@ if(isset($_POST['deletePemasok'])) {
     $namaPelanggan     = $_POST['namaPelanggan'];
     $emailPelanggan    = $_POST['emailPelanggan'];
     $passwordPelanggan = $_POST['passwordPelanggan'];
-    $teleponPelanggan  = $_POST['teleponPelanggan'];
+    $nomorHPPelanggan  = $_POST['nomorHPPelanggan'];
     $alamatPelanggan   = $_POST['alamatPelanggan'];
     
     $passwordHash = password_hash($passwordPelanggan, PASSWORD_DEFAULT);
@@ -424,7 +426,7 @@ if(isset($_POST['deletePemasok'])) {
             namaPelanggan, 
             emailPelanggan, 
             passwordPelanggan, 
-            teleponPelanggan, 
+            nomorHPPelanggan, 
             alamatPelanggan, 
             fotoProfil
         ) VALUES (
@@ -432,7 +434,7 @@ if(isset($_POST['deletePemasok'])) {
             '$namaPelanggan',
             '$emailPelanggan',
             '$passwordHash',
-            '$teleponPelanggan',
+            '$nomorHPPelanggan',
             '$alamatPelanggan',
             '$fotoProfil'
         )
@@ -454,7 +456,7 @@ if (isset($_POST['editCustomer'])) {
     $idPelanggan     = $_POST['idPelanggan'];
     $namaPelanggan   = $_POST['namaPelanggan'];
     $alamatPelanggan = $_POST['alamatPelanggan'];
-    $teleponPelanggan  = $_POST['teleponPelanggan'];
+    $nomorHPPelanggan  = $_POST['nomorHPPelanggan'];
     $queryGetGambar = "SELECT fotoProfil FROM pelanggan WHERE idPelanggan = '$idPelanggan'";
     $result = mysqli_query($conn, $queryGetGambar);
     $row    = mysqli_fetch_assoc($result);
@@ -502,7 +504,7 @@ if (isset($_POST['editCustomer'])) {
     $q = "UPDATE pelanggan SET
             namaPelanggan     = '$namaPelanggan',
             alamatPelanggan   = '$alamatPelanggan',
-            teleponPelanggan  = '$teleponPelanggan',
+            nomorHPPelanggan  = '$nomorHPPelanggan',
             fotoProfil      = '$gambarBaru'
           WHERE idPelanggan   = '$idPelanggan'";
 

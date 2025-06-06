@@ -45,7 +45,7 @@ if ($search !== '') {
 }
 
 //Hitung total data & total halaman
-$totalQ = mysqli_query($conn, "SELECT COUNT(*) AS total FROM stokberas {$where}");
+$totalQ = mysqli_query($conn, "SELECT COUNT(*) AS total FROM stokberaspemilik {$where}");
 $totalData = mysqli_fetch_assoc($totalQ)['total'];
 $totalPages = ceil($totalData / $itemsPerPage);
 
@@ -53,7 +53,7 @@ $totalPages = ceil($totalData / $itemsPerPage);
 $sql = "
   SELECT sb.*,
          p.namaPemasok AS supplierName
-  FROM stokberas sb
+  FROM stokberaspemilik sb
   LEFT JOIN pemasok p
     ON sb.idPemasok = p.idPemasok
   {$where}
@@ -336,7 +336,8 @@ unset($_SESSION['success'], $_SESSION['error']);
                             '<?= $beras['hargaJualBeras'] ?>',
                             '<?= $beras['hargaBeliBeras'] ?>',
                             '<?= $beras['stokBeras'] ?>',
-                            '<?= $beras['idPemasok'] ?>'
+                            '<?= $beras['idPemasok'] ?>',
+                            '<?= $beras['deskripsiBeras'] ?>'
                         )" class="w-8 h-8 bg-blue-500 hover:bg-blue-600 text-white rounded-lg flex items-center justify-center transition">
                                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
@@ -759,6 +760,11 @@ unset($_SESSION['success'], $_SESSION['error']);
                             <input type="text" name="supplierBeras" id="editPemasok" readonly
                                 class="w-full border rounded-md p-2">
                         </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-semibold mb-2">Description</label>
+                            <textarea name="deskripsiBeras" id="editDeskripsi"
+                                class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]"></textarea>
+                        </div>
 
                         <div class="col-span-2">
                             <label class="block mb-2 text-sm font-semibold">Image</label>
@@ -878,7 +884,7 @@ window.onclick = function(event) {
     }
 }
 
-function openEditModal(id, nama, jenis, berat, hargaJual, hargaBeli, stok, idPemasok) {
+function openEditModal(id, nama, jenis, berat, hargaJual, hargaBeli, stok, idPemasok,deskripsi) {
     document.getElementById('editId').value = id;
     document.getElementById('editNama').value = nama;
     document.getElementById('editJenis').value = jenis;
@@ -887,6 +893,7 @@ function openEditModal(id, nama, jenis, berat, hargaJual, hargaBeli, stok, idPem
     document.getElementById('editHargaBeli').value = hargaBeli;
     document.getElementById('editStok').value = stok;
     document.getElementById('editPemasok').value = idPemasok;
+    document.getElementById('editDeskripsi').value = deskripsi;
     document.getElementById('editModal').classList.remove('hidden');
 }
 

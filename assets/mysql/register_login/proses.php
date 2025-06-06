@@ -20,7 +20,7 @@ if (isset($_POST["registerCustomer"])) {
     }
 
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-    $query = mysqli_query($conn, "INSERT INTO pelanggan VALUES ('','$email','$hashedPassword','$fullname','$telephone','$address','$zipcode','profil.jpeg')");
+    $query = mysqli_query($conn, "INSERT INTO pelanggan VALUES ('','$fullname','$address','$telephone','$email','$hashedPassword','profil.jpeg','$zipcode')");
     header("Location:../../../pages/register/register.php?register=berhasil");
     exit();
 }

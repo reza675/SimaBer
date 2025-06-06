@@ -177,7 +177,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                             <th class="px-4 py-3 text-left">Customer Name</th>
                             <th class="px-4 py-3 text-left">Address</th>
                             <th class="px-4 py-3 text-left">Contact</th>
-                            <th class="px-4 py-3 text-left">Action</th>
+                            <th class="px-4 py-3 text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
@@ -207,7 +207,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                             </td>
 
                             <td class="px-4 py-3 whitespace-nowrap">
-                                <?= htmlspecialchars($pelanggan['teleponPelanggan']) ?>
+                                <?= htmlspecialchars($pelanggan['nomorHPPelanggan']) ?>
                             </td>
                             <td class="px-4 py-3 text-center">
                                 <div class="inline-flex space-x-3 justify-center">
@@ -225,7 +225,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                             '<?= $pelanggan['idPelanggan'] ?>',
                             '<?= $pelanggan['namaPelanggan'] ?>',
                             '<?= $pelanggan['alamatPelanggan'] ?>',
-                            '<?= $pelanggan['teleponPelanggan'] ?>',
+                            '<?= $pelanggan['nomorHPPelanggan'] ?>',
                         )" class="w-8 h-8 bg-blue-500 hover:bg-blue-600 text-white rounded-lg flex items-center justify-center transition">
                                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
@@ -325,7 +325,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-semibold mb-2">ID Pelanggan</label>
-                                <input type="text" name="idPelanggan" placeholder="ID" required
+                                <input type="text" name="idPelanggan" placeholder="ID"
                                     class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
                             </div>
                             <div>
@@ -352,7 +352,7 @@ unset($_SESSION['success'], $_SESSION['error']);
 
                             <div>
                                 <label class="block text-sm font-semibold mb-2">Contact</label>
-                                <input type="text" name="teleponPelanggan" placeholder="Contact" required
+                                <input type="text" name="nomorHPPelanggan" placeholder="Contact" required
                                     class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
                             </div>
                         </div>
@@ -448,7 +448,7 @@ unset($_SESSION['success'], $_SESSION['error']);
 
                             <div>
                                 <label class="block text-sm font-semibold mb-2">Contact</label>
-                                <input type="text" name="teleponPelanggan" id="editTeleponPelanggan"
+                                <input type="text" name="nomorHPPelanggan" id="editnomorHPPelanggan"
                                     class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
                             </div>
                             <div class="col-span-2">
@@ -535,7 +535,7 @@ function showDetailModal(pelanggan) {
     document.getElementById('detail-id').textContent = pelanggan.idPelanggan;
     document.getElementById('detail-nama').textContent = pelanggan.namaPelanggan;
     document.getElementById('detail-alamat').textContent = pelanggan.alamatPelanggan;
-    document.getElementById('detail-telepon').textContent = pelanggan.teleponPelanggan;
+    document.getElementById('detail-telepon').textContent = pelanggan.nomorHPPelanggan;
     document.getElementById('detail-gambar').src = '../../assets/gambar/pelanggan/photoProfile/' + pelanggan.fotoProfil;
     document.getElementById('detailModal').classList.remove('hidden');
 }
@@ -556,7 +556,7 @@ function openEditModal(id, nama, alamat, contact) {
   document.getElementById('editId').value = id;
   document.getElementById('editNamaPelanggan').value = nama;
   document.getElementById('editAlamatPelanggan').value = alamat;
-  document.getElementById('editTeleponPelanggan').value = contact;
+  document.getElementById('editnomorHPPelanggan').value = contact;
   document.getElementById('editModal').classList.remove('hidden');
 }
 

@@ -9,13 +9,13 @@ $idPelanggan = $_SESSION['idPelanggan'];
 $currentPage = 'dashboardCustomer.php';
 
 include '../../assets/mysql/connect.php';
-$query = mysqli_query($conn, "SELECT * FROM stokberas WHERE idBeras = '1M' or idBeras = '2M' or idBeras = '3M' or idBeras = '4SP' AND stokBeras > 0 AND beratBeras = 5 or beratBeras = 10");
+$query = mysqli_query($conn, "SELECT * FROM stokberaspemilik WHERE idBeras = '1M' or idBeras = '2M' or idBeras = '3M' or idBeras = '4SP' AND stokBeras > 0 AND beratBeras = 5 or beratBeras = 10");
 $dataBeras = [];
 while ($data = mysqli_fetch_array($query)) {
     $dataBeras[] = $data;
 }
 
-$query2 = mysqli_query($conn, "SELECT * FROM stokberas");
+$query2 = mysqli_query($conn, "SELECT * FROM stokberaspemilik");
 $stockBeras = 0;
 while ($data2 = mysqli_fetch_array($query2)) {
     $stockBeras += $data2['stokBeras'];
@@ -23,6 +23,7 @@ while ($data2 = mysqli_fetch_array($query2)) {
 $q = mysqli_query($conn, "SELECT fotoProfil FROM pelanggan WHERE idPelanggan = '$idPelanggan'");
 $dataPelanggan = mysqli_fetch_assoc($q);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 

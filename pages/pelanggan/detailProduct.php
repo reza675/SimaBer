@@ -15,10 +15,10 @@ if ($from === 'dashboard') {
     $backURL = 'orderCustomer.php';
 }
 include '../../assets/mysql/connect.php';
-$query = mysqli_query($conn, "SELECT * FROM stokberas WHERE idBeras = '$idBeras'");
+$query = mysqli_query($conn, "SELECT * FROM stokberasPemilik WHERE idBeras = '$idBeras'");
 $product = mysqli_fetch_assoc($query);
 $namaBeras = $product['namaBeras'];
-$queryWeights = mysqli_query($conn, "SELECT * FROM stokberas WHERE namaBeras = '$namaBeras'");
+$queryWeights = mysqli_query($conn, "SELECT * FROM stokberasPemilik WHERE namaBeras = '$namaBeras'");
 $q = mysqli_query($conn, "SELECT fotoProfil FROM pelanggan WHERE idPelanggan = '$idPelanggan'");
 $dataPelanggan = mysqli_fetch_assoc($q);
 ?>
@@ -32,6 +32,17 @@ $dataPelanggan = mysqli_fetch_assoc($q);
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="../../assets/cdn/flowbite.min.css" rel="stylesheet" />
     <link rel="icon" href="../../assets/gambar/icon.png">
+    <style>
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+</style>
 </head>
 
 <body class="bg-[#EFE9E2] min-h-screen">
