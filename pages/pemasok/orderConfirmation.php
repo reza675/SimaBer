@@ -11,7 +11,61 @@ $currentPage = 'orderConfirmation.php';
 include '../../assets/mysql/connect.php';
 $q = mysqli_query($conn, "SELECT fotoProfil FROM pemasok WHERE idPemasok = '$idPemasok'");
 $dataPemasok = mysqli_fetch_assoc($q);  
+
+//paginasi
+$itemsPerPage = isset($_GET['show']) ? (int)$_GET['show'] : 10;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $itemsPerPage;
+
+//parameter search
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$where = "WHERE pp.idPemasok = '" . mysqli_real_escape_string($conn, $idPemasok) . "'";
+
+if ($search !== '') {
+    $escSearch = mysqli_real_escape_string($conn, $search);
+    $where    .= " AND (b.namaBeras LIKE '%{$escSearch}%' OR po.namaPemilik LIKE '%{$escSearch}%')";
+}
+
+//Hitung total data & total halaman
+$totalQ = mysqli_query($conn, "
+    SELECT COUNT(*) AS total 
+    FROM pesananpemasok pp 
+    JOIN stokberaspemasok b ON pp.idBeras = b.idBeras 
+    JOIN pemilikusaha po ON pp.idPemilik = po.idPemilik
+    {$where}
+");
+$totalRow  = mysqli_fetch_assoc($totalQ);
+$totalData = (int) $totalRow['total'];
+$totalPages= ($totalData > 0) ? ceil($totalData / $itemsPerPage) : 1;
+
+//Ambil data pesanan dengan filter & paginasi
+$sql = "
+  SELECT 
+    pp.*,
+    b.namaBeras,
+    b.gambarBeras,
+    po.namaPemilik AS customerName
+  FROM pesananpemasok pp
+  JOIN stokberaspemasok b ON pp.idBeras = b.idBeras
+  JOIN pemilikusaha po ON pp.idPemilik = po.idPemilik
+  {$where}
+  ORDER BY pp.tanggalPesanan DESC
+  LIMIT {$itemsPerPage} OFFSET {$offset}
+";
+$query = mysqli_query($conn, $sql);
+$dataPesanan = [];
+while ($row = mysqli_fetch_assoc($query)) {
+    $dataPesanan[] = $row;
+}
+
+//Hitung range tampilan
+$start = $offset + 1;
+$end   = min($offset + $itemsPerPage, $totalData);
+$success = $_SESSION['success'] ?? null;
+$error = $_SESSION['error'] ?? null;
+unset($_SESSION['success'], $_SESSION['error']);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -84,16 +138,169 @@ $dataPemasok = mysqli_fetch_assoc($q);
 
             </div>
 
-           
+
         </div>
-         <?php 
-    if (isset($_GET['search']) && $_GET['search'] === 'notfound') :?>
-         <div class="mt-4 mb-4 px-4 py-3 bg-red-100 border border-red-400 text-red-700 rounded">
+        <?php 
+        if (isset($_GET['search']) && $_GET['search'] === 'notfound') :?>
+        <div class="mt-4 mb-4 px-4 py-3 bg-red-100 border border-red-400 text-red-700 rounded">
             <p>Keyword not found</p>
         </div>
-    
-    <?php endif; ?>
-        
+        <?php endif; ?>
+        <div class="rounded-2xl border border-[#A2A1A8] shadow-lg p-8 mt-4 mb-4">
+            <div class="relative flex justify-between items-center gap-4">
+                <div class="relative flex-grow">
+                    <form action="orderConfirmation.php" method="get" class="relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                            class="absolute w-5 h-5 top-2.5 left-2.5 text-slate-600">
+                            <path fill-rule="evenodd"
+                                d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <input type="text" name="search" value="<?= $search ?>" placeholder="Search Item"
+                            class="w-64 bg-transparent placeholder:text-[#16151C] text-[#16151C] text-sm border border-slate-400 rounded-md pl-10 pr-3 py-2 transition focus:outline-none focus:border-slate-400" />
+                    </form>
+                </div>
+
+            </div>
+
+            <!-- Tabel Utama -->
+            <div class="overflow-x-auto mt-4">
+                <table class="min-w-full bg-white rounded-lg shadow">
+                    <thead class="bg-[#A2845E] text-black">
+                        <tr>
+                            <th class="px-4 py-3 text-left">No</th>
+                            <th class="px-4 py-3 text-left">Item Name</th>
+                            <th class="px-4 py-3 text-left">Much</th>
+                            <th class="px-4 py-3 text-left">Customer Name</th>
+                            <th class="px-4 py-3 text-left">Buying Price</th>
+                            <th class="px-4 py-3 text-left">Status</th>
+                            <th class="px-4 py-3 text-left">Order Date</th>
+                            <th class="px-4 py-3 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <?php if (empty($dataPesanan)): ?>
+                        <tr>
+                            <td colspan="8" class="px-4 py-3 text-center text-gray-500">No orders found</td>
+                        </tr>
+                        <?php else: ?>
+                        <?php foreach ($dataPesanan as $index => $pesanan): ?>
+                        <tr class="<?= $index % 2 === 0 ? 'bg-[#FFEEDB]' : 'bg-[#E7DDD3]' ?> hover:bg-[#D1BEAB]">
+                            <td class="px-4 py-3"><?= $start + $index ?></td>
+
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <?= htmlspecialchars($pesanan['namaBeras']) ?>
+                            </td>
+
+                            <td class="px-4 py-3 text-center">
+                                <?= htmlspecialchars($pesanan['jumlahPesanan']) ?> karung
+                            </td>
+
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <?= htmlspecialchars($pesanan['customerName']) ?>
+                            </td>
+
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                Rp <?= number_format($pesanan['hargaBeli'], 0, ',', '.') ?>
+                            </td>
+
+                            <td class="px-4 py-3">
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full
+                                <?php 
+                                switch($pesanan['status']) {
+                                    case 'pending':
+                                        echo 'bg-yellow-100 text-yellow-800';
+                                        break;
+                                    case 'approved':
+                                        echo 'bg-green-100 text-green-800';
+                                        break;
+                                    case 'rejected':
+                                        echo 'bg-red-100 text-red-800';
+                                        break;
+                                    default:
+                                        echo 'bg-gray-100 text-gray-800';
+                                }
+                                ?>">
+                                    <?= ucfirst($pesanan['status']) ?>
+                                </span>
+                            </td>
+
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <?= date('d/m/Y', strtotime($pesanan['tanggalPesanan'])) ?>
+                            </td>
+
+                            <td class="px-4 py-3 text-center">
+                                <div class="inline-flex space-x-2 justify-center">
+                                    <?php if ($pesanan['status'] === 'pending'): ?>
+                                    <button onclick="updateOrderStatus(<?= $pesanan['idPesanan'] ?>, 'approved')"
+                                        class="px-3 py-1 bg-green-500 hover:bg-green-600 text-white text-xs rounded-md transition">
+                                        Approve
+                                    </button>
+                                    <button onclick="updateOrderStatus(<?= $pesanan['idPesanan'] ?>, 'rejected')"
+                                        class="px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-xs rounded-md transition">
+                                        Reject
+                                    </button>
+                                    <?php else: ?>
+                                    <span class="text-gray-500 text-xs">No action available</span>
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+            <div class="flex justify-between items-center mb-4 mt-4">
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <span>Showing</span>
+                    <select id="showEntries" class="border bg-[#EFE9E2] rounded-md px-2 py-1"
+                        onchange="window.location.href = '?show='+this.value+'&page=1'">
+                        <option value="5" <?= $itemsPerPage == 5 ? 'selected' : '' ?>>5</option>
+                        <option value="10" <?= $itemsPerPage == 10 ? 'selected' : '' ?>>10</option>
+                        <option value="20" <?= $itemsPerPage == 20 ? 'selected' : '' ?>>20</option>
+                    </select>
+                </div>
+
+                <div class="text-sm text-gray-600">
+                    Showing <?= $start ?> to <?= $end ?> of <?= $totalData ?> records
+                </div>
+            </div>
+            <div class="flex justify-center mt-6 gap-2 border[#7C4D16]">
+                <?php if($page > 1): ?>
+                <a href="?page=<?= $page-1 ?>&show=<?= $itemsPerPage ?>&search=<?= $search ?>"
+                    class="px-4 py-2 border rounded-md bg-none hover:bg-[#D1BEAB]">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M14.4685 17.5856C14.7919 17.3269 14.8444 16.8549 14.5856 16.5315L10.9604 12L14.5856 7.46849C14.8444 7.14505 14.7919 6.67308 14.4685 6.41432C14.145 6.15556 13.6731 6.208 13.4143 6.53145L9.41432 11.5315C9.19519 11.8054 9.19519 12.1946 9.41432 12.4685L13.4143 17.4685C13.6731 17.7919 14.145 17.8444 14.4685 17.5856Z"
+                            fill="#16151C" />
+                    </svg>
+
+
+                </a>
+                <?php endif; ?>
+
+                <?php for($i = 1; $i <= $totalPages; $i++): ?>
+                <a href="?page=<?= $i ?>&show=<?= $itemsPerPage ?>&search=<?= $search ?>"
+                    class="px-4 py-2 border rounded-md <?= $i == $page ? 'bg-none border-[#7C4D16] border-2 text-[#7C4D16] font-semibold' : 'bg-none hover:bg-[#D1BEAB]' ?>">
+                    <?= $i ?>
+                </a>
+                <?php endfor; ?>
+
+                <?php if($page < $totalPages): ?>
+                <a href="?page=<?= $page+1 ?>&show=<?= $itemsPerPage ?>&search=<?= $search ?>"
+                    class="px-4 py-2 border rounded-md bg-none hover:bg-[#D1BEAB]">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M9.53151 17.5856C9.20806 17.3269 9.15562 16.8549 9.41438 16.5315L13.0396 12L9.41438 7.46849C9.15562 7.14505 9.20806 6.67308 9.53151 6.41432C9.85495 6.15556 10.3269 6.208 10.5857 6.53145L14.5857 11.5315C14.8048 11.8054 14.8048 12.1946 14.5857 12.4685L10.5857 17.4685C10.3269 17.7919 9.85495 17.8444 9.53151 17.5856Z"
+                            fill="#16151C" />
+                    </svg>
+
+                </a>
+                <?php endif; ?>
+            </div>
+        </div>
+
 
     </div>
 
@@ -102,6 +309,35 @@ $dataPemasok = mysqli_fetch_assoc($q);
 <script src="../../assets/cdn/flowbite.min.js"></script>
 <script src="../../assets/cdn/flowbite.bundle.js"></script>
 <script>
+function updateOrderStatus(orderId, status) {
+    // Konfirmasi khusus untuk reject
+    if (status === 'rejected') {
+        if (!confirm('Are you sure you want to reject this order?')) {
+            return;
+        }
+    }
+    fetch('../../assets/mysql/pemasok/proses.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `idPesanan=${orderId}&status=${status}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                location.reload();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred');
+        });
+}
+
 function toggleDropdown() {
     const dropdown = document.getElementById("dropdownProfile");
     dropdown.classList.toggle("hidden");

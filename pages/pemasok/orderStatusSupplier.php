@@ -11,6 +11,30 @@ $currentPage = 'orderStatusSupplier.php';
 include '../../assets/mysql/connect.php';
 $q = mysqli_query($conn, "SELECT fotoProfil FROM pemasok WHERE idPemasok = '$idPemasok'");
 $dataPemasok = mysqli_fetch_assoc($q);  
+
+// Ambil data pesanan yang sudah di-approve
+$query = mysqli_query($conn, "
+    SELECT 
+        pp.*,
+        b.namaBeras,
+        b.gambarBeras,
+        b.beratBeras,
+        p.namaPemasok AS supplierName,
+        po.namaPemilik AS customerName,
+        po.alamatPemilik AS alamatCustomer,
+        LOWER(COALESCE(pp.status_pengiriman, 'order placed')) AS status_normalized
+    FROM pesananpemasok pp
+    JOIN stokberaspemasok b ON pp.idBeras = b.idBeras
+    JOIN pemasok p ON pp.idPemasok = p.idPemasok
+    JOIN pemilikusaha po ON pp.idPemilik = po.idPemilik
+    WHERE pp.status = 'approved'
+    ORDER BY pp.tanggalPesanan DESC
+");
+
+$dataPesanan = [];
+while ($row = mysqli_fetch_assoc($query)) {
+    $dataPesanan[] = $row;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,6 +46,77 @@ $dataPemasok = mysqli_fetch_assoc($q);
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="../../assets/cdn/flowbite.min.css" rel="stylesheet" />
     <link rel="icon" href="../../assets/gambar/icon.png">
+    <style>
+    .status-stepper {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        margin: 40px 0;
+    }
+
+    .status-stepper::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background-color: #E5E7EB;
+        z-index: 1;
+    }
+
+    .status-step {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        width: 25%;
+    }
+
+    .status-dot {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #EFE9E2;
+        border: 2px solid #E5E7EB;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 10px;
+        transition: all 0.3s ease;
+    }
+
+    .status-step.active .status-dot {
+        background: #A2845E;
+        border-color: #A2845E;
+        color: white;
+    }
+
+    .status-label {
+        font-size: 14px;
+        color: #6B7280;
+    }
+
+    .status-step.active .status-label {
+        color: #16151C;
+        font-weight: 600;
+    }
+
+    .status-time {
+        font-size: 12px;
+        color: #6B7280;
+        margin-top: 4px;
+    }
+
+    .status-action {
+        margin-top: 10px;
+    }
+    
+    .order-item.selected {
+        background-color: #f3f4f6;
+        border-color: #A2845E;
+        border-width: 2px;
+    }
+    </style>
 </head>
 
 <body class="bg-[#EFE9E2] min-h-screen">
@@ -61,7 +156,7 @@ $dataPemasok = mysqli_fetch_assoc($q);
                 <div class="relative inline-block text-left">
                     <button onclick="toggleDropdown()"
                         class="flex border-2 border-solid items-center bg-none rounded-xl px-4 py-2 shadow hover:ring-2 hover:ring-gray-500 transition space-x-4">
-                        <img src="../../assets/gambar/pemilikUsaha/photoProfile/<?= $dataPemilikUsaha['fotoProfil'] ?? 'profil.jpeg' ?>"
+                        <img src="../../assets/gambar/pemasok/photoProfile/<?= $dataPemasok['fotoProfil'] ?? 'profil.jpeg' ?>"
                             alt="User" class="w-14 h-14 rounded-xl object-cover mix-blend-multiply" />
                         <div class="text-left hidden sm:block">
                             <span class="block text-lg font-bold text-black leading-5"><?= $nama; ?></span>
@@ -76,44 +171,400 @@ $dataPemasok = mysqli_fetch_assoc($q);
                         class="hidden absolute right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-md z-50 w-48">
                         <a href="settingsSupplier.php"
                             class="block font-semibold px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-center">Settings</a>
-                        <a href="../../assets/mysql/pemilikUsaha/proses.php?logout=true"
+                        <a href="../../assets/mysql/pemasok/proses.php?logout=true"
                             class="block px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600 text-center rounded-b-lg">Log
                             Out</a>
                     </div>
                 </div>
-
             </div>
-
-           
         </div>
-         <?php 
-    if (isset($_GET['search']) && $_GET['search'] === 'notfound') :?>
-         <div class="mt-4 mb-4 px-4 py-3 bg-red-100 border border-red-400 text-red-700 rounded">
+
+        <?php 
+        if (isset($_GET['search']) && $_GET['search'] === 'notfound') :?>
+        <div class="mt-4 mb-4 px-4 py-3 bg-red-100 border border-red-400 text-red-700 rounded">
             <p>Keyword not found</p>
         </div>
-    
-    <?php endif; ?>
-        
+        <?php endif; ?>
 
-    </div>
+        <!-- Tampilan Utama -->
+        <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-xl font-bold text-[#16151C] mb-4">Approved Orders</h3>
+                <div class="space-y-4">
+                    <?php if (empty($dataPesanan)): ?>
+                    <p class="text-gray-500">No approved orders found</p>
+                    <?php else: ?>
+                    <?php foreach ($dataPesanan as $index => $pesanan): ?>
+                    <div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer order-item
+                        <?= $index === 0 ? 'selected' : '' ?>" 
+                        data-id="<?= $pesanan['idPesanan'] ?>"
+                        data-beras="<?= htmlspecialchars($pesanan['namaBeras']) ?>"
+                        data-berat="<?= htmlspecialchars($pesanan['beratBeras']) ?>"
+                        data-jumlah="<?= htmlspecialchars($pesanan['jumlahPesanan']) ?>"
+                        data-customer="<?= htmlspecialchars($pesanan['customerName']) ?>"
+                        data-alamat="<?= htmlspecialchars($pesanan['alamatCustomer']) ?>"
+                        data-tanggal="<?= date('h:i A', strtotime($pesanan['tanggalPesanan'])) ?>"
+                        data-status="<?= $pesanan['status_normalized'] ?>">
+                        <div class="flex justify-between">
+                            <div>
+                                <h4 class="font-semibold"><?= htmlspecialchars($pesanan['namaBeras']) ?></h4>
+                                <p class="text-sm text-gray-600">
+                                    <?= date('M d, Y', strtotime($pesanan['tanggalPesanan'])) ?></p>
+                            </div>
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 capitalize">
+                                <?= $pesanan['status_normalized'] ?>
+                            </span>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
 
+            <!-- Detail Pesanan -->
+            <div class="lg:col-span-2 bg-white rounded-lg shadow p-6">
+                <h3 class="text-xl font-bold text-[#16151C] mb-6">Order Tracking</h3>
+
+                <!-- Status Tracking -->
+                <div class="status-stepper">
+                    <!-- STEP 1: Order Placed -->
+                    <div class="status-step" data-step="order placed">
+                        <div class="status-dot">1</div>
+                        <div class="status-label">Order Placed</div>
+                        <div class="status-time">10:30 AM</div>
+                        <div class="status-action">
+                            <button
+                                class="prev-btn hidden bg-gray-100 text-gray-600 hover:bg-gray-200 py-2 px-2 rounded">←
+                                Prev</button>
+                            <button
+                                class="next-btn bg-[#8C5E3C] text-white hover:bg-[#A2845E] py-2 px-2 rounded md">Next
+                                →</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: Packaging -->
+                    <div class="status-step" data-step="packaging">
+                        <div class="status-dot">2</div>
+                        <div class="status-label">Packaging</div>
+                        <div class="status-time">On Process</div>
+                        <div class="status-action">
+                            <button
+                                class="prev-btn bg-gray-100 text-gray-600 hover:bg-gray-200 py-2 px-2 rounded">←
+                                Prev</button>
+                            <button
+                                class="next-btn bg-[#8C5E3C] text-white hover:bg-[#A2845E] py-2 px-2 rounded md">Next
+                                →</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: On The Road -->
+                    <div class="status-step" data-step="on the road">
+                        <div class="status-dot">3</div>
+                        <div class="status-label">On The Road</div>
+                        <div class="status-time">Pending</div>
+                        <div class="status-action">
+                            <button
+                                class="prev-btn bg-gray-100 text-gray-600 hover:bg-gray-200 py-2 px-2 rounded">←
+                                Prev</button>
+                            <button
+                                class="next-btn bg-[#8C5E3C] text-white hover:bg-[#A2845E] py-2 px-2 rounded md">Next
+                                →</button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4: Delivered -->
+                    <div class="status-step" data-step="delivered">
+                        <div class="status-dot">4</div>
+                        <div class="status-label">Delivered</div>
+                        <div class="status-time">Pending</div>
+                        <div class="status-action">
+                            <button
+                                class="prev-btn bg-gray-100 text-gray-600 hover:bg-gray-200 py-2 px-2 rounded">←
+                                Prev</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Order Detail -->
+                <div class="mt-8 border-t pt-6">
+                    <h4 class="text-lg font-bold text-[#16151C] mb-4">Order Detail</h4>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <p class="font-semibold text-gray-700">Item Name</p>
+                            <p class="text-[#16151C] font-medium" id="detail-beras">-</p>
+
+                            <div class="mt-4 grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="font-semibold text-gray-700">Weight</p>
+                                    <p class="text-[#16151C]" id="detail-berat">-</p>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-700">Much</p>
+                                    <p class="text-[#16151C]" id="detail-jumlah">-</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="font-semibold text-gray-700">Shipping To</p>
+                            <p class="font-semibold text-[#16151C] mt-1" id="detail-customer">-</p>
+                            <p class="text-gray-600 mt-1" id="detail-alamat">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const orderItems = document.querySelectorAll('.order-item');
+            const statusSteps = document.querySelectorAll('.status-step');
+            let currentOrderId = null;
+
+            // Fungsi untuk mengupdate tampilan detail pesanan
+            function updateOrderDetail(data) {
+                document.getElementById('detail-beras').textContent = data.beras;
+                document.getElementById('detail-berat').textContent = data.berat;
+                document.getElementById('detail-jumlah').textContent = data.jumlah;
+                document.getElementById('detail-customer').textContent = data.customer;
+                document.getElementById('detail-alamat').textContent = data.alamat;
+
+                // Update waktu Order Placed
+                document.querySelector('.status-step[data-step="order placed"] .status-time').textContent = data.tanggal;
+
+                // Reset semua status
+                statusSteps.forEach(step => {
+                    step.classList.remove('active');
+                    step.querySelector('.status-dot').style.backgroundColor = '#EFE9E2';
+                    step.querySelector('.status-dot').style.borderColor = '#E5E7EB';
+                    step.querySelector('.status-label').style.color = '#6B7280';
+                    step.querySelector('.status-label').style.fontWeight = 'normal';
+                });
+
+                // Set status aktif berdasarkan data
+                const currentStatus = data.status || 'order placed';
+                const activeStep = document.querySelector(`.status-step[data-step="${currentStatus}"]`);
+                if (activeStep) {
+                    activeStep.classList.add('active');
+                    activeStep.querySelector('.status-dot').style.backgroundColor = '#A2845E';
+                    activeStep.querySelector('.status-dot').style.borderColor = '#A2845E';
+                    activeStep.querySelector('.status-dot').style.color = 'white';
+                    activeStep.querySelector('.status-label').style.color = '#16151C';
+                    activeStep.querySelector('.status-label').style.fontWeight = '600';
+                }
+
+                // Sembunyikan semua tombol prev/next
+                document.querySelectorAll('.prev-btn, .next-btn').forEach(btn => {
+                    btn.classList.add('hidden');
+                });
+
+                // Tampilkan tombol yang sesuai
+                if (currentStatus === 'order placed') {
+                    document.querySelector('.status-step[data-step="order placed"] .next-btn')?.classList
+                        .remove('hidden');
+                } else if (currentStatus === 'packaging') {
+                    document.querySelector('.status-step[data-step="packaging"] .prev-btn')?.classList.remove(
+                        'hidden');
+                    document.querySelector('.status-step[data-step="packaging"] .next-btn')?.classList.remove(
+                        'hidden');
+                } else if (currentStatus === 'on the road') {
+                    document.querySelector('.status-step[data-step="on the road"] .prev-btn')?.classList.remove(
+                        'hidden');
+                    document.querySelector('.status-step[data-step="on the road"] .next-btn')?.classList.remove(
+                        'hidden');
+                } else if (currentStatus === 'delivered') {
+                    document.querySelector('.status-step[data-step="delivered"] .prev-btn')?.classList.remove(
+                        'hidden');
+                }
+            }
+
+            // Event listener untuk klik pesanan
+            orderItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Hapus seleksi sebelumnya
+                    orderItems.forEach(i => i.classList.remove('selected'));
+
+                    // Tambahkan seleksi
+                    this.classList.add('selected');
+
+                    // Simpan ID pesanan yang dipilih
+                    currentOrderId = this.dataset.id;
+
+                    // Update detail pesanan
+                    updateOrderDetail({
+                        id: this.dataset.id,
+                        beras: this.dataset.beras,
+                        berat: this.dataset.berat,
+                        jumlah: this.dataset.jumlah,
+                        customer: this.dataset.customer,
+                        alamat: this.dataset.alamat,
+                        tanggal: this.dataset.tanggal,
+                        status: this.dataset.status
+                    });
+                });
+            });
+
+            // Event listener untuk tombol next
+            document.querySelectorAll('.next-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!currentOrderId) {
+                        alert('Please select an order first');
+                        return;
+                    }
+
+                    const currentStep = this.closest('.status-step');
+                    const nextStep = currentStep.nextElementSibling;
+                    if (!nextStep) return;
+
+                    const newStatus = nextStep.dataset.step;
+
+                    // Tampilkan loading indicator
+                    const originalText = this.textContent;
+                    this.disabled = true;
+                    this.textContent = 'Loading...';
+
+                    // Kirim permintaan update status
+                    fetch('../../assets/mysql/pemasok/proses.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: `action=update_status&idPesanan=${currentOrderId}&status=${newStatus}`
+                        })
+                        .then(response => {
+                            // Kembalikan tombol ke keadaan semula
+                            this.disabled = false;
+                            this.textContent = originalText;
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                // Update UI
+                                const currentItem = document.querySelector(
+                                    `.order-item[data-id="${currentOrderId}"]`);
+
+                                if (currentItem) {
+                                    currentItem.dataset.status = newStatus;
+                                    const statusSpan = currentItem.querySelector('span');
+                                    if (statusSpan) {
+                                        statusSpan.textContent = newStatus;
+                                    }
+
+                                    // Update waktu jika perlu
+                                    const statusTimeElement = nextStep.querySelector(
+                                        '.status-time');
+                                    if (statusTimeElement) {
+                                        if (newStatus === 'packaging') {
+                                            statusTimeElement.textContent = 'On Process';
+                                        } else if (newStatus === 'on the road') {
+                                            statusTimeElement.textContent = 'Retailing';
+                                        } else if (newStatus === 'delivered') {
+                                            statusTimeElement.textContent =
+                                                'Delivered at ' + new Date()
+                                                .toLocaleTimeString([], {
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                });
+                                        }
+                                    }
+
+                                    updateOrderDetail({
+                                        ...currentItem.dataset,
+                                        status: newStatus
+                                    });
+
+                                    alert('Status updated successfully!');
+                                } else {
+                                    alert('Order item not found in DOM');
+                                }
+                            } else {
+                                alert('Failed to update status: ' + (data.message ||
+                                    'Unknown error'));
+                            }
+                        })
+                        .catch(error => {
+                            this.disabled = false;
+                            this.textContent = originalText;
+                            console.error('Error:', error);
+                            alert('An error occurred while updating status');
+                        });
+                });
+            });
+
+            // Event listener untuk tombol prev
+            document.querySelectorAll('.prev-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!currentOrderId) {
+                        alert('Please select an order first');
+                        return;
+                    }
+
+                    const currentStep = this.closest('.status-step');
+                    const prevStep = currentStep.previousElementSibling;
+                    if (!prevStep) return;
+
+                    const newStatus = prevStep.dataset.step;
+
+                    // Tampilkan loading indicator
+                    const originalText = this.textContent;
+                    this.disabled = true;
+                    this.textContent = 'Loading...';
+
+                    // Kirim permintaan update status
+                    fetch('../../assets/mysql/pemasok/proses.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: `action=update_status&idPesanan=${currentOrderId}&status=${newStatus}`
+                        })
+                        .then(response => {
+                            this.disabled = false;
+                            this.textContent = originalText;
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                // Update UI
+                                const currentItem = document.querySelector(
+                                    `.order-item[data-id="${currentOrderId}"]`);
+                                currentItem.dataset.status = newStatus;
+                                const statusSpan = currentItem.querySelector('span');
+                                if (statusSpan) {
+                                    statusSpan.textContent = newStatus;
+                                }
+
+                                updateOrderDetail({
+                                    ...currentItem.dataset,
+                                    status: newStatus
+                                });
+
+                                alert('Status updated successfully!');
+                            } else {
+                                alert('Failed to update status: ' + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            this.disabled = false;
+                            this.textContent = originalText;
+                            console.error('Error:', error);
+                            alert('An error occurred while updating status');
+                        });
+                });
+            });
+
+            // Pilih pesanan pertama secara otomatis jika ada
+            if (orderItems.length > 0) {
+                orderItems[0].click();
+            }
+        });
+
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdownProfile');
+            dropdown.classList.toggle('hidden');
+        }
+        </script>
 </body>
-
-<script src="../../assets/cdn/flowbite.min.js"></script>
-<script src="../../assets/cdn/flowbite.bundle.js"></script>
-<script>
-function toggleDropdown() {
-    const dropdown = document.getElementById("dropdownProfile");
-    dropdown.classList.toggle("hidden");
-}
-
-document.addEventListener("click", function(event) {
-    const dropdown = document.getElementById("dropdownProfile");
-    const button = event.target.closest("button[onclick='toggleDropdown()']");
-    if (!button && !dropdown.contains(event.target)) {
-        dropdown.classList.add("hidden");
-    }
-});
-</script>
-
 </html>

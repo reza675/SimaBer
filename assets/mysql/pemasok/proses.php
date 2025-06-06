@@ -53,7 +53,6 @@ if (isset($_POST['submitEdit'])) {
 }
 //add data beras
 if(isset($_POST['addBeras'])) {
-    $idBeras = $_POST['idBeras'];
     $namaBeras = $_POST['namaBeras'];
     $tipeBeras = $_POST['jenisBeras'];
     $beratBeras = $_POST['beratBeras'];
@@ -62,14 +61,6 @@ if(isset($_POST['addBeras'])) {
     $idPemasok = $_POST['idPemasok'];
 
     $gambarBeras = '';
-
-    $cek = mysqli_query($conn, "SELECT COUNT(*) AS jumlah FROM stokberaspemasok WHERE idBeras = '$idBeras'");
-    $row = mysqli_fetch_assoc($cek);
-    if ($row['jumlah'] > 0) {
-        $_SESSION['error'] = "The Rice ID '$idBeras' is already used by another supplier.";
-        header("Location: ../../../pages/pemasok/riceManagement.php");
-        exit();
-    }
     if(isset($_FILES['gambarBeras'])) {
         $file = $_FILES['gambarBeras'];
         $fileName = $file['name'];
@@ -121,7 +112,7 @@ if(isset($_POST['addBeras'])) {
         idPemasok,
         gambarBeras
     ) VALUES (
-        '$idBeras',
+        '',
         '$namaBeras',
         '$tipeBeras',
         '$beratBeras',
@@ -243,6 +234,91 @@ if(isset($_POST['deleteBeras'])) {
     }
     header("Location: ../../../pages/pemasok/riceManagement.php");
     exit();
+}
+
+
+//buat nerima atau nolak pesanan pemilikusaha
+if (isset($_POST['idPesanan']) && isset($_POST['status'])) {
+    $idPesanan = intval($_POST['idPesanan']);
+    $status    = $_POST['status'];
+
+    // Validasi dasar
+    if ($idPesanan <= 0 || ($status !== 'approved' && $status !== 'rejected')) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Invalid order ID or status'
+        ]);
+        exit;
+    }
+
+    if ($status === 'approved') {
+        $query = "UPDATE pesananpemasok 
+                  SET status = 'approved' 
+                  WHERE idPesanan = $idPesanan";
+        if (mysqli_query($conn, $query)) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Order approved successfully! Redirecting to order status...'
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Failed to approve order: ' . mysqli_error($conn)
+            ]);
+        }
+    }
+    elseif ($status === 'rejected') {
+        $query = "DELETE FROM pesananpemasok 
+                  WHERE idPesanan = $idPesanan";
+        if (mysqli_query($conn, $query)) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Order rejected and removed successfully!'
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Failed to reject order: ' . mysqli_error($conn)
+            ]);
+        }
+    }
+
+    exit;
+}
+
+// Fungsi untuk update status pengiriman
+include "../connect.php";
+
+if (isset($_POST['action']) && $_POST['action'] === 'update_status') {
+    // Validasi input
+    if (!isset($_POST['idPesanan']) || !isset($_POST['status'])) {
+        echo json_encode(['success' => false, 'message' => 'Invalid input']);
+        exit;
+    }
+
+    $idPesanan = intval($_POST['idPesanan']);
+    $newStatus = strtolower(trim($_POST['status'])); // Normalisasi ke huruf kecil
+
+    $allowed = ['order placed', 'packaging', 'on the road', 'delivered'];
+    
+    if ($idPesanan <= 0 || !in_array($newStatus, $allowed)) {
+        echo json_encode(['success' => false, 'message' => 'Invalid order ID or status']);
+        exit;
+    }
+
+    // Gunakan prepared statement
+    $stmt = $conn->prepare("UPDATE pesananpemasok SET status_pengiriman = ? WHERE idPesanan = ?");
+    $stmt->bind_param("si", $newStatus, $idPesanan);
+    
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Status updated successfully']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Database error: ' . $stmt->error]);
+    }
+    
+    $stmt->close();
+    mysqli_close($conn);
+    exit;
 }
 
 

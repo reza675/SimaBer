@@ -184,8 +184,8 @@ unset($_SESSION['success'], $_SESSION['error']);
                     </thead>
                     <tbody class="divide-y divide-gray-200">
                         <?php
-        if (empty($dataBeras)):
-      ?>
+                            if (empty($dataBeras)):
+                        ?>
                         <tr>
                             <td colspan="9" class="px-4 py-3 text-center text-gray-500">No data found</td>
                         </tr>
@@ -344,11 +344,11 @@ unset($_SESSION['success'], $_SESSION['error']);
                         id="myForm">
 
                         <div class="grid grid-cols-2 gap-4">
-                            <div>
+                            <!-- <div>
                                 <label class="block text-sm font-semibold mb-2">ID Item</label>
                                 <input type="text" name="idBeras" placeholder="ID" required
                                     class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
-                            </div>
+                            </div> -->
                             <div>
                                 <label class="block text-sm font-semibold mb-2">Item Name</label>
                                 <input type="text" name="namaBeras" placeholder="Name" required

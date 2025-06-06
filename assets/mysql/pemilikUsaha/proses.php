@@ -177,16 +177,16 @@ if(isset($_POST['editBeras'])) {
             exit();
         }
         // Cek ekstensi file
-        $allowed = ['jpg', 'jpeg', 'png'];
+        $allowed = ['jpg', 'jpeg', 'png','webp'];
         if(!in_array($fileType, $allowed)) {
-            $_SESSION['error'] = "Only JPG, JPEG and PNG formats are allowed!";
+            $_SESSION['error'] = "Only JPG, JPEG, PNG, WEBP formats are allowed!";
             header("Location: ../../../pages/pemilikUsaha/riceStock.php");
             exit();
         }
         if(move_uploaded_file($_FILES['gambarBeras']['tmp_name'], $targetFile)) {
-            $gambarBaru = $targetFile;
-            if(file_exists($gambarLama)) {
-                unlink($gambarLama);
+            $gambarBaru = basename($targetFile);
+           if(file_exists("../../gambar/beras/" . $gambarLama)) {
+                unlink("../../gambar/beras/" . $gambarLama);
             }
         } else {
             $_SESSION['error'] = "Failed to upload image!";
@@ -550,5 +550,38 @@ if(isset($_POST['deletePelanggan'])) {
     }
     header("Location: ../../../pages/pemilikUsaha/customer.php");
     exit();
+}
+
+//beli beras ke pemasok
+if (isset($_POST["submitOrder"])) {
+    $idPemilik = $_POST['idPemilik'];
+    $idBeras       = $_POST['idBeras'];
+    $idPemasok     = $_POST['idPemasok'];
+    $jumlahPesanan = $_POST['jumlahPesanan'];
+    $hargaBeli     = $_POST['hargaBeli']; 
+    $tanggalPesanan = date('Y-m-d');
+    $status        = "pending";
+    
+    $idBeras = mysqli_real_escape_string($conn, $idBeras);
+    $idPemasok = mysqli_real_escape_string($conn, $idPemasok);
+    $jumlahPesanan = (int)$jumlahPesanan;
+    
+    $queryInsert = mysqli_query(
+        $conn,
+        "INSERT INTO pesananpemasok 
+           (tanggalPesanan, status, idPemasok, idBeras, jumlahPesanan, hargaBeli,idPemilik) 
+         VALUES 
+           ('$tanggalPesanan', '$status', '$idPemasok', '$idBeras', '$jumlahPesanan', '$hargaBeli','$idPemilik')"   
+    );  
+
+    if ($queryInsert) {
+        $_SESSION['success'] = "Your order has been successfully created!";
+        header("Location: ../../../pages/pemilikUsaha/orderSupplier.php");
+        exit();
+    } else {
+        $_SESSION['error'] = "Failed to create order: " . mysqli_error($conn);
+        header("Location: ../../../pages/pemilikUsaha/orderSupplier.php");
+        exit();
+    }
 }
 ?>
