@@ -8,23 +8,7 @@ $nama = $_SESSION['namaPemilik'];
 $idPemilik = $_SESSION['idPemilik'];
 $currentPage = 'supplier.php';
 include '../../assets/mysql/connect.php';
-if (isset($_POST['applyFilter'])) {
-    $selectedColumns = isset($_POST['columns']) ? $_POST['columns'] : [];
-    $_SESSION['selectedColumns'] = $selectedColumns;
-} elseif (isset($_POST['resetFilter'])) {
-    unset($_SESSION['selectedColumns']);
-}
 
-// Default columns
-$defaultColumns = [
-    'no' => true,
-    'id' => true,
-    'supplier name' => true,
-    'address' => true,
-    'contact' => true,
-    'action' => true,
-];
-$activeColumns = isset($_SESSION['selectedColumns']) ? array_fill_keys($_SESSION['selectedColumns'], true) : $defaultColumns;
 //paginasi
 $itemsPerPage = isset($_GET['show']) ? (int)$_GET['show'] : 10;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -62,7 +46,6 @@ $dataPemilikUsaha = mysqli_fetch_assoc($q);
 $success = $_SESSION['success'] ?? null;
 $error = $_SESSION['error'] ?? null;
 unset($_SESSION['success'], $_SESSION['error']);
-?>
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -167,6 +150,19 @@ unset($_SESSION['success'], $_SESSION['error']);
                         <input type="text" name="search" value="<?= $search ?>" placeholder="Search Item"
                             class="w-64 bg-transparent placeholder:text-[#16151C] text-[#16151C] text-sm border border-slate-400 rounded-md pl-10 pr-3 py-2 transition focus:outline-none focus:border-slate-400" />
                     </form>
+                </div>
+
+                <div>
+                    <button id="button" type="button" onclick="openAddModal()"
+                        class="flex items-center gap-2 px-4 py-2 bg-[#A2845E] rounded-md hover:bg-[#8C6B42] focus:outline-none transition">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12 8V16M16 12H8M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                                stroke="#EFE9E2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+
+                        <span class="font-semibold text-sm text-white">Add Supplier</span>
+                    </button>
                 </div>
 
             </div>
@@ -306,6 +302,80 @@ unset($_SESSION['success'], $_SESSION['error']);
                 </a>
                 <?php endif; ?>
             </div>
+
+            <!-- Add Modal -->
+            <div id="addModal"
+                class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                <div class="bg-white rounded-lg p-6 w-full max-w-[600px] h-[400px]">
+                    <div class="flex justify-between items-center pb-1">
+                        <h3 class="text-2xl font-bold mb-4 text-[#16151C]">Add Supplier</h3>
+                        <button onclick="closeAddModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M27.0708 12.929L12.9287 27.0712M27.0708 27.0711L12.9287 12.929"
+                                    stroke="#28303F" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+                    <form action="../../assets/mysql/pemilikUsaha/proses.php" method="POST"
+                        enctype="multipart/form-data" id="myForm">
+                        <input type="hidden" name="idPemasok">
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">ID Pemasok</label>
+                                <input type="text" name="idPemasok" placeholder="ID" required
+                                    class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Supplier Name</label>
+                                <input type="text" name="namaPemasok" placeholder="Name" required
+                                    class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Email</label>
+                                <input type="email" name="emailPemasok" placeholder="Email" required
+                                    class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
+                            </div>
+                            <div class="col-span-2 md:col-span-1">
+                                <label class="block text-sm font-semibold mb-2">Password</label>
+                                <input type="password" name="passwordPemasok" placeholder="Password" required
+                                    class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Address</label>
+                                <input type="text" name="alamatPemasok" placeholder="Alamat" required
+                                    class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Contact</label>
+                                <input type="text" name="nomorHPPemasok" placeholder="Contact" required
+                                    class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end gap-2 mt-2">
+                            <button type="button" onclick="closeAddModal()"
+                                class="px-4 py-2 border rounded-md hover:bg-gray-100">Cancel</button>
+                            <button type="submit" name="addSupplier"
+                                class="flex items-center gap-2 px-4 py-2 bg-[#A2845E] rounded-md hover:bg-[#8C6B42] focus:outline-none transition">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M12 8V16M16 12H8M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                                        stroke="#EFE9E2" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                                <span class="font-semibold text-sm text-white">Add</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- detail modal -->
             <div id="detailModal"
                 class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
                 <div class="bg-white rounded-xl p-6 max-w-xl w-full shadow-lg">
@@ -321,7 +391,7 @@ unset($_SESSION['success'], $_SESSION['error']);
 
                     <hr class="border-gray-300 mb-6" />
 
-                    <div class="flex flex-col md:flex-row gap-6 items-center">
+                    <div class="flex flex-col md:flex-row gap-4 items-center">
                         <img id="detail-gambar" src="" alt="supplier"
                             class="w-32 h-32 object-cover rounded-full border border-gray-300" />
                         <div class="space-y-2 text-sm md:text-base w-full">
@@ -334,7 +404,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                                 <span id="detail-nama">-</span>
                             </div>
                             <div class="flex">
-                                <span class="font-semibold w-48">Address</span>
+                                <span class="font-semibold w-32">Address</span>
                                 <span id="detail-alamat">-</span>
                             </div>
                             <div class="flex">
@@ -398,6 +468,28 @@ unset($_SESSION['success'], $_SESSION['error']);
                 </div>
             </div>
 
+            <!-- Delete Modal -->
+            <div id="deleteModal"
+                class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                <div class="bg-white rounded-lg p-6 max-w-md w-full ">
+                    <h3 class="text-xl font-bold mb-4 text-center">Delete Confirmation</h3>
+                    <p class="mb-4 text-center">Are you sure you want to delete <br> <span id="deleteItemSpan"
+                            class="font-semibold"></span> <span id="deleteItemName" class="font-semibold"></span>?
+                    </p>
+                    <div class="flex justify-center gap-2">
+                        <form id="deleteForm" action="../../assets/mysql/pemilikUsaha/proses.php" method="POST">
+                            <input type="hidden" name="idPemasok" id="deleteItemId">
+                            <div class="mx-auto justify-center flex space-x-2">
+                                <button type="button" onclick="closeDeleteModal()"
+                                    class="px-4 py-2 border rounded-md hover:bg-gray-100">Cancel</button>
+                                <button type="submit" name="deletePemasok"
+                                    class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">Delete</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
 
@@ -408,6 +500,23 @@ unset($_SESSION['success'], $_SESSION['error']);
 <script src="../../assets/cdn/flowbite.min.js"></script>
 <script src="../../assets/cdn/flowbite.bundle.js"></script>
 <script>
+//add modal
+const modal = document.getElementById('addModal');
+
+function openAddModal() {
+    modal.classList.remove('hidden');
+}
+
+function closeAddModal() {
+    modal.classList.add('hidden');
+}
+
+window.onclick = function(event) {
+    if (event.target === modal) {
+        closeAddModal();
+    }
+}
+
 function toggleDropdown() {
     const dropdown = document.getElementById("dropdownProfile");
     dropdown.classList.toggle("hidden");
@@ -459,6 +568,25 @@ document.addEventListener('click', function(event) {
     const modal = document.getElementById('editModal');
     if (event.target === modal) {
         closeEditModal();
+    }
+});
+
+//delete modal
+function openDeleteModal(id, name) {
+    document.getElementById('deleteItemSpan').textContent = id;
+    document.getElementById('deleteItemId').value = id;
+    document.getElementById('deleteItemName').textContent = name;
+    document.getElementById('deleteModal').classList.remove('hidden');
+}
+
+function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.add('hidden');
+}
+
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('deleteModal');
+    if (event.target === modal) {
+        closeDeleteModal();
     }
 });
 </script>
