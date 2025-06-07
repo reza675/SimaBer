@@ -149,15 +149,29 @@ if (isset($_POST['checkout_action']) && $_POST['checkout_action'] === 'complete_
     $deliveryNotes   = isset($_POST['delivery_notes'])
                        ? mysqli_real_escape_string($conn, $_POST['delivery_notes'])
                        : '';
-    $tanggalPesanan  = date_time_set('Y-m-d H:i:s');
+    $tanggalPesanan  = date('Y-m-d H:i:s');
     $status          = 'pending';
     $isDeliver       = ($checkoutData['shippingMethod'] === 'delivery') ? 1 : 0;
+
+    $stokQuery = "SELECT idPemilik FROM stokberaspemilik WHERE idBeras = '$idBeras'";
+    $stokResult = mysqli_query($conn, $stokQuery);
+    
+    if (!$stokResult || mysqli_num_rows($stokResult) == 0) {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Rice stock not found']);
+        exit();
+    }
+    
+    $stokData = mysqli_fetch_assoc($stokResult);
+    $idPemilik = $stokData['idPemilik'];
+
 
     // Insert order ke database
     $insertQuery = "
       INSERT INTO pesananpemilik (
         tanggalPesanan,
         status,
+        idPemilik,
         idPelanggan,
         idBeras,
         jumlahPesanan,
@@ -167,8 +181,9 @@ if (isset($_POST['checkout_action']) && $_POST['checkout_action'] === 'complete_
       ) VALUES (
         '$tanggalPesanan',
         '$status',
+        '$idPemilik',
         '{$_SESSION['idPelanggan']}',
-        '{$checkoutData['idBeras']}',
+        '{$checkoutData['idBeras']}',   
         '{$checkoutData['quantity']}',
         '{$checkoutData['finalTotal']}',
         '$isDeliver',

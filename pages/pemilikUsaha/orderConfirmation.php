@@ -60,7 +60,11 @@ $sql = "
         pp.hargaBeli,
         pp.status,
         pp.tanggalPesanan,
+        pp.deliverNotes,
+        pp.isDeliver,
         sbp.namaBeras,
+        sbp.beratBeras,
+        p.alamatPelanggan,
         p.namaPelanggan AS customerName
     FROM pesananpemilik pp
     JOIN stokberaspemilik sbp ON pp.idBeras = sbp.idBeras
@@ -210,11 +214,15 @@ unset($_SESSION['success'], $_SESSION['error']);
                         <tr>
                             <th class="px-4 py-3 text-left">No</th>
                             <th class="px-4 py-3 text-left">Item Name</th>
-                            <th class="px-4 py-3 text-left">Weight</th>
+                            <th class="px-4 py-3 text-left">Much</th>
                             <th class="px-4 py-3 text-left">Customer Name</th>
+                            <th class="px-4 py-3 text-left">Address</th>
+                            <th class="px-4 py-3 text-left">Weight</th>
                             <th class="px-4 py-3 text-left">Buying Price</th>
                             <th class="px-4 py-3 text-left">Status</th>
                             <th class="px-4 py-3 text-left">Order Date</th>
+                            <th class="px-4 py-3 text-left">Delivery Note</th>
+                            <th class="px-4 py-3 text-left">is Deliver</th>
                             <th class="px-4 py-3 text-center">Action</th>
                         </tr>
                     </thead>
@@ -231,10 +239,16 @@ unset($_SESSION['success'], $_SESSION['error']);
                                 <?= htmlspecialchars($pesanan['namaBeras']) ?>
                             </td>
                             <td class="px-4 py-3 text-center">
-                                <?= htmlspecialchars($pesanan['jumlahPesanan']) ?> karung
+                                <?= htmlspecialchars($pesanan['jumlahPesanan']) ?>
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap">
                                 <?= htmlspecialchars($pesanan['customerName']) ?>
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <?= htmlspecialchars($pesanan['alamatPelanggan']) ?>
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <?= htmlspecialchars($pesanan['beratBeras']) ?> kg
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap">
                                 Rp <?= number_format($pesanan['hargaBeli'], 0, ',', '.') ?>
@@ -260,7 +274,11 @@ unset($_SESSION['success'], $_SESSION['error']);
                                 </span>
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap">
-                                <?= date('d/m/Y', strtotime($pesanan['tanggalPesanan'])) ?>
+                                <?= date('d/m/Y/h:i A', strtotime($pesanan['tanggalPesanan'])) ?>
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap"><?= htmlspecialchars($pesanan['deliverNotes']) ?></td>
+                            <td class="px-4 py-3 whitespace-nowrap"><?php if ($pesanan['isDeliver'] == 1) { echo 'Delivery'; } else {echo 'Self Pickup'; } ?>
+                        
                             </td>
                             <td class="px-4 py-3 text-center">
                                 <div class="inline-flex space-x-2 justify-center">

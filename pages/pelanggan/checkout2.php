@@ -250,7 +250,7 @@ $dataPelanggan = mysqli_fetch_assoc($q);
             
             <button onclick="closeFailedModal()"
                 class="w-full bg-amber-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-amber-700 transition">
-                Back to Dashboard
+                Back to Payment
             </button>
         </div>
     </div>
