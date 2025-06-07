@@ -666,4 +666,44 @@ if (isset($_POST['action']) && $_POST['action'] === 'confirm_order') {
     exit;
 }
 
+// Fungsi untuk update status pengiriman
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
+    if ($_POST['action'] == 'update_status') {
+        $orderId = $_POST['idPesanan'];
+        $status = $_POST['status'];
+        
+        error_log("Update status request: idPesanan=$orderId, status=$status");
+        if (!is_numeric($orderId)) {
+            echo "error: Invalid order ID";
+            exit();
+        }
+        $allowedStatus = ['Order Placed', 'Packaging', 'On The Road', 'Delivered', 'Completed'];
+        if (!in_array($status, $allowedStatus)) {
+            echo "error: Invalid status value";
+            exit();
+        }
+        $query = "UPDATE pesananpemilik SET status_pengiriman = ? WHERE idPesanan = ?";
+        $stmt = mysqli_prepare($conn, $query);
+        
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "si", $status, $orderId);
+            
+            if (mysqli_stmt_execute($stmt)) {
+                if (mysqli_stmt_affected_rows($stmt) > 0) {
+                    echo "success";
+                } else {
+                    echo "error: No rows affected. Order ID $orderId not found or status unchanged.";
+                }
+            } else {
+                echo "error: " . mysqli_stmt_error($stmt);
+            }
+            
+            mysqli_stmt_close($stmt);
+        } else {
+            echo "error: " . mysqli_error($conn);
+        }
+    }
+    exit();
+}
+
 ?>

@@ -207,6 +207,7 @@ while ($row = mysqli_fetch_assoc($query)) {
                     <p class="text-gray-500">No approved orders found</p>
                     <?php else: ?>
                     <?php foreach ($dataPesanan as $index => $pesanan): ?>
+                        <?php if ($pesanan['status_normalized'] === 'completed') continue; ?>
                     <div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer order-item
                                 <?= $index === 0 ? 'selected' : '' ?>" data-id="<?= $pesanan['idPesanan'] ?>"
                         data-beras="<?= htmlspecialchars($pesanan['namaBeras']) ?>"

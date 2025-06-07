@@ -152,6 +152,7 @@ if (isset($_POST['checkout_action']) && $_POST['checkout_action'] === 'complete_
     $tanggalPesanan  = date('Y-m-d H:i:s');
     $status          = 'pending';
     $isDeliver       = ($checkoutData['shippingMethod'] === 'delivery') ? 1 : 0;
+    $idBeras = $checkoutData['idBeras'];
 
     $stokQuery = "SELECT idPemilik FROM stokberaspemilik WHERE idBeras = '$idBeras'";
     $stokResult = mysqli_query($conn, $stokQuery);
@@ -203,6 +204,7 @@ if (isset($_POST['checkout_action']) && $_POST['checkout_action'] === 'complete_
         ]);
         exit();
     } else {
+        error_log("Order error: " . mysqli_error($conn));
         echo json_encode([
             'success' => false,
             'message' => 'Failed to create order: '.mysqli_error($conn)

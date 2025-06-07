@@ -197,6 +197,7 @@
                         <p class="text-gray-500">No approved orders found</p>
                         <?php else: ?>
                         <?php foreach ($dataPesanan as $index => $pesanan): ?>
+                            <?php if ($pesanan['status_normalized'] === 'completed') continue; ?>
                         <div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer order-item
                             <?= $index === 0 ? 'selected' : '' ?>" data-id="<?= $pesanan['idPesanan'] ?>"
                             data-beras="<?= htmlspecialchars($pesanan['namaBeras']) ?>"
@@ -317,6 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const statusSteps = document.querySelectorAll('.status-step');
     let currentOrderId = null;
 
+     document.querySelectorAll('.complete-btn').forEach(btn => btn.classList.add('hidden'));
     // Mapping status UI ke database
     const statusMap = {
         'order placed': 'Order Placed',
