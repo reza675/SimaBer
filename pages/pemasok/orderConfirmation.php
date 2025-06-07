@@ -321,7 +321,7 @@ function updateOrderStatus(orderId, status) {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: `idPesanan=${orderId}&status=${status}`
+            body: `action=confirm_order&idPesanan=${orderId}&status=${status}`
         })
         .then(response => response.json())
         .then(data => {

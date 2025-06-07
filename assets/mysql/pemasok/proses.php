@@ -238,7 +238,7 @@ if(isset($_POST['deleteBeras'])) {
 
 
 //buat nerima atau nolak pesanan pemilikusaha
-if (isset($_POST['idPesanan']) && isset($_POST['status'])) {
+if (isset($_POST['action']) && $_POST['action'] === 'confirm_order') {
     $idPesanan = intval($_POST['idPesanan']);
     $status    = $_POST['status'];
 
@@ -253,8 +253,8 @@ if (isset($_POST['idPesanan']) && isset($_POST['status'])) {
 
     if ($status === 'approved') {
         $query = "UPDATE pesananpemasok 
-                  SET status = 'approved' 
-                  WHERE idPesanan = $idPesanan";
+              SET status = 'approved', waktu_approve = NOW() 
+              WHERE idPesanan = $idPesanan";
         if (mysqli_query($conn, $query)) {
             echo json_encode([
                 'success' => true,
@@ -287,39 +287,51 @@ if (isset($_POST['idPesanan']) && isset($_POST['status'])) {
 }
 
 // Fungsi untuk update status pengiriman
-include "../connect.php";
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
+    if ($_POST['action'] == 'update_status') {
+        $orderId = $_POST['idPesanan'];
+        $status = $_POST['status'];
 
-if (isset($_POST['action']) && $_POST['action'] === 'update_status') {
-    // Validasi input
-    if (!isset($_POST['idPesanan']) || !isset($_POST['status'])) {
-        echo json_encode(['success' => false, 'message' => 'Invalid input']);
-        exit;
+        // Debug: Log input
+        error_log("Update status request: idPesanan=$orderId, status=$status");
+
+        // Validasi input
+        if (!is_numeric($orderId)) {
+            echo "error: Invalid order ID";
+            exit();
+        }
+
+        // Daftar status yang diizinkan
+        $allowedStatus = ['Order Placed', 'Packaging', 'On The Road', 'Delivered'];
+        if (!in_array($status, $allowedStatus)) {
+            echo "error: Invalid status value";
+            exit();
+        }
+
+        // Update database
+        $query = "UPDATE pesananpemasok SET status_pengiriman = ? WHERE idPesanan = ?";
+        $stmt = mysqli_prepare($conn, $query);
+        
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "si", $status, $orderId);
+            
+            if (mysqli_stmt_execute($stmt)) {
+                // Periksa baris yang terpengaruh
+                if (mysqli_stmt_affected_rows($stmt) > 0) {
+                    echo "success";
+                } else {
+                    echo "error: No rows affected. Order ID $orderId not found or status unchanged.";
+                }
+            } else {
+                echo "error: " . mysqli_stmt_error($stmt);
+            }
+            
+            mysqli_stmt_close($stmt);
+        } else {
+            echo "error: " . mysqli_error($conn);
+        }
     }
-
-    $idPesanan = intval($_POST['idPesanan']);
-    $newStatus = strtolower(trim($_POST['status'])); // Normalisasi ke huruf kecil
-
-    $allowed = ['order placed', 'packaging', 'on the road', 'delivered'];
-    
-    if ($idPesanan <= 0 || !in_array($newStatus, $allowed)) {
-        echo json_encode(['success' => false, 'message' => 'Invalid order ID or status']);
-        exit;
-    }
-
-    // Gunakan prepared statement
-    $stmt = $conn->prepare("UPDATE pesananpemasok SET status_pengiriman = ? WHERE idPesanan = ?");
-    $stmt->bind_param("si", $newStatus, $idPesanan);
-    
-    if ($stmt->execute()) {
-        echo json_encode(['success' => true, 'message' => 'Status updated successfully']);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Database error: ' . $stmt->error]);
-    }
-    
-    $stmt->close();
-    mysqli_close($conn);
-    exit;
+    exit();
 }
-
 
 ?>
