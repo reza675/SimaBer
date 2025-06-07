@@ -140,39 +140,31 @@ if (isset($_POST['checkout_action']) && $_POST['checkout_action'] === 'continue_
 //validasi ke 3 - Complete Order
 if (isset($_POST['checkout_action']) && $_POST['checkout_action'] === 'complete_order') {
     if (!isset($_SESSION['checkout_data'])) {
-        $_SESSION['error'] = "No checkout data found. Please start over.";
-        header("Location: ../../../pages/pelanggan/orderCustomer.php");
+        echo json_encode(['success' => false, 'message' => 'No checkout data found']);
         exit();
     }
 
-    $checkoutData = $_SESSION['checkout_data'];
-    $paymentMethod = $_POST['payment_method'];
-    $recipientName = mysqli_real_escape_string($conn, $_POST['recipient_name']);
-    $phoneNumber = mysqli_real_escape_string($conn, $_POST['phone_number']);
-    $deliveryNotes = isset($_POST['delivery_notes']) ? mysqli_real_escape_string($conn, $_POST['delivery_notes']) : '';
-    $tanggalPesanan = date('Y-m-d');
-    $status = ($paymentMethod === 'qris') ? 'Menunggu Pembayaran' : 'Dikonfirmasi';
-    
-    // Set delivery flag
-    $isDeliver = ($checkoutData['shippingMethod'] === 'delivery') ? 1 : 0;
-    
-    // Prepare delivery notes with recipient info
-    $fullDeliveryNotes = "Penerima: $recipientName, Telp: $phoneNumber";
-    if (!empty($deliveryNotes)) {
-        $fullDeliveryNotes .= ", Catatan: $deliveryNotes";
-    }
-    
-    // Insert order into database
-    $insertQuery = "INSERT INTO pesananpemilik (
-        tanggalPesanan, 
-        status, 
-        idPelanggan, 
-        idBeras, 
-        jumlahPesanan, 
-        hargaBeli, 
-        isDeliver, 
+    $checkoutData    = $_SESSION['checkout_data'];
+    $paymentMethod   = $_POST['payment_method'];
+    $deliveryNotes   = isset($_POST['delivery_notes'])
+                       ? mysqli_real_escape_string($conn, $_POST['delivery_notes'])
+                       : '';
+    $tanggalPesanan  = date('Y-m-d');
+    $status          = 'Pending';
+    $isDeliver       = ($checkoutData['shippingMethod'] === 'delivery') ? 1 : 0;
+
+    // Insert order ke database
+    $insertQuery = "
+      INSERT INTO pesananpemilik (
+        tanggalPesanan,
+        status,
+        idPelanggan,
+        idBeras,
+        jumlahPesanan,
+        hargaBeli,
+        isDeliver,
         deliverNotes
-    ) VALUES (
+      ) VALUES (
         '$tanggalPesanan',
         '$status',
         '{$_SESSION['idPelanggan']}',
@@ -180,38 +172,44 @@ if (isset($_POST['checkout_action']) && $_POST['checkout_action'] === 'complete_
         '{$checkoutData['quantity']}',
         '{$checkoutData['finalTotal']}',
         '$isDeliver',
-        '$fullDeliveryNotes'
-    )";
-    
+        '$deliveryNotes'
+      )";
+
     if (mysqli_query($conn, $insertQuery)) {
         $orderID = mysqli_insert_id($conn);
-        
-        // Update stock beras (reduce quantity)
-        $updateStockQuery = "UPDATE stokberasPemilik 
-                           SET stokBeras = stokBeras - {$checkoutData['quantity']} 
-                           WHERE idBeras = '{$checkoutData['idBeras']}'";
-        mysqli_query($conn, $updateStockQuery);
-        
-        // Clear checkout data from session
+
         unset($_SESSION['checkout_data']);
-        
-        // Set success message with order details
-        $_SESSION['success'] = "Pesanan berhasil dibuat! ID Pesanan: #$orderID. Status: $status";
-        
-        // Redirect based on payment method
-        if ($paymentMethod === 'qris') {
-            // Redirect to payment page or show QRIS code
-            header("Location: ../../../pages/pelanggan/paymentQRIS.php?order_id=$orderID");
-        } else {
-            // For COD, redirect back to checkout2 with success parameter
-            header("Location: ../../../pages/pelanggan/checkout2.php?success=1&order_id=$orderID");
-        }
+
+        echo json_encode([
+            'success'        => true,
+            'payment_method' => $paymentMethod,
+            'order_id'       => $orderID,
+            'total'          => $checkoutData['finalTotal']
+        ]);
         exit();
     } else {
-        $_SESSION['error'] = "Gagal membuat pesanan. Silakan coba lagi.";
-        header("Location: ../../../pages/pelanggan/checkout2.php");
+        echo json_encode([
+            'success' => false,
+            'message' => 'Failed to create order: '.mysqli_error($conn)
+        ]);
+        exit();
+    }
+}
+// Cancel order action
+if (isset($_POST['cancel_action'])) {
+    $orderID = $_POST['order_id'];
+    $deleteQuery = "DELETE FROM pesananpemilik WHERE idPesanan = '$orderID'";
+    
+    if (mysqli_query($conn, $deleteQuery)) {
+        echo json_encode(['success' => true]);
+        exit();
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Failed to cancel order']);
         exit();
     }
 }
 
+
 ?>
+
+

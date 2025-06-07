@@ -251,36 +251,68 @@ if (isset($_POST['action']) && $_POST['action'] === 'confirm_order') {
         exit;
     }
 
-    if ($status === 'approved') {
-        $query = "UPDATE pesananpemasok 
-              SET status = 'approved', waktu_approve = NOW() 
-              WHERE idPesanan = $idPesanan";
-        if (mysqli_query($conn, $query)) {
+    // Mulai transaksi
+    mysqli_begin_transaction($conn);
+
+    try {
+        if ($status === 'approved') {
+            $query = "SELECT idBeras, jumlahPesanan 
+                      FROM pesananpemasok 
+                      WHERE idPesanan = $idPesanan";
+            $result = mysqli_query($conn, $query);
+            $pesanan = mysqli_fetch_assoc($result);
+            
+            if (!$pesanan) {
+                throw new Exception('Order not found');
+            }
+            
+            $idBeras = $pesanan['idBeras'];
+            $jumlahPesanan = $pesanan['jumlahPesanan'];
+
+            // Update status pesanan
+            $query = "UPDATE pesananpemasok 
+                      SET status = 'approved', waktu_approve = NOW() 
+                      WHERE idPesanan = $idPesanan";
+            
+            if (!mysqli_query($conn, $query)) {
+                throw new Exception('Failed to approve order: ' . mysqli_error($conn));
+            }
+
+            // Kurangi stok
+            $query = "UPDATE stokberaspemasok 
+                      SET stokBeras = stokBeras - $jumlahPesanan 
+                      WHERE idBeras = $idBeras";
+            
+            if (!mysqli_query($conn, $query)) {
+                throw new Exception('Failed to update stock: ' . mysqli_error($conn));
+            }
+            mysqli_commit($conn);
+
             echo json_encode([
                 'success' => true,
                 'message' => 'Order approved successfully! Redirecting to order status...'
             ]);
-        } else {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Failed to approve order: ' . mysqli_error($conn)
-            ]);
         }
-    }
-    elseif ($status === 'rejected') {
-        $query = "DELETE FROM pesananpemasok 
-                  WHERE idPesanan = $idPesanan";
-        if (mysqli_query($conn, $query)) {
-            echo json_encode([
-                'success' => true,
-                'message' => 'Order rejected and removed successfully!'
-            ]);
-        } else {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Failed to reject order: ' . mysqli_error($conn)
-            ]);
+        elseif ($status === 'rejected') {
+            $query = "DELETE FROM pesananpemasok 
+                      WHERE idPesanan = $idPesanan";
+            
+            if (mysqli_query($conn, $query)) {
+                mysqli_commit($conn);
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Order rejected and removed successfully!'
+                ]);
+            } else {
+                throw new Exception('Failed to reject order: ' . mysqli_error($conn));
+            }
         }
+    } catch (Exception $e) {
+        mysqli_rollback($conn);
+        echo json_encode([
+            'success' => false,
+            'message' => $e->getMessage()
+        ]);
     }
 
     exit;

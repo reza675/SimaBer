@@ -1,4 +1,3 @@
-<!-- checkout2 -->
 <?php
 session_start();
 if (!isset($_SESSION['namaPelanggan']) || !isset($_SESSION['idPelanggan'])) {
@@ -21,6 +20,7 @@ include '../../assets/mysql/connect.php';
 $q = mysqli_query($conn, "SELECT fotoProfil FROM pelanggan WHERE idPelanggan = '$idPelanggan'");
 $dataPelanggan = mysqli_fetch_assoc($q);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -31,6 +31,7 @@ $dataPelanggan = mysqli_fetch_assoc($q);
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="../../assets/cdn/flowbite.min.css" rel="stylesheet" />
     <link rel="icon" href="../../assets/gambar/icon.png">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body class="bg-[#EFE9E2] min-h-screen">
@@ -120,32 +121,30 @@ $dataPelanggan = mysqli_fetch_assoc($q);
                     </div>
                 </div>
 
-                <!-- Payment Details Form -->
                 <div id="paymentDetails">
-                    <h3 class="text-lg font-semibold mb-4">Payment Details</h3>
+                    <h3 class="text-lg font-semibold mb-4">
+                        <?= $checkoutData['shippingMethod'] === 'self_pickup' ? 'Pickup at' : 'Payment Details' ?></h3>
 
-                    <form id="checkoutForm" action="../../assets/mysql/pelanggan/proses.php" method="post">
+                    <form id="checkoutForm" method="post">
                         <input type="hidden" name="checkout_action" value="complete_order">
                         <input type="hidden" name="payment_method" id="paymentMethod" value="qris">
 
                         <div class="space-y-4">
-                            <div>
-                                <input type="text" name="recipient_name" id="recipientName"
-                                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8C5E3C] focus:border-transparent"
-                                    placeholder="Recipient Name" required>
-                            </div>
-
-                            <div>
-                                <input type="tel" name="phone_number" id="phoneNumber"
-                                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8C5E3C] focus:border-transparent"
-                                    placeholder="Phone Number" required>
-                            </div>
-
-                            <div id="deliveryNotesDiv"
-                                <?= $checkoutData['shippingMethod'] === 'self_pickup' ? 'style="display:none;"' : '' ?>>
+                            <div id="deliveryNotesDiv">
+                                <label for="deliveryNotes" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <?= $checkoutData['shippingMethod'] === 'delivery' ? 'Delivery Notes' : 'Pickup Notes' ?>
+                                    <span class="text-red-500">*</span>
+                                </label>
                                 <textarea name="delivery_notes" id="deliveryNotes"
                                     class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8C5E3C] focus:border-transparent"
-                                    placeholder="Delivery Notes (optional)" rows="3"></textarea>
+                                    placeholder="<?= $checkoutData['shippingMethod'] === 'delivery' ? 'Please provide delivery instructions, address details, or special requests...' : 'Any notes for pickup' ?>"
+                                    rows="3" required minlength="10" maxlength="500"></textarea>
+                                <div class="mt-1 text-sm text-gray-500">
+                                    Minimum 10 characters required
+                                </div>
+                                <div id="deliveryNotesError" class="mt-1 text-sm text-red-600 hidden">
+                                    Please provide delivery/pickup notes (minimum 10 characters)
+                                </div>
                             </div>
                         </div>
 
@@ -160,13 +159,20 @@ $dataPelanggan = mysqli_fetch_assoc($q);
                             </label>
                         </div>
 
-                        <!-- Confirm Order Button -->
-                        <button type="button" id="confirmOrderBtn"
-                            class="w-full bg-[#8C5E3C] text-white py-3 px-6 rounded-lg font-medium hover:bg-[#79513a] transition">
-                            <span id="confirmButtonText">Confirm QRIS Order</span>
-                        </button>
+                        <!-- Action Buttons -->
+                        <div class="flex gap-4">
+                            <button type="button" id="cancelOrderBtn"
+                                class="flex-1 bg-gray-300 text-gray-700 py-3 px-6 rounded-lg font-medium hover:bg-gray-400 transition">
+                                Cancel Order
+                            </button>
+                            <button type="button" id="confirmOrderBtn"
+                                class="flex-1 bg-[#8C5E3C] text-white py-3 px-6 rounded-lg font-medium hover:bg-[#79513a] transition">
+                                <span id="confirmButtonText">Confirm QRIS Order</span>
+                            </button>
+                        </div>
                     </form>
                 </div>
+
             </div>
 
             <!-- Right Column - Cart Summary -->
@@ -212,18 +218,13 @@ $dataPelanggan = mysqli_fetch_assoc($q);
     <!-- Success Modal -->
     <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 text-center">
-            <!-- Success Icon -->
             <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
                 <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
                 </svg>
             </div>
-
-            <!-- Success Message -->
             <h2 class="text-2xl font-bold text-gray-900 mb-2">Payment Successfully</h2>
             <p class="text-gray-600 mb-8">The store has received your payment notification</p>
-
-            <!-- Back to Dashboard Button -->
             <button onclick="redirectToDashboard()"
                 class="w-full bg-[#8C5E3C] text-white py-3 px-6 rounded-lg font-medium hover:bg-[#79513a] transition">
                 Back to Dashboard
@@ -231,7 +232,62 @@ $dataPelanggan = mysqli_fetch_assoc($q);
         </div>
     </div>
 
+    <!-- Failed Payment Modal -->
+    <div id="failedModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 text-center">
+            <div class="relative w-20 h-20 mx-auto mb-6">
+                <div class="absolute inset-0 w-20 h-20 bg-pink-200 rounded-full opacity-50"></div>
+                <div class="relative w-20 h-20 bg-red-500 rounded-full flex items-center justify-center">
+                    <div class="text-white">
+                        <div class="w-1 h-8 bg-white rounded-full mb-1"></div>
+                        <div class="w-1 h-1 bg-white rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">We couldn't proceed your payment</h2>
+            <p class="text-gray-500 mb-8">Process failed, please try again</p>
+            
+            <button onclick="closeFailedModal()"
+                class="w-full bg-amber-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-amber-700 transition">
+                Back to Dashboard
+            </button>
+        </div>
+    </div>
+
+    <!-- QRIS Modal -->
+    <div id="qrisModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <div class="flex items-center justify-center">
+                <img src="../../assets/gambar/pelanggan/qrispayment.png" alt="QR Code"
+                    class="w-full h-auto max-h-96 object-contain">
+            </div>
+            <div class="flex flex-col justify-center">
+                <p class="font-semibold">Order ID: <span id="qrisOrderId"></span></p>
+                <p class="text-3xl font-bold mt-2">Rp <span id="qrisTotal"></span></p>
+                <p class="text-gray-600 mt-4 mb-8">
+                    Please scan the QR code above to make your payment. Please screenshot payment proof for
+                    confirmation
+                </p>
+                <div class="flex gap-4">
+                    <button onclick="cancelQRISOrder()"
+                        class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-400 transition">
+                        Cancel Order
+                    </button>
+                    <button onclick="closeQRISModal()"
+                        class="flex-1 bg-[#8C5E3C] text-white py-3 rounded-lg font-medium hover:bg-[#79513a] transition">
+                        I've Paid
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <script>
+    let currentOrderId = null;
+
     function toggleDropdown() {
         const dropdown = document.getElementById("dropdownProfile");
         dropdown.classList.toggle("hidden");
@@ -251,26 +307,21 @@ $dataPelanggan = mysqli_fetch_assoc($q);
         const codBtn = document.getElementById('codBtn');
         const paymentMethod = document.getElementById('paymentMethod');
         const confirmButtonText = document.getElementById('confirmButtonText');
-        const deliveryNotesDiv = document.getElementById('deliveryNotesDiv');
         const shippingMethod = '<?= $checkoutData['shippingMethod'] ?>';
 
         function selectPaymentMethod(method) {
             if (method === 'qris') {
-                qrisBtn.classList.add('bg-[#8C5E3C]', 'text-white', 'border-[#8C5E3C]');
-                qrisBtn.classList.remove('bg-white', 'text-gray-700', 'border-gray-300');
-
-                codBtn.classList.remove('bg-[#8C5E3C]', 'text-white', 'border-[#8C5E3C]');
-                codBtn.classList.add('bg-white', 'text-gray-700', 'border-gray-300');
-
+                qrisBtn.classList.add('border-[#8C5E3C]');
+                qrisBtn.classList.remove('border-gray-300');
+                codBtn.classList.remove('border-[#8C5E3C]');
+                codBtn.classList.add('border-gray-300');
                 paymentMethod.value = 'qris';
                 confirmButtonText.textContent = 'Confirm QRIS Order';
             } else {
-                codBtn.classList.add('bg-[#8C5E3C]', 'text-white', 'border-[#8C5E3C]');
-                codBtn.classList.remove('bg-white', 'text-gray-700', 'border-gray-300');
-
-                qrisBtn.classList.remove('bg-[#8C5E3C]', 'text-white', 'border-[#8C5E3C]');
-                qrisBtn.classList.add('bg-white', 'text-gray-700', 'border-gray-300');
-
+                codBtn.classList.add('border-[#8C5E3C]');
+                codBtn.classList.remove('border-gray-300');
+                qrisBtn.classList.remove('border-[#8C5E3C]');
+                qrisBtn.classList.add('border-gray-300');
                 paymentMethod.value = 'cod';
                 confirmButtonText.textContent = 'Confirm COD Order';
             }
@@ -283,39 +334,95 @@ $dataPelanggan = mysqli_fetch_assoc($q);
         codBtn.addEventListener('click', function() {
             selectPaymentMethod('cod');
         });
-
-        // Show/hide delivery notes based on shipping method
-        if (shippingMethod === 'delivery') {
-            deliveryNotesDiv.style.display = 'block';
-        }
+        selectPaymentMethod('qris');
     });
+
+    function validateDeliveryNotes() {
+        const deliveryNotes = document.getElementById('deliveryNotes').value.trim();
+        const shippingMethod = '<?= $checkoutData['shippingMethod'] ?>';
+        const errorElement = document.getElementById('deliveryNotesError');
+
+        if (deliveryNotes.length < 10) {
+            errorElement.classList.remove('hidden');
+            return false;
+        }
+
+        errorElement.classList.add('hidden');
+        return true;
+    }
 
     // Handle form submission
     document.getElementById('confirmOrderBtn').addEventListener('click', function(e) {
         e.preventDefault();
-
-        // Validate form
-        const recipientName = document.getElementById('recipientName').value.trim();
-        const phoneNumber = document.getElementById('phoneNumber').value.trim();
-
-        if (!recipientName || !phoneNumber) {
-            alert('Please fill in all required fields (Recipient Name and Phone Number)');
+        
+        if (!validateDeliveryNotes()) {
             return;
         }
 
         const paymentMethod = document.getElementById('paymentMethod').value;
+        const shippingMethod = '<?= $checkoutData['shippingMethod'] ?>';
 
         if (paymentMethod === 'cod') {
-            // For COD, show success modal immediately
-            showSuccessModal();
+            const confirmationMessage = shippingMethod === 'delivery' ?
+                'Are you sure you want to proceed with COD (Cash on Delivery)?' :
+                'Are you sure you want to proceed with payment COD on pickup?';
 
-            // Submit form in background
-            setTimeout(function() {
-                document.getElementById('checkoutForm').submit();
-            }, 2000);
-        } else {
-            // For QRIS, submit form normally
-            document.getElementById('checkoutForm').submit();
+            if (!confirm(confirmationMessage)) {
+                return;
+            }
+        }
+
+        const formData = new FormData(document.getElementById('checkoutForm'));
+        
+        // Disable button to prevent double submission
+        const confirmBtn = document.getElementById('confirmOrderBtn');
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = '<span>Processing...</span>';
+
+        $.ajax({
+            url: '../../assets/mysql/pelanggan/proses.php',
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    currentOrderId = response.order_id; // Store order ID globally
+                    
+                    if (response.payment_method === 'qris') {
+                        document.getElementById('qrisOrderId').textContent = response.order_id;
+                        document.getElementById('qrisTotal').textContent =
+                            response.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                        showQRISModal();
+                    } else {
+                        showSuccessModal();
+                    }
+                } else {
+                    showFailedModal();
+                }
+                
+                // Re-enable button
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = '<span id="confirmButtonText">' + 
+                    (paymentMethod === 'qris' ? 'Confirm QRIS Order' : 'Confirm COD Order') + '</span>';
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', error);
+                showFailedModal();
+                
+                // Re-enable button
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = '<span id="confirmButtonText">' + 
+                    (paymentMethod === 'qris' ? 'Confirm QRIS Order' : 'Confirm COD Order') + '</span>';
+            }
+        });
+    });
+
+    // Cancel order button
+    document.getElementById('cancelOrderBtn').addEventListener('click', function() {
+        if (confirm('Are you sure you want to cancel this order?')) {
+            window.location.href = 'orderCustomer.php';
         }
     });
 
@@ -325,9 +432,100 @@ $dataPelanggan = mysqli_fetch_assoc($q);
         modal.classList.add('flex');
     }
 
+    function showFailedModal() {
+        const modal = document.getElementById('failedModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeFailedModal() {
+        const modal = document.getElementById('failedModal');
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }
+
+    function showQRISModal() {
+        const modal = document.getElementById('qrisModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeQRISModal() {
+        const modal = document.getElementById('qrisModal');
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+        showSuccessModal(); 
+    }
+
+    function cancelQRISOrder() {
+        if (!confirm('Are you sure you want to cancel this QRIS order?')) {
+            return;
+        }
+
+        if (currentOrderId) {
+            $.ajax({
+                url: '../../assets/mysql/pelanggan/proses.php',
+                method: 'POST',
+                data: {
+                    cancel_action: 'cancel_order',
+                    order_id: currentOrderId
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        const modal = document.getElementById('qrisModal');
+                        modal.classList.remove('flex');
+                        modal.classList.add('hidden');
+                        
+                        alert('Order cancelled successfully');
+                        window.location.href = 'orderCustomer.php';
+                    } else {
+                        const modal = document.getElementById('qrisModal');
+                        modal.classList.remove('flex');
+                        modal.classList.add('hidden');
+                        showFailedModal();
+                    }
+                },
+                error: function() {
+                    // Close QRIS modal first
+                    const modal = document.getElementById('qrisModal');
+                    modal.classList.remove('flex');
+                    modal.classList.add('hidden');
+                    
+                    // Show failed modal instead of alert
+                    showFailedModal();
+                }
+            });
+        } else {
+            // If no order ID, just redirect
+            const modal = document.getElementById('qrisModal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+            window.location.href = 'orderCustomer.php';
+        }
+    }
+
     function redirectToDashboard() {
         window.location.href = 'dashboardCustomer.php';
     }
+
+    document.getElementById('qrisModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeQRISModal();
+        }
+    });
+
+    document.getElementById('successModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            redirectToDashboard();
+        }
+    });
+
+    document.getElementById('failedModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeFailedModal();
+        }
+    });
     </script>
 </body>
 
