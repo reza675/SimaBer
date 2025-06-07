@@ -149,8 +149,8 @@ if (isset($_POST['checkout_action']) && $_POST['checkout_action'] === 'complete_
     $deliveryNotes   = isset($_POST['delivery_notes'])
                        ? mysqli_real_escape_string($conn, $_POST['delivery_notes'])
                        : '';
-    $tanggalPesanan  = date('Y-m-d');
-    $status          = 'Pending';
+    $tanggalPesanan  = date_time_set('Y-m-d H:i:s');
+    $status          = 'pending';
     $isDeliver       = ($checkoutData['shippingMethod'] === 'delivery') ? 1 : 0;
 
     // Insert order ke database

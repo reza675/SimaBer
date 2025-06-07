@@ -83,19 +83,19 @@
                     </button>
                     <ul id="relationship-dropdown" class="dropdown-list hidden py-2 space-y-2">
                         <li>
-                            <a href="supplier.php" class="flex items-center p-2 pl-11 rounded-lg text-gray-900 dark:hover:bg-[#FFEEDB] <?php echo $currentPage === 'supplier.php' ? 'bg-[#FFEEDB] font-semibold text-black border-l-4 border-black rounded-l-none' : 'text-gray-900 dark:hover:bg-[#FFEEDB]'; ?>">
+                            <a href="supplier.php" class="flex items-center p-2 pl-11 rounded-lg text-gray-900 dark:hover:bg-[#FFEEDB] <?php echo $currentPage === 'supplier.php' ? 'bg-[#FFEEDB] font-semibold' : ''; ?>">
                                 Supplier
                             </a>
                         </li>
                         <li>
-                            <a href="customer.php" class="flex items-center p-2 pl-11 rounded-lg text-gray-900 dark:hover:bg-[#FFEEDB] <?php echo $currentPage === 'customer.php' ? 'bg-[#FFEEDB] font-semibold text-black border-l-4 border-black rounded-l-none' : 'text-gray-900 dark:hover:bg-[#FFEEDB]'; ?>">
+                            <a href="customer.php" class="flex items-center p-2 pl-11 rounded-lg text-gray-900 dark:hover:bg-[#FFEEDB] <?php echo $currentPage === 'customer.php' ? 'bg-[#FFEEDB] font-semibold' : ''; ?>">
                                 Customer
                             </a>
                         </li>
                     </ul>
                 </li>
                 <li>
-                    <button data-dropdown-target="transaction-dropdown" class="flex items-center justify-between w-full p-2 text-gray-900 rounded-lg dark:hover:bg-[#FFEEDB] group">
+                    <button data-dropdown-target="transaction-dropdown" class="flex items-center justify-between w-full p-2 text-gray-900 rounded-lg dark:hover:bg-[#FFEEDB] group <?php echo $currentPage === 'orderConfirmation.php' || $currentPage === 'orderStatusCustomer.php' ? 'bg-[#FFEEDB] font-semibold text-black border-l-4 border-black rounded-l-none' : 'text-gray-900 dark:hover:bg-[#FFEEDB]'; ?>">
                         <div class="flex items-center">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <g clip-path="url(#clip0_2668_2805)">
@@ -115,17 +115,17 @@
                     </button>
                     <ul id="transaction-dropdown" class="dropdown-list hidden py-2 space-y-2">
                         <li>
-                            <a href="orderConfirmation.php" class="flex items-center p-2 pl-11 rounded-lg text-gray-900 dark:hover:bg-[#FFEEDB] <?php echo $currentPage === 'orderConfirmation.php' ? 'bg-[#FFEEDB] font-semibold text-black border-l-4 border-black rounded-l-none' : 'text-gray-900 dark:hover:bg-[#FFEEDB]'; ?>">
+                            <a href="orderConfirmation.php" class="flex items-center p-2 pl-11 rounded-lg text-gray-900 dark:hover:bg-[#FFEEDB] <?php echo $currentPage === 'orderConfirmation.php' ? 'bg-[#FFEEDB] font-semibold' : ''; ?>">
                                 Order Confirmation
                             </a>
                         </li>
                         <li>
-                            <a href="orderStatusCustomer.php" class="flex items-center p-2 pl-11 rounded-lg text-gray-900 dark:hover:bg-[#FFEEDB] <?php echo $currentPage === 'order.php' ? 'bg-[#FFEEDB] font-semibold text-black border-l-4 border-black rounded-l-none' : 'text-gray-900 dark:hover:bg-[#FFEEDB]'; ?>">
+                            <a href="orderStatusCustomer.php" class="flex items-center p-2 pl-11 rounded-lg text-gray-900 dark:hover:bg-[#FFEEDB] <?php echo $currentPage === 'orderStatusCustomer.php' ? 'bg-[#FFEEDB] font-semibold' : ''; ?>">
                                 Order Status
                             </a>
                         </li>
                         <li>
-                            <a href="historyOrder.php" class="flex items-center p-2 pl-11 rounded-lg text-gray-900 dark:hover:bg-[#FFEEDB] <?php echo $currentPage === 'historyOrder.php' ? 'bg-[#FFEEDB] font-semibold text-black border-l-4 border-black rounded-l-none' : 'text-gray-900 dark:hover:bg-[#FFEEDB]'; ?>">
+                            <a href="historyOrder.php" class="flex items-center p-2 pl-11 rounded-lg text-gray-900 dark:hover:bg-[#FFEEDB] <?php echo $currentPage === 'historyOrder.php' ? 'bg-[#FFEEDB] font-semibold' : ''; ?>">
                                 History Order
                             </a>
                         </li>
