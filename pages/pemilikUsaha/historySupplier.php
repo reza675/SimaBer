@@ -14,7 +14,7 @@ $itemsPerPage = isset($_GET['show']) ? (int)$_GET['show'] : 10;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $itemsPerPage;
 
-$whereClauses = ["pp.status_pengiriman = 'Delivered'"];
+$whereClauses = ["pp.status_pengiriman = 'Completed'"];
 
 // filter pencarian (misal cari berdasarkan nama pemasok atau nama beras)
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -219,7 +219,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                                 Rp <?= number_format($row['hargaBeli'] * $row['jumlahPesanan'], 0, ',', '.') ?>
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap">
-                            <?= $row['status_pengiriman'] === 'Delivered'
+                            <?= $row['status_pengiriman'] === 'Completed'
                                 ? 'Successful'
                                 : htmlspecialchars($row['status_pengiriman']); ?>
                             </td>

@@ -150,8 +150,8 @@
                         <path
                             d="M18.6796 21.794C19.0538 18.4909 21.7709 16 25 16C28.2291 16 30.9462 18.4909 31.3204 21.794L31.6652 24.8385C31.7509 25.595 32.0575 26.3069 32.5445 26.88C33.5779 28.0964 32.7392 30 31.1699 30H18.8301C17.2608 30 16.4221 28.0964 17.4555 26.88C17.9425 26.3069 18.2491 25.595 18.3348 24.8385L18.6796 21.794Z"
                             stroke="#16151C" stroke-width="1.5" stroke-linejoin="round" />
-                        <path d="M28 32C27.5633 33.1652 26.385 34 25 34C23.615 34 22.4367 33.1652 22 32" stroke="#16151C"
-                            stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M28 32C27.5633 33.1652 26.385 34 25 34C23.615 34 22.4367 33.1652 22 32"
+                            stroke="#16151C" stroke-width="1.5" stroke-linecap="round" />
                     </svg>
 
                     <div class="relative inline-block text-left">
@@ -164,7 +164,8 @@
                                 <span class="block font-semibold text-sm text-[#A2A1A8] leading-4">Supplier</span>
                             </div>
                             <svg class="w-5 h-5 text-black ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
 
@@ -225,10 +226,7 @@
                 <!-- Detail Pesanan -->
                 <div class="lg:col-span-2 bg-white rounded-lg shadow p-6">
                     <h3 class="text-xl font-bold text-[#16151C] mb-6">Order Tracking</h3>
-
-                    <!-- Status Tracking -->
                     <div class="status-stepper">
-                        <!-- STEP 1: Order Placed -->
                         <div class="status-step" data-step="order placed">
                             <div class="status-dot">1</div>
                             <div class="status-label">Order Placed</div>
@@ -242,8 +240,6 @@
                                     →</button>
                             </div>
                         </div>
-
-                        <!-- STEP 2: Packaging -->
                         <div class="status-step" data-step="packaging">
                             <div class="status-dot">2</div>
                             <div class="status-label">Packaging</div>
@@ -256,8 +252,6 @@
                                     →</button>
                             </div>
                         </div>
-
-                        <!-- STEP 3: On The Road -->
                         <div class="status-step" data-step="on the road">
                             <div class="status-dot">3</div>
                             <div class="status-label">On The Road</div>
@@ -270,15 +264,15 @@
                                     →</button>
                             </div>
                         </div>
-
-                        <!-- STEP 4: Delivered -->
                         <div class="status-step" data-step="delivered">
                             <div class="status-dot">4</div>
                             <div class="status-label">Delivered</div>
                             <div class="status-time">Pending</div>
                             <div class="status-action">
-                                <button class="prev-btn bg-gray-100 text-gray-600 hover:bg-gray-200 py-2 px-2 rounded">←
-                                    Prev</button>
+                                <button
+                                    class="complete-btn bg-green-600 text-white hover:bg-green-700 py-2 px-4 rounded">
+                                    ✓ Complete
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -318,281 +312,346 @@
 
     </body>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const orderItems = document.querySelectorAll('.order-item');
-        const statusSteps = document.querySelectorAll('.status-step');
-        let currentOrderId = null;
+document.addEventListener('DOMContentLoaded', function() {
+    const orderItems = document.querySelectorAll('.order-item');
+    const statusSteps = document.querySelectorAll('.status-step');
+    let currentOrderId = null;
 
-        // Mapping status UI ke database
-        const statusMap = {
-            'order placed': 'Order Placed',
-            'packaging': 'Packaging',
-            'on the road': 'On The Road',
-            'delivered': 'Delivered'
-        };
-
-        // Fungsi untuk mengupdate tampilan detail pesanan
-        function updateOrderDetail(data) {
-            document.getElementById('detail-beras').textContent = data.beras;
-            document.getElementById('detail-berat').textContent = data.berat;
-            document.getElementById('detail-jumlah').textContent = data.jumlah;
-            document.getElementById('detail-customer').textContent = data.customer;
-            document.getElementById('detail-alamat').textContent = data.alamat;
-
-            
-            const orderPlacedTime = document.querySelector('.status-step[data-step="order placed"] .status-time');
-    if (orderPlacedTime) {
-        orderPlacedTime.textContent = data.tanggal || '12:00 AM';
+    // Mapping status UI ke database
+    const statusMap = {
+        'order placed': 'Order Placed',
+        'packaging': 'Packaging',
+        'on the road': 'On The Road',
+        'delivered': 'Delivered',
+        'completed': 'Completed'
+    };
+    function initStatusColors() {
+        orderItems.forEach(item => {
+            const status = item.dataset.status || 'order placed';
+            const statusSpan = item.querySelector('span');
+            if (statusSpan) {
+                statusSpan.className = getStatusClass(status);
+            }
+        });
     }
 
-            // Reset semua status
-            statusSteps.forEach(step => {
-                step.classList.remove('active');
-                step.querySelector('.status-dot').style.backgroundColor = '#EFE9E2';
-                step.querySelector('.status-dot').style.borderColor = '#E5E7EB';
-                step.querySelector('.status-label').style.color = '#6B7280';
-                step.querySelector('.status-label').style.fontWeight = 'normal';
-            });
+    // Fungsi untuk mengupdate tampilan detail pesanan
+    function updateOrderDetail(data) {
+        // Hanya update jika ini pesanan yang aktif
+        if (currentOrderId !== data.id) {
+            return;
+        }
 
-            // Set status aktif berdasarkan data
-            const currentStatus = data.status || 'order placed';
-            const activeStep = document.querySelector(`.status-step[data-step="${currentStatus}"]`);
-            if (activeStep) {
-                activeStep.classList.add('active');
-                activeStep.querySelector('.status-dot').style.backgroundColor = '#A2845E';
-                activeStep.querySelector('.status-dot').style.borderColor = '#A2845E';
-                activeStep.querySelector('.status-dot').style.color = 'white';
-                activeStep.querySelector('.status-label').style.color = '#16151C';
-                activeStep.querySelector('.status-label').style.fontWeight = '600';
-            }
+        document.getElementById('detail-beras').textContent = data.beras;
+        document.getElementById('detail-berat').textContent = data.berat;
+        document.getElementById('detail-jumlah').textContent = data.jumlah;
+        document.getElementById('detail-customer').textContent = data.customer;
+        document.getElementById('detail-alamat').textContent = data.alamat;
 
-            // Sembunyikan semua tombol prev/next
-            document.querySelectorAll('.prev-btn, .next-btn').forEach(btn => {
+        const orderPlacedTime = document.querySelector('.status-step[data-step="order placed"] .status-time');
+        if (orderPlacedTime) {
+            orderPlacedTime.textContent = data.tanggal || '12:00 AM';
+        }
+
+        // Reset semua status
+        statusSteps.forEach(step => {
+            step.classList.remove('active');
+            step.querySelector('.status-dot').style.backgroundColor = '#EFE9E2';
+            step.querySelector('.status-dot').style.borderColor = '#E5E7EB';
+            step.querySelector('.status-label').style.color = '#6B7280';
+            step.querySelector('.status-label').style.fontWeight = 'normal';
+        });
+
+        // Set status aktif berdasarkan data
+        const currentStatus = data.status || 'order placed';
+        const activeStep = document.querySelector(`.status-step[data-step="${currentStatus}"]`);
+        if (activeStep) {
+            activeStep.classList.add('active');
+            activeStep.querySelector('.status-dot').style.backgroundColor = '#A2845E';
+            activeStep.querySelector('.status-dot').style.borderColor = '#A2845E';
+            activeStep.querySelector('.status-dot').style.color = 'white';
+            activeStep.querySelector('.status-label').style.color = '#16151C';
+            activeStep.querySelector('.status-label').style.fontWeight = '600';
+        }
+
+        // Sembunyikan semua tombol prev/next
+        document.querySelectorAll('.prev-btn, .next-btn').forEach(btn => {
+            btn.classList.add('hidden');
+        });
+
+        // Tampilkan tombol yang sesuai
+        if (currentStatus === 'order placed') {
+            document.querySelector('.status-step[data-step="order placed"] .next-btn')?.classList.remove(
+                'hidden');
+        } else if (currentStatus === 'packaging') {
+            document.querySelector('.status-step[data-step="packaging"] .prev-btn')?.classList.remove('hidden');
+            document.querySelector('.status-step[data-step="packaging"] .next-btn')?.classList.remove('hidden');
+        } else if (currentStatus === 'on the road') {
+            document.querySelector('.status-step[data-step="on the road"] .prev-btn')?.classList.remove(
+                'hidden');
+            document.querySelector('.status-step[data-step="on the road"] .next-btn')?.classList.remove(
+                'hidden');
+        } else if (currentStatus === 'delivered') {
+            document.querySelector('.status-step[data-step="delivered"] .prev-btn')?.classList.remove('hidden');
+            document.querySelector('.status-step[data-step="delivered"] .complete-btn')?.classList.remove(
+                'hidden');
+        } else if (currentStatus === 'completed') {
+            // Jika completed, sembunyikan semua tombol aksi
+            document.querySelectorAll('.prev-btn, .next-btn, .complete-btn').forEach(btn => {
                 btn.classList.add('hidden');
             });
-
-            // Tampilkan tombol yang sesuai
-            if (currentStatus === 'order placed') {
-                document.querySelector('.status-step[data-step="order placed"] .next-btn')?.classList.remove(
-                    'hidden');
-            } else if (currentStatus === 'packaging') {
-                document.querySelector('.status-step[data-step="packaging"] .prev-btn')?.classList.remove('hidden');
-                document.querySelector('.status-step[data-step="packaging"] .next-btn')?.classList.remove('hidden');
-            } else if (currentStatus === 'on the road') {
-                document.querySelector('.status-step[data-step="on the road"] .prev-btn')?.classList.remove(
-                    'hidden');
-                document.querySelector('.status-step[data-step="on the road"] .next-btn')?.classList.remove(
-                    'hidden');
-            } else if (currentStatus === 'delivered') {
-                document.querySelector('.status-step[data-step="delivered"] .prev-btn')?.classList.remove('hidden');
-            }
         }
+    }
 
-        // Event listener untuk klik pesanan
-        orderItems.forEach(item => {
-            item.addEventListener('click', function() {
-                // Hapus seleksi sebelumnya
-                orderItems.forEach(i => i.classList.remove('selected'));
+    // Event listener untuk klik pesanan
+    orderItems.forEach(item => {
+        item.addEventListener('click', function() {
+            // Hapus seleksi sebelumnya
+            orderItems.forEach(i => i.classList.remove('selected'));
 
-                // Tambahkan seleksi
-                this.classList.add('selected');
+            // Tambahkan seleksi
+            this.classList.add('selected');
 
-                // Simpan ID pesanan yang dipilih
-                currentOrderId = this.dataset.id;
+            // Simpan ID pesanan yang dipilih
+            currentOrderId = this.dataset.id;
 
-                // Update detail pesanan
-                updateOrderDetail({
-                    id: this.dataset.id,
-                    beras: this.dataset.beras,
-                    berat: this.dataset.berat,
-                    jumlah: this.dataset.jumlah,
-                    customer: this.dataset.customer,
-                    alamat: this.dataset.alamat,
-                    tanggal: this.dataset.tanggal,
-                    status: this.dataset.status
-                });
+            // Update detail pesanan
+            updateOrderDetail({
+                id: this.dataset.id,
+                beras: this.dataset.beras,
+                berat: this.dataset.berat,
+                jumlah: this.dataset.jumlah,
+                customer: this.dataset.customer,
+                alamat: this.dataset.alamat,
+                tanggal: this.dataset.tanggal,
+                status: this.dataset.status
             });
         });
-
-        // Event listener untuk tombol next
-        document.querySelectorAll('.next-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if (!currentOrderId) {
-                    alert('Please select an order first');
-                    return;
-                }
-
-                const currentStep = this.closest('.status-step');
-                const nextStep = currentStep.nextElementSibling;
-                if (!nextStep) return;
-
-                const newStatus = nextStep.dataset.step;
-                const newStatusMapped = statusMap[newStatus] || newStatus; // Map ke format database
-
-                // Tampilkan loading indicator
-                const originalText = this.textContent;
-                this.disabled = true;
-                this.textContent = 'Loading...';
-
-                // Kirim permintaan update status
-                const formData = new FormData();
-                formData.append('action', 'update_status');
-                formData.append('idPesanan', currentOrderId);
-                formData.append('status', newStatusMapped);
-
-                fetch('../../assets/mysql/pemasok/proses.php', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => {
-                        // Kembalikan tombol ke keadaan semula
-                        this.disabled = false;
-                        this.textContent = originalText;
-
-                        return response.text();
-                    })
-                    .then(text => {
-                        console.log('Raw response:', text);
-
-                        if (text.toLowerCase().includes('success')) {
-                            // Update UI
-                            const currentItem = document.querySelector(
-                                `.order-item[data-id="${currentOrderId}"]`
-                            );
-
-                            if (currentItem) {
-                                currentItem.dataset.status = newStatus;
-                                const statusSpan = currentItem.querySelector('span');
-                                if (statusSpan) {
-                                    statusSpan.textContent = statusMap[newStatus] || newStatus;
-                                }
-
-                                // Update waktu jika perlu
-                                const statusTimeElement = nextStep.querySelector(
-                                    '.status-time');
-                                if (statusTimeElement) {
-                                    if (newStatus === 'packaging') {
-                                        statusTimeElement.textContent = 'On Process';
-                                    } else if (newStatus === 'on the road') {
-                                        statusTimeElement.textContent = 'Retailing';
-                                    } else if (newStatus === 'delivered') {
-                                        statusTimeElement.textContent = 'Delivered at ' +
-                                            new Date().toLocaleTimeString([], {
-                                                hour: '2-digit',
-                                                minute: '2-digit'
-                                            });
-                                    }
-                                }
-
-                                updateOrderDetail({
-                                    ...currentItem.dataset,
-                                    status: newStatus
-                                });
-
-                                alert('Status updated successfully!');
-                            } else {
-                                alert('Order item not found in DOM');
-                            }
-                        } else {
-                            alert('Failed to update status: ' + text);
-                        }
-                    })
-                    .catch(error => {
-                        this.disabled = false;
-                        this.textContent = originalText;
-                        console.error('Fetch error:', error);
-                        alert('Network error occurred while updating status');
-                    });
-            });
-        });
-
-        // Event listener untuk tombol prev
-        document.querySelectorAll('.prev-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if (!currentOrderId) {
-                    alert('Please select an order first');
-                    return;
-                }
-
-                const currentStep = this.closest('.status-step');
-                const prevStep = currentStep.previousElementSibling;
-                if (!prevStep) return;
-
-                const newStatus = prevStep.dataset.step;
-                const newStatusMapped = statusMap[newStatus] || newStatus; // Map ke format database
-
-                // Tampilkan loading indicator
-                const originalText = this.textContent;
-                this.disabled = true;
-                this.textContent = 'Loading...';
-
-                // Kirim permintaan update status
-                const formData = new FormData();
-                formData.append('action', 'update_status');
-                formData.append('idPesanan', currentOrderId);
-                formData.append('status', newStatusMapped);
-
-                fetch('../../assets/mysql/pemasok/proses.php', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => {
-                        this.disabled = false;
-                        this.textContent = originalText;
-                        return response.text();
-                    })
-                    .then(text => {
-                        if (text.toLowerCase().includes('success')) {
-                            // Update UI
-                            const currentItem = document.querySelector(
-                                `.order-item[data-id="${currentOrderId}"]`
-                            );
-
-                            if (currentItem) {
-                                currentItem.dataset.status = newStatus;
-                                const statusSpan = currentItem.querySelector('span');
-                                if (statusSpan) {
-                                    statusSpan.textContent = statusMap[newStatus] || newStatus;
-                                }
-
-                                updateOrderDetail({
-                                    ...currentItem.dataset,
-                                    status: newStatus
-                                });
-
-                                alert('Status updated successfully!');
-                            }
-                        } else {
-                            // Tampilkan error lebih informatif
-                            alert(`Failed to update status: ${text}`);
-                            console.error('Update failed:', text);
-
-                            // Tampilkan data yang dikirim
-                            console.log('Sent data:', {
-                                idPesanan: currentOrderId,
-                                status: newStatusMapped
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        this.disabled = false;
-                        this.textContent = originalText;
-                        console.error('Error:', error);
-                        alert('An error occurred while updating status');
-                    });
-            });
-        });
-
-        // Pilih pesanan pertama secara otomatis jika ada
-        if (orderItems.length > 0) {
-            orderItems[0].click();
-        }
     });
 
-    function toggleDropdown() {
-        const dropdown = document.getElementById('dropdownProfile');
-        dropdown.classList.toggle('hidden');
+    // Event listener untuk tombol next
+    document.querySelectorAll('.next-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (!currentOrderId) {
+                alert('Please select an order first');
+                return;
+            }
+
+            const currentStep = this.closest('.status-step');
+            const nextStep = currentStep.nextElementSibling;
+            if (!nextStep) return;
+
+            const newStatus = nextStep.dataset.step;
+            const newStatusMapped = statusMap[newStatus] || newStatus; // Map ke format database
+
+            // Tampilkan loading indicator
+            const originalText = this.textContent;
+            this.disabled = true;
+            this.textContent = 'Loading...';
+
+            // Kirim permintaan update status
+            const formData = new FormData();
+            formData.append('action', 'update_status');
+            formData.append('idPesanan', currentOrderId);
+            formData.append('status', newStatusMapped);
+
+            fetch('../../assets/mysql/pemasok/proses.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(text => {
+                    this.disabled = false;
+                    this.textContent = originalText;
+
+                    if (text.toLowerCase().includes('success')) {
+                        const currentItem = document.querySelector(
+                            `.order-item[data-id="${currentOrderId}"]`);
+
+                        if (currentItem) {
+                            currentItem.dataset.status = newStatus;
+                            const statusSpan = currentItem.querySelector('span');
+                            if (statusSpan) {
+                                statusSpan.textContent = newStatusMapped;
+                                statusSpan.className = getStatusClass(newStatus);
+                            }
+
+                            // Update detail view (hanya untuk pesanan aktif)
+                            updateOrderDetail({
+                                ...currentItem.dataset,
+                                status: newStatus
+                            });
+                        }
+                    } else {
+                        alert('Failed to update status: ' + text);
+                    }
+                })
+                .catch(error => {
+                    this.disabled = false;
+                    this.textContent = originalText;
+                    console.error('Error:', error);
+                    alert('An error occurred while updating status');
+                });
+        });
+    });
+
+    // Event listener untuk tombol prev
+    document.querySelectorAll('.prev-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (!currentOrderId) {
+                alert('Please select an order first');
+                return;
+            }
+
+            const currentStep = this.closest('.status-step');
+            const prevStep = currentStep.previousElementSibling;
+            if (!prevStep) return;
+
+            const newStatus = prevStep.dataset.step;
+            const newStatusMapped = statusMap[newStatus] || newStatus; 
+
+            // Tampilkan loading indicator
+            const originalText = this.textContent;
+            this.disabled = true;
+            this.textContent = 'Loading...';
+
+            // Kirim permintaan update status
+            const formData = new FormData();
+            formData.append('action', 'update_status');
+            formData.append('idPesanan', currentOrderId);
+            formData.append('status', newStatusMapped);
+
+            fetch('../../assets/mysql/pemasok/proses.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(text => {
+                    this.disabled = false;
+                    this.textContent = originalText;
+
+                    if (text.toLowerCase().includes('success')) {
+                        // Update UI
+                        const currentItem = document.querySelector(
+                            `.order-item[data-id="${currentOrderId}"]`);
+
+                        if (currentItem) {
+                            currentItem.dataset.status = newStatus;
+                            const statusSpan = currentItem.querySelector('span');
+                            if (statusSpan) {
+                                statusSpan.textContent = newStatusMapped;
+                                statusSpan.className = getStatusClass(newStatus);
+                            }
+
+                            updateOrderDetail({
+                                ...currentItem.dataset,
+                                status: newStatus
+                            });
+                        }
+                    } else {
+                        alert('Failed to update status: ' + text);
+                    }
+                })
+                .catch(error => {
+                    this.disabled = false;
+                    this.textContent = originalText;
+                    console.error('Error:', error);
+                    alert('An error occurred while updating status');
+                });
+        });
+    });
+
+    // Event listener untuk tombol Complete
+    document.querySelector('.complete-btn').addEventListener('click', function() {
+        if (!currentOrderId) {
+            alert('Please select an order first');
+            return;
+        }
+        const originalText = this.textContent;
+        this.disabled = true;
+        this.textContent = 'Loading...';
+
+        const formData = new FormData();
+        formData.append('action', 'update_status');
+        formData.append('idPesanan', currentOrderId);
+        formData.append('status', 'Completed');
+
+        fetch('../../assets/mysql/pemasok/proses.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(text => {
+                this.disabled = false;
+                this.textContent = originalText;
+
+                if (text.includes('success')) {
+                    const currentItem = document.querySelector(
+                        `.order-item[data-id="${currentOrderId}"]`);
+                    if (currentItem) {
+                        currentItem.dataset.status = 'completed';
+                        const statusSpan = currentItem.querySelector('span');
+                        if (statusSpan) {
+                            statusSpan.textContent = 'Completed';
+                            statusSpan.className = getStatusClass('completed');
+                        }
+                        updateOrderDetail({
+                            ...currentItem.dataset,
+                            status: 'completed'
+                        });
+                    }
+                } else {
+                    alert('Error: ' + text);
+                }
+            })
+            .catch(error => {
+                this.disabled = false;
+                this.textContent = originalText;
+                console.error('Error:', error);
+                alert('An error occurred');
+            });
+    });
+
+    // Helper untuk menentukan kelas status
+    function getStatusClass(status) {
+        const base = "p-2 mt-2 text-xs font-semibold rounded-full capitalize ";
+        
+        // Normalisasi status ke lowercase untuk konsistensi
+        const normalizedStatus = status.toLowerCase();
+        
+        switch (normalizedStatus) {
+            case 'order placed':
+                return base + "bg-yellow-100 text-yellow-800 border border-yellow-300";
+            case 'packaging':
+                return base + "bg-yellow-100 text-yellow-800 border border-yellow-300";
+            case 'on the road':
+                return base + "bg-blue-100 text-blue-800 border border-blue-300";
+            case 'delivered':
+                return base + "bg-blue-100 text-blue-800 border border-blue-300";
+            case 'completed':
+                return base + "bg-green-100 text-green-800 border border-green-300";
+            default:
+                return base + "bg-gray-100 text-gray-800 border border-gray-300";
+        }
     }
+
+    // Pilih pesanan pertama secara otomatis jika ada
+    if (orderItems.length > 0) {
+        orderItems[0].click();
+    }
+    initStatusColors();
+});
+
+function toggleDropdown() {
+    const dropdown = document.getElementById('dropdownProfile');
+    dropdown.classList.toggle('hidden');
+}
+
+
+function toggleDropdown() {
+    const dropdown = document.getElementById('dropdownProfile');
+    dropdown.classList.toggle('hidden');
+}
     </script>
 
     </html>

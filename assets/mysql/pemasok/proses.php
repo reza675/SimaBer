@@ -302,7 +302,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
         }
 
         // Daftar status yang diizinkan
-        $allowedStatus = ['Order Placed', 'Packaging', 'On The Road', 'Delivered'];
+        $allowedStatus = ['Order Placed', 'Packaging', 'On The Road', 'Delivered','Completed'];
         if (!in_array($status, $allowedStatus)) {
             echo "error: Invalid status value";
             exit();
