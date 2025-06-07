@@ -19,7 +19,7 @@ $query = mysqli_query($conn, "
         b.gambarBeras,
         b.beratBeras,
         p.namaPemasok AS supplierName,
-        p.nomorHPPemasok AS supplierContact,  -- Tambahkan nomor kontak supplier
+        p.nomorHPPemasok AS supplierContact,  
         po.namaPemilik AS customerName,
         po.alamatPemilik AS alamatCustomer,
         COALESCE(LOWER(pp.status_pengiriman), 'order placed') AS status_normalized,

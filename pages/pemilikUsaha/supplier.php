@@ -164,7 +164,6 @@ unset($_SESSION['success'], $_SESSION['error']);
                         <span class="font-semibold text-sm text-white">Add Supplier</span>
                     </button>
                 </div>
-
             </div>
 
             <!-- Tabel Utama -->
@@ -182,8 +181,8 @@ unset($_SESSION['success'], $_SESSION['error']);
                     </thead>
                     <tbody class="divide-y divide-gray-200">
                         <?php
-        if (empty($dataPemasok)):
-      ?>
+                            if (empty($dataPemasok)):
+                        ?>
                         <tr>
                             <td colspan="9" class="px-4 py-3 text-center text-gray-500">No data found</td>
                         </tr>
