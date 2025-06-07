@@ -42,7 +42,7 @@ $dataPelanggan = mysqli_fetch_assoc($q);
     input[type=number] {
         -moz-appearance: textfield;
     }
-</style>
+    </style>
 </head>
 
 <body class="bg-[#EFE9E2] min-h-screen">
@@ -82,8 +82,8 @@ $dataPelanggan = mysqli_fetch_assoc($q);
                 <div class="relative inline-block text-left">
                     <button onclick="toggleDropdown()"
                         class="flex border-2 border-solid items-center bg-none rounded-xl px-4 py-2 shadow hover:ring-2 hover:ring-gray-500 transition space-x-4">
-                        <img src="../../assets/gambar/pelanggan/photoProfile/<?= $dataPelanggan['fotoProfil'] ?? 'profil.jpeg' ?>" alt="User"
-                            class="w-14 h-14 rounded-xl object-cover mix-blend-multiply" />
+                        <img src="../../assets/gambar/pelanggan/photoProfile/<?= $dataPelanggan['fotoProfil'] ?? 'profil.jpeg' ?>"
+                            alt="User" class="w-14 h-14 rounded-xl object-cover mix-blend-multiply" />
                         <div class="text-left hidden sm:block">
                             <span class="block text-lg font-bold text-black leading-5"><?= $nama; ?></span>
                             <span class="block font-semibold text-sm text-[#A2A1A8] leading-4">Pelanggan</span>
@@ -144,9 +144,11 @@ $dataPelanggan = mysqli_fetch_assoc($q);
 
                 <div class="mt-8 flex items-center gap-6">
                     <form action="../../assets/mysql/pelanggan/proses.php" method="post" class="w-full">
+                        <input type="hidden" name="idPelanggan" value="<?= $idPelanggan ?>">
                         <input type="hidden" name="idBeras" value="<?= $idBeras ?>">
                         <input type="hidden" name="quantity" id="formQuantity" value="1">
                         <input type="hidden" name="harga" value="<?= $product['hargaJualBeras'] ?>">
+                        <input type="hidden" name="from" value="<?= $from ?>">
                         <button type="submit" name="beliBeras"
                             class="w-full px-6 py-3 mt-7 bg-[#8C5E3C] text-white font-medium rounded-lg shadow hover:bg-[#79513a] transition">
                             Add to Cart Rp <span
@@ -157,10 +159,12 @@ $dataPelanggan = mysqli_fetch_assoc($q);
                         <p class="text-sm font-medium text-gray-800 mb-2">Quantity</p>
                         <div class="flex items-center border border-black">
                             <button id="decrement" class="px-2 py-2 text-xl">-</button>
-                            <input type="number" id="quantity" value="1" min="1"
+                            <input type="number" name="quantity" id="quantity" value="1" min="1"
+                                max="<?= $product['stokBeras'] ?>"
                                 class="w-12 text-center bg-[#EFE9E2] border-none focus:outline-none">
                             <button id="increment" class="px-2 py-2 text-xl">+</button>
                         </div>
+                        <p class="text-xs text-gray-600 mt-1">Stok: <?= $product['stokBeras'] ?></p>
                     </div>
                 </div>
             </div>
@@ -184,45 +188,67 @@ document.addEventListener("click", function(event) {
         dropdown.classList.add("hidden");
     }
 });
-    document.addEventListener('DOMContentLoaded', function() {
-        const quantityInput = document.getElementById('quantity');
-        const decrementButton = document.getElementById('decrement');
-        const incrementButton = document.getElementById('increment');
-        const totalPriceSpan = document.getElementById('totalPrice');
-        const formQuantity = document.getElementById('formQuantity');
-        const pricePerUnit = <?= $product['hargaJualBeras'] ?>;
+document.addEventListener('DOMContentLoaded', function() {
+    const quantityInput = document.getElementById('quantity');
+    const decrementButton = document.getElementById('decrement');
+    const incrementButton = document.getElementById('increment');
+    const totalPriceSpan = document.getElementById('totalPrice');
+    const formQuantity = document.getElementById('formQuantity');
+    const pricePerUnit = <?= $product['hargaJualBeras'] ?>;
+    const maxStock = <?= $product['stokBeras'] ?>;
 
-        function updateTotalPrice() {
-            const quantity = parseInt(quantityInput.value);
-            const totalPrice = pricePerUnit * quantity;
-            totalPriceSpan.textContent = totalPrice.toLocaleString('id-ID');
-            formQuantity.value = quantity;
-        }
+    function updateTotalPrice() {
+        const quantity = parseInt(quantityInput.value);
+        const totalPrice = pricePerUnit * quantity;
+        totalPriceSpan.textContent = totalPrice.toLocaleString('id-ID');
+        formQuantity.value = quantity;
+    }
 
-        decrementButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            let currentVal = parseInt(quantityInput.value);
-            if (currentVal > 1) {
-                quantityInput.value = currentVal - 1;
-                updateTotalPrice();
-            }
-        });
+    function validateQuantity(value) {
+        if (value < 1) return 1;
+        if (value > maxStock) return maxStock;
+        return value;
+    }
 
-        incrementButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            let currentVal = parseInt(quantityInput.value);
-            quantityInput.value = currentVal + 1;
-            updateTotalPrice();
-        });
-
-        quantityInput.addEventListener('change', function() {
-            let currentVal = parseInt(this.value);
-            if (currentVal < 1) {
-                this.value = 1;
-            }
-            updateTotalPrice();
-        });
+    decrementButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        let currentVal = parseInt(quantityInput.value);
+        let newVal = validateQuantity(currentVal - 1);
+        quantityInput.value = newVal;
+        updateTotalPrice();
     });
+
+    incrementButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        let currentVal = parseInt(quantityInput.value);
+        let newVal = validateQuantity(currentVal + 1);
+        quantityInput.value = newVal;
+        updateTotalPrice();
+        
+        // Show warning if user tries to exceed stock
+        if (currentVal >= maxStock) {
+            alert(`Stock available only ${maxStock}`);
+        }
+    });
+
+    quantityInput.addEventListener('change', function() {
+        let currentVal = parseInt(this.value) || 1;
+        let validatedVal = validateQuantity(currentVal);
+        this.value = validatedVal;
+        updateTotalPrice();
+        
+        if (currentVal > maxStock) {
+            alert(`Stock available only ${maxStock}`);
+        }
+    });
+
+    quantityInput.addEventListener('input', function() {
+        let currentVal = parseInt(this.value) || 1;
+        let validatedVal = validateQuantity(currentVal);
+        this.value = validatedVal;
+        updateTotalPrice();
+    });
+});
 </script>
 
 

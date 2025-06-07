@@ -291,17 +291,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
     if ($_POST['action'] == 'update_status') {
         $orderId = $_POST['idPesanan'];
         $status = $_POST['status'];
-
-        // Debug: Log input
         error_log("Update status request: idPesanan=$orderId, status=$status");
 
-        // Validasi input
         if (!is_numeric($orderId)) {
             echo "error: Invalid order ID";
             exit();
         }
-
-        // Daftar status yang diizinkan
         $allowedStatus = ['Order Placed', 'Packaging', 'On The Road', 'Delivered','Completed'];
         if (!in_array($status, $allowedStatus)) {
             echo "error: Invalid status value";
@@ -316,7 +311,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
             mysqli_stmt_bind_param($stmt, "si", $status, $orderId);
             
             if (mysqli_stmt_execute($stmt)) {
-                // Periksa baris yang terpengaruh
                 if (mysqli_stmt_affected_rows($stmt) > 0) {
                     echo "success";
                 } else {
