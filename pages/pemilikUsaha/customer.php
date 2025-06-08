@@ -177,6 +177,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                             <th class="px-4 py-3 text-left">Customer Name</th>
                             <th class="px-4 py-3 text-left">Address</th>
                             <th class="px-4 py-3 text-left">Contact</th>
+                            <th class="px-4 py-3 text-left">Zip Code</th>
                             <th class="px-4 py-3 text-center">Action</th>
                         </tr>
                     </thead>
@@ -209,6 +210,9 @@ unset($_SESSION['success'], $_SESSION['error']);
                             <td class="px-4 py-3 whitespace-nowrap">
                                 <?= htmlspecialchars($pelanggan['nomorHPPelanggan']) ?>
                             </td>
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <?= htmlspecialchars($pelanggan['kodePos']) ?>
+                            </td>
                             <td class="px-4 py-3 text-center">
                                 <div class="inline-flex space-x-3 justify-center">
                                     <a href="#" onclick='showDetailModal(<?= json_encode($pelanggan) ?>)'
@@ -224,8 +228,9 @@ unset($_SESSION['success'], $_SESSION['error']);
                                     <button onclick="openEditModal(
                             '<?= $pelanggan['idPelanggan'] ?>',
                             '<?= $pelanggan['namaPelanggan'] ?>',
-                            '<?= $pelanggan['alamatPelanggan'] ?>',
                             '<?= $pelanggan['nomorHPPelanggan'] ?>',
+                            '<?= $pelanggan['alamatPelanggan'] ?>',
+                            '<?= $pelanggan['kodePos'] ?>'
                         )" class="w-8 h-8 bg-blue-500 hover:bg-blue-600 text-white rounded-lg flex items-center justify-center transition">
                                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
@@ -320,14 +325,8 @@ unset($_SESSION['success'], $_SESSION['error']);
                     </div>
                     <form action="../../assets/mysql/pemilikUsaha/proses.php" method="POST"
                         enctype="multipart/form-data" id="myForm">
-                        <input type="hidden" name="idPelanggan">
 
                         <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-semibold mb-2">ID Pelanggan</label>
-                                <input type="text" name="idPelanggan" placeholder="ID"
-                                    class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
-                            </div>
                             <div>
                                 <label class="block text-sm font-semibold mb-2">Customer Name</label>
                                 <input type="text" name="namaPelanggan" placeholder="Name" required
@@ -343,16 +342,19 @@ unset($_SESSION['success'], $_SESSION['error']);
                                 <input type="password" name="passwordPelanggan" placeholder="Password" required
                                     class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
                             </div>
-
-                            <div>
-                                <label class="block text-sm font-semibold mb-2">Address</label>
-                                <input type="text" name="alamatPelanggan" placeholder="Alamat" required
-                                    class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
-                            </div>
-
                             <div>
                                 <label class="block text-sm font-semibold mb-2">Contact</label>
                                 <input type="text" name="nomorHPPelanggan" placeholder="Contact" required
+                                    class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
+                            </div>
+                            <div >
+                                <label class="block text-sm font-semibold mb-2">Address</label>
+                                <input type="text" name="alamatPelanggan" placeholder="Address" required
+                                    class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Zip Code</label>
+                                <input type="text" name="kodePos" placeholder="Zip Code" required
                                     class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
                             </div>
                         </div>
@@ -411,6 +413,10 @@ unset($_SESSION['success'], $_SESSION['error']);
                                 <span class="font-semibold w-32">Contact</span>
                                 <span id="detail-telepon">-</span>
                             </div>
+                             <div class="flex">
+                                <span class="font-semibold w-32">Zip Code</span>
+                                <span id="detail-kodePos">-</span>
+                            </div>
                         </div>
                     </div>
 
@@ -441,14 +447,18 @@ unset($_SESSION['success'], $_SESSION['error']);
                             </div>
 
                             <div>
+                                <label class="block text-sm font-semibold mb-2">Contact</label>
+                                <input type="text" name="nomorHPPelanggan" id="editnomorHPPelanggan"
+                                    class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
+                            </div>
+                            <div>
                                 <label class="block text-sm font-semibold mb-2">Address</label>
                                 <input type="text" name="alamatPelanggan" id="editAlamatPelanggan"
                                     class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
                             </div>
-
                             <div>
-                                <label class="block text-sm font-semibold mb-2">Contact</label>
-                                <input type="text" name="nomorHPPelanggan" id="editnomorHPPelanggan"
+                                <label class="block text-sm font-semibold mb-2">Zip Code</label>
+                                <input type="text" name="kodePos" id="editkodePosPelanggan"
                                     class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
                             </div>
                             <div class="col-span-2">
@@ -536,6 +546,7 @@ function showDetailModal(pelanggan) {
     document.getElementById('detail-nama').textContent = pelanggan.namaPelanggan;
     document.getElementById('detail-alamat').textContent = pelanggan.alamatPelanggan;
     document.getElementById('detail-telepon').textContent = pelanggan.nomorHPPelanggan;
+    document.getElementById('detail-kodePos').textContent = pelanggan.kodePos;
     document.getElementById('detail-gambar').src = '../../assets/gambar/pelanggan/photoProfile/' + pelanggan.fotoProfil;
     document.getElementById('detailModal').classList.remove('hidden');
 }
@@ -552,11 +563,12 @@ window.onclick = function(event) {
 }
 
 //show edit
-function openEditModal(id, nama, alamat, contact) {
+function openEditModal(id, nama, contact, alamat,kodePos) {
   document.getElementById('editId').value = id;
   document.getElementById('editNamaPelanggan').value = nama;
-  document.getElementById('editAlamatPelanggan').value = alamat;
   document.getElementById('editnomorHPPelanggan').value = contact;
+  document.getElementById('editAlamatPelanggan').value = alamat;
+  document.getElementById('editkodePosPelanggan').value = kodePos;
   document.getElementById('editModal').classList.remove('hidden');
 }
 

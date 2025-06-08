@@ -63,7 +63,17 @@ if(isset($_POST['addBeras'])) {
     $hargaBeliBeras = $_POST['hargaBeliBeras'];
     $stokBeras = $_POST['stokBeras'];
     $idPemasok = $_POST['idPemasok'];
+    $idPemilik = $_POST['idPemilik'];
     $deskripsiBeras = $_POST['deskripsiBeras'];
+
+    $cekSql = "SELECT COUNT(*) AS cnt FROM stokberaspemilik WHERE idBeras = '$idBeras'";
+    $cekRes = mysqli_query($conn, $cekSql);
+    $row    = mysqli_fetch_assoc($cekRes);
+    if ($row['cnt'] > 0) {
+        $_SESSION['error'] = "Rice ID '$idBeras' already exists!";
+        header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+        exit();
+    }
 
     $gambarBeras = '';
     if(isset($_FILES['gambarBeras'])) {
@@ -115,7 +125,8 @@ if(isset($_POST['addBeras'])) {
         hargaJualBeras, 
         hargaBeliBeras, 
         stokBeras, 
-        idPemasok, 
+        idPemasok,
+        idPemilik,
         deskripsiBeras, 
         gambarBeras
     ) VALUES (
@@ -127,6 +138,7 @@ if(isset($_POST['addBeras'])) {
         '$hargaBeliBeras',
         '$stokBeras',
         '$idPemasok',
+        '$idPemilik',
         '$deskripsiBeras',
         '$gambarBeras'
     )";
@@ -403,12 +415,12 @@ if(isset($_POST['deletePemasok'])) {
 
 //tambah customer
    if (isset($_POST['addCustomer'])) {
-    $idPelanggan       = $_POST['idPelanggan'];
     $namaPelanggan     = $_POST['namaPelanggan'];
     $emailPelanggan    = $_POST['emailPelanggan'];
     $passwordPelanggan = $_POST['passwordPelanggan'];
     $nomorHPPelanggan  = $_POST['nomorHPPelanggan'];
     $alamatPelanggan   = $_POST['alamatPelanggan'];
+    $kodePosPelanggan  = $_POST['kodePos'];
     
     $passwordHash = password_hash($passwordPelanggan, PASSWORD_DEFAULT);
     $fotoProfil = 'profil.jpeg';
@@ -422,20 +434,20 @@ if(isset($_POST['deletePemasok'])) {
     }
     $insertSQL = "
         INSERT INTO pelanggan (
-            idPelanggan, 
             namaPelanggan, 
             emailPelanggan, 
             passwordPelanggan, 
             nomorHPPelanggan, 
-            alamatPelanggan, 
+            alamatPelanggan,
+            kodePos, 
             fotoProfil
         ) VALUES (
-            '$idPelanggan',
             '$namaPelanggan',
             '$emailPelanggan',
             '$passwordHash',
             '$nomorHPPelanggan',
             '$alamatPelanggan',
+            '$kodePosPelanggan',
             '$fotoProfil'
         )
     ";
@@ -457,6 +469,7 @@ if (isset($_POST['editCustomer'])) {
     $namaPelanggan   = $_POST['namaPelanggan'];
     $alamatPelanggan = $_POST['alamatPelanggan'];
     $nomorHPPelanggan  = $_POST['nomorHPPelanggan'];
+    $kodePosPelanggan  = $_POST['kodePos'];
     $queryGetGambar = "SELECT fotoProfil FROM pelanggan WHERE idPelanggan = '$idPelanggan'";
     $result = mysqli_query($conn, $queryGetGambar);
     $row    = mysqli_fetch_assoc($result);
@@ -505,6 +518,7 @@ if (isset($_POST['editCustomer'])) {
             namaPelanggan     = '$namaPelanggan',
             alamatPelanggan   = '$alamatPelanggan',
             nomorHPPelanggan  = '$nomorHPPelanggan',
+            kodePos           = '$kodePosPelanggan',
             fotoProfil      = '$gambarBaru'
           WHERE idPelanggan   = '$idPelanggan'";
 

@@ -550,6 +550,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                 <form action="../../assets/mysql/pemilikUsaha/proses.php" method="POST" enctype="multipart/form-data"
                     id="myForm">
                     <input type="hidden" name="idBeras">
+                    <input type="hidden" name="idPemilik" value="<?= $idPemilik ?>">
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
