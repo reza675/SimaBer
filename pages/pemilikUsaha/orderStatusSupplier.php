@@ -379,11 +379,11 @@ while ($row = mysqli_fetch_assoc($query)) {
                 case 'order placed':
                     return base + "bg-yellow-100 text-yellow-800 border border-yellow-300";
                 case 'packaging':
-                    return base + "bg-yellow-100 text-yellow-800 border border-yellow-300";
+                    return base + "bg-orange-100 text-orange-800 border border-orange-300";
                 case 'on the road':
                     return base + "bg-blue-100 text-blue-800 border border-blue-300";
                 case 'delivered':
-                    return base + "bg-blue-100 text-blue-800 border border-blue-300";
+                    return base + "bg-indigo-100 text-indigo-800 border border-indigo-300";
                 case 'completed':
                     return base + "bg-green-100 text-green-800 border border-green-300";
                 default:

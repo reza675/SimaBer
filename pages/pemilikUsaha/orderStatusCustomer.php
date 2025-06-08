@@ -20,6 +20,7 @@ SELECT
     b.beratBeras,
     pl.namaPelanggan AS customerName,
     pl.alamatPelanggan AS alamatCustomer,
+    pl.nomorHPPelanggan AS customerContact,
     LOWER(COALESCE(pg.status_pengiriman, 'order placed')) AS status_normalized,
     DATE_FORMAT(pg.waktu_approve, '%h:%i %p') AS waktu_approve_formatted
 FROM pesananpemilik pg
@@ -114,6 +115,22 @@ while ($row = mysqli_fetch_assoc($query)) {
         border-color: #A2845E;
         border-width: 2px;
     }
+
+    .customer-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 8px;
+    }
+
+    .customer-icon {
+        background-color: #EFE9E2;
+        border-radius: 8px;
+        padding: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
     </style>
 </head>
 
@@ -192,7 +209,7 @@ while ($row = mysqli_fetch_assoc($query)) {
                     <p class="text-gray-500">No approved orders found</p>
                     <?php else: ?>
                     <?php foreach ($dataPesanan as $index => $pesanan): ?>
-                        <?php if ($pesanan['status_normalized'] === 'completed') continue; ?>
+                    <?php if ($pesanan['status_normalized'] === 'completed') continue; ?>
                     <div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer order-item
                         <?= $index === 0 ? 'selected' : '' ?>" data-id="<?= $pesanan['idPesanan'] ?>"
                         data-beras="<?= htmlspecialchars($pesanan['namaBeras']) ?>"
@@ -200,6 +217,7 @@ while ($row = mysqli_fetch_assoc($query)) {
                         data-jumlah="<?= htmlspecialchars($pesanan['jumlahPesanan']) ?>"
                         data-customer="<?= htmlspecialchars($pesanan['customerName']) ?>"
                         data-alamat="<?= htmlspecialchars($pesanan['alamatCustomer']) ?>"
+                        data-contact="<?= htmlspecialchars($pesanan['customerContact']) ?>"
                         data-tanggal="<?= $pesanan['waktu_approve_formatted'] ?: date('h:i A', strtotime($pesanan['tanggalPesanan'])) ?>"
                         data-status="<?= $pesanan['status_normalized'] ?>">
                         <div class="flex justify-between">
@@ -295,8 +313,21 @@ while ($row = mysqli_fetch_assoc($query)) {
 
                         <div>
                             <p class="font-semibold text-gray-700">Shipping To</p>
-                            <p class="font-semibold text-[#16151C] mt-1" id="detail-customer">-</p>
-                            <p class="text-gray-600 mt-1" id="detail-alamat">-</p>
+
+                            <div class="customer-info">
+                                <div class="customer-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#A2845E]" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-[#16151C] mt-1" id="detail-customer">-</p>
+                                    <p class="text-gray-600 mt-1" id="detail-alamat">-</p>
+                                    <p class="text-gray-600 mt-1" id="detail-contact">-</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -310,7 +341,7 @@ while ($row = mysqli_fetch_assoc($query)) {
         const statusSteps = document.querySelectorAll('.status-step');
         let currentOrderId = null;
 
-         document.querySelectorAll('.complete-btn').forEach(btn => btn.classList.add('hidden'));
+        document.querySelectorAll('.complete-btn').forEach(btn => btn.classList.add('hidden'));
 
         // Mapping status UI ke database
         const statusMap = {
@@ -343,6 +374,7 @@ while ($row = mysqli_fetch_assoc($query)) {
             document.getElementById('detail-jumlah').textContent = data.jumlah;
             document.getElementById('detail-customer').textContent = data.customer;
             document.getElementById('detail-alamat').textContent = data.alamat;
+            document.getElementById('detail-contact').textContent = data.contact || '-';
 
             const orderPlacedTime = document.querySelector(
                 '.status-step[data-step="order placed"] .status-time');
@@ -395,8 +427,33 @@ while ($row = mysqli_fetch_assoc($query)) {
                     'hidden');
                 document.querySelector('.status-step[data-step="delivered"] .complete-btn')?.classList.remove(
                     'hidden');
+                const existingWhatsappBtn = document.querySelector('.whatsapp-btn');
+                if (existingWhatsappBtn) existingWhatsappBtn.remove();
+
+                // Buat tombol WhatsApp baru
+                const whatsappBtn = document.createElement('button');
+                whatsappBtn.textContent = 'Kirim WhatsApp';
+                whatsappBtn.className = 'whatsapp-btn bg-green-600 text-white py-2 px-4 rounded mt-4';
+
+                whatsappBtn.onclick = function() {
+                    if (!data.contact) {
+                        alert("Nomor kontak pelanggan tidak tersedia!");
+                        return;
+                    }
+
+                    const phone = "62" + data.contact.substring(1);
+                    const message =
+                        `Hai ${data.customer}! Pesanan ${data.beras} Anda telah tiba. Harap sertakan bukti pembayaran untuk metode QRIS atau jika COD siapkan uang sesuai pesanan.`;
+                    const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+                    window.open(whatsappUrl, '_blank');
+                    this.style.display = 'none';
+                    localStorage.setItem(`whatsappSent_${currentOrderId}`, 'true');
+                };
+                if (localStorage.getItem(`whatsappSent_${currentOrderId}`) === 'true') {
+                    whatsappBtn.style.display = 'none';
+                }
+                document.querySelector('.status-action').appendChild(whatsappBtn);
             } else if (currentStatus === 'completed') {
-                // Jika completed, sembunyikan semua tombol aksi
                 document.querySelectorAll('.prev-btn, .next-btn, .complete-btn').forEach(btn => {
                     btn.classList.add('hidden');
                 });
@@ -423,6 +480,7 @@ while ($row = mysqli_fetch_assoc($query)) {
                     jumlah: this.dataset.jumlah,
                     customer: this.dataset.customer,
                     alamat: this.dataset.alamat,
+                    contact: this.dataset.contact,
                     tanggal: this.dataset.tanggal,
                     status: this.dataset.status
                 });
@@ -443,7 +501,7 @@ while ($row = mysqli_fetch_assoc($query)) {
 
                 const newStatus = nextStep.dataset.step;
                 const newStatusMapped = statusMap[newStatus] ||
-                newStatus; // Map ke format database
+                    newStatus; // Map ke format database
 
                 // Tampilkan loading indicator
                 const originalText = this.textContent;
@@ -624,11 +682,11 @@ while ($row = mysqli_fetch_assoc($query)) {
                 case 'order placed':
                     return base + "bg-yellow-100 text-yellow-800 border border-yellow-300";
                 case 'packaging':
-                    return base + "bg-yellow-100 text-yellow-800 border border-yellow-300";
+                    return base + "bg-orange-100 text-yellow-800 border border-orange-300";
                 case 'on the road':
                     return base + "bg-blue-100 text-blue-800 border border-blue-300";
                 case 'delivered':
-                    return base + "bg-blue-100 text-blue-800 border border-blue-300";
+                    return base + "bg-indigo-100 text-blue-800 border border-indigo-300";
                 case 'completed':
                     return base + "bg-green-100 text-green-800 border border-green-300";
                 default:
