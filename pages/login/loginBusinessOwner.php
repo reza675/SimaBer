@@ -13,8 +13,8 @@
 
 <body class="bg-[#EFE9E2] min-h-screen flex">
     <div class="flex flex-col md:flex-row w-full h-screen overflow-hidden">
-        <div class="flex items-center justify-center md:w-1/2 bg-[#EFE9E2] overflow-hidden">
-            <img src="../../assets/gambar/login/designlogin.jpg" alt="login Image" class="p-6 rounded-xl w-full h-full"
+        <div class="flex items-center justify-center md:w-1/2 bg-[#EFE9E2] overflow-hidden py-12 pl-6 pr-6">
+            <img src="../../assets/gambar/login/designlogin.jpg" alt="login Image" class="py-6 rounded-xl w-full h-full"
                 style="border-radius: 3rem;" />
         </div>
 

@@ -20,6 +20,15 @@ $stockBeras = 0;
 while ($data2 = mysqli_fetch_array($query2)) {
     $stockBeras += $data2['stokBeras'];
 }
+
+$query3 = mysqli_query($conn, "SELECT * FROM pesananpemilik WHERE idPelanggan = '$idPelanggan' AND status_pengiriman = 'Completed'");
+$dataPesananBeras = 0;
+$dataTransksi = 0;
+while ($data3 = mysqli_fetch_array($query3)) {
+    $dataPesananBeras += $data3['jumlahPesanan'];
+    $dataTransksi += $data3['hargaBeli'];
+}
+
 $q = mysqli_query($conn, "SELECT fotoProfil FROM pelanggan WHERE idPelanggan = '$idPelanggan'");
 $dataPelanggan = mysqli_fetch_assoc($q);
 ?>
@@ -251,6 +260,9 @@ $dataPelanggan = mysqli_fetch_assoc($q);
                             fill="#DBA362" />
                     </svg>
                 </div>
+                <div>
+                    <p class="text-[#383E49] text-lg font-bold mb-4 mt-5 text-center">Rp <?= number_format($dataTransksi, 2, ',', '.'); ?></p>
+                </div>
             </div>
             <div
                 class="relative row-span-2 bg-[#FFF1CB] rounded-lg overflow-hidden flex flex-col p-6 transition duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
@@ -263,6 +275,9 @@ $dataPelanggan = mysqli_fetch_assoc($q);
                         <path d="M38.626 11.356V13.0493H26.418V11.356H38.626Z" fill="#DBA362" stroke="#DBA362"
                             stroke-width="0.2" />
                     </svg>
+                </div>
+                <div>
+                    <p class="text-[#383E49] text-lg font-bold mb-4 mt-5 text-center"><?= $dataPesananBeras; ?> Rice</p>
                 </div>
             </div>
             <div
