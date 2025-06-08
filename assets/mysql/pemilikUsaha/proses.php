@@ -65,6 +65,7 @@ if(isset($_POST['addBeras'])) {
     $idPemasok = $_POST['idPemasok'];
     $idPemilik = $_POST['idPemilik'];
     $deskripsiBeras = $_POST['deskripsiBeras'];
+    $tanggalInput = date('Y-m-d');
 
     $cekSql = "SELECT COUNT(*) AS cnt FROM stokberaspemilik WHERE idBeras = '$idBeras'";
     $cekRes = mysqli_query($conn, $cekSql);
@@ -137,6 +138,7 @@ if(isset($_POST['addBeras'])) {
         stokBeras, 
         idPemasok,
         idPemilik,
+        tanggalMasuk,
         deskripsiBeras, 
         gambarBeras
     ) VALUES (
@@ -149,6 +151,7 @@ if(isset($_POST['addBeras'])) {
         '$stokBeras',
         '$idPemasok',
         '$idPemilik',
+        '$tanggalInput',
         '$deskripsiBeras',
         '$gambarBeras'
     )";
@@ -173,6 +176,7 @@ if(isset($_POST['editBeras'])) {
     $stokBeras = $_POST['stokBeras'];
     $deskripsiBeras = $_POST['deskripsiBeras'];
     $idPemasok = $_POST['supplierBeras'];
+    $tanggalInput = date('Y-m-d');
 
     $queryGetGambar = "SELECT gambarBeras FROM stokberaspemilik WHERE idBeras = '$idBeras'";
     $result = mysqli_query($conn, $queryGetGambar);
@@ -224,6 +228,7 @@ if(isset($_POST['editBeras'])) {
           hargaBeliBeras='$hargaBeliBeras',
           stokBeras='$stokBeras',
           idPemasok='$idPemasok',
+          tanggalMasuk='$tanggalInput',
           deskripsiBeras='$deskripsiBeras',
           gambarBeras='$gambarBaru' 
           WHERE idBeras='$idBeras'";
@@ -741,9 +746,14 @@ if (isset($_POST['tambahBiaya'])) {
     VALUES ('$idPemilik', '$namaBiaya', $jumlahBiaya, '$tanggal')
     ";
     mysqli_query($conn, $sql);
-
-    $_SESSION['success'] = "Other expense successfully added!";
-    header("Location: ../../../pages/pemilikUsaha/report.php?$qs&added=true");
+    if (mysqli_affected_rows($conn) > 0) {
+        $_SESSION['success'] = "Other cost successfully added!";
+        header("Location: ../../../pages/pemilikUsaha/report.php?added=true");
+    }
+    else {
+        $_SESSION['error'] = "Error to add other cost! ";
+        header("Location: ../../../pages/pemilikUsaha/report.php?added=false");
+    }
 }
 
 ?>

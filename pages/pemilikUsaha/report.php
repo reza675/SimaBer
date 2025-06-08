@@ -57,9 +57,15 @@ $resultBiayaLain = mysqli_query($conn, $queryBiayaLain);
 
 // —— 4) Stock Masuk ——
 $queryStokMasuk = "
-  SELECT namaBeras, jenisBeras, beratBeras, stokBeras AS jumlah_masuk
-    FROM stokberaspemilik
-   WHERE idPemilik = '$idPemilik'
+  SELECT
+    namaBeras,
+    jenisBeras,
+    beratBeras,
+    SUM(stokBeras) AS jumlah_masuk
+  FROM stokberaspemilik
+  WHERE idPemilik     = '$idPemilik'
+    AND tanggalMasuk BETWEEN '$startDate' AND '$endDate'
+  GROUP BY idBeras, namaBeras, beratBeras
 ";
 $resultStokMasuk = mysqli_query($conn, $queryStokMasuk);
 
@@ -77,6 +83,9 @@ $queryStokKeluar = "
   GROUP BY sb.idBeras, sb.namaBeras, sb.beratBeras
 ";
 $resultStokKeluar = mysqli_query($conn, $queryStokKeluar);
+$success = $_SESSION['success'] ?? null;
+$error = $_SESSION['error'] ?? null;
+unset($_SESSION['success'], $_SESSION['error']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -136,6 +145,16 @@ $resultStokKeluar = mysqli_query($conn, $queryStokKeluar);
                 </div>
             </div>
         </div>
+        <?php if ($success): ?>
+        <div class="mt-4 mb-4 px-4 py-3 bg-green-100 border border-green-400 text-green-700 rounded">
+            <?= $success ?>
+        </div>
+        <?php endif; ?>
+        <?php if ($error): ?>
+        <div class="mt-4 mb-4 px-4 py-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            <?= $error ?>
+        </div>
+        <?php endif; ?>
 
         <!-- Period Time -->
         <div class="text-center mb-6">
@@ -158,7 +177,7 @@ $resultStokKeluar = mysqli_query($conn, $queryStokKeluar);
             </form>
         </div>
 
-        <div class="flex justify-end mb-4">
+        <div class="flex justify-end mb-4 space-x-4">
             <button data-modal-target="modalBiayaLain" data-modal-show="modalBiayaLain"
                 class="flex items-center gap-2 p-3 bg-[#A2845E] rounded-md hover:bg-[#8C6B42] focus:outline-none transition text-white font-semibold">
 
@@ -170,6 +189,17 @@ $resultStokKeluar = mysqli_query($conn, $queryStokKeluar);
 
                 <span class="text-sm font-semibold text-white">Add Other Cost</span>
             </button>
+
+            <a href="download_report.php?start_date=<?= $startDate ?>&end_date=<?= $endDate ?>"
+                class="flex items-center gap-2 p-3 bg-green-600 rounded-md hover:bg-green-700 text-white font-semibold">
+                <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M16 11V14.3333C16 14.7754 15.8244 15.1993 15.5118 15.5118C15.1993 15.8244 14.7754 16 14.3333 16H2.66667C2.22464 16 1.80072 15.8244 1.48816 15.5118C1.17559 15.1993 1 14.7754 1 14.3333V11M4.33333 6.83333L8.5 11M8.5 11L12.6667 6.83333M8.5 11V1"
+                        stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+
+                <span class="text-md font-semibold">Download</span>
+            </a>
         </div>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <!-- Revenue & Expenses -->
