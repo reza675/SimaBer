@@ -226,7 +226,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                             </td>
 
                             <td class="px-4 py-3 whitespace-nowrap">
-                                <?= date('d/m/Y/h:i A', strtotime($pesanan['tanggalPesanan'])) ?>
+                                <?= $pesanan['tanggalPesanan'] ?>
                             </td>
 
                             <td class="px-4 py-3 text-center">

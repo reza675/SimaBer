@@ -730,4 +730,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
     exit();
 }
 
+if (isset($_POST['tambahBiaya'])) {
+    $idPemilik   = $_POST['idPemilik'];
+    $namaBiaya   = $_POST['namaBiaya'];
+    $jumlahBiaya = $_POST['jumlahBiaya'];
+    $tanggal     = $_POST['tanggalBiaya'];
+
+    $sql = "
+    INSERT INTO biaya_lain (idPemilik, namaBiaya, jumlahBiaya, tanggalBiaya)
+    VALUES ('$idPemilik', '$namaBiaya', $jumlahBiaya, '$tanggal')
+    ";
+    mysqli_query($conn, $sql);
+
+    $_SESSION['success'] = "Other expense successfully added!";
+    header("Location: ../../../pages/pemilikUsaha/report.php?$qs&added=true");
+}
+
 ?>
