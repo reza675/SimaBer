@@ -45,6 +45,7 @@ $sql = "
     pp.jumlahPesanan,
     p.namaPelanggan,
     pp.hargaBeli,
+    sb.beratBeras,
     pp.status_pengiriman
   FROM pesananpemilik pp
   JOIN pelanggan p        ON pp.idPelanggan   = p.idPelanggan
@@ -176,6 +177,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                             <th class="px-4 py-3 text-left">ID Order</th>
                             <th class="px-4 py-3 text-left">Order Date</th>
                             <th class="px-4 py-3 text-left">Item Name</th>
+                            <th class="px-4 py-3 text-left">Weight</th>
                             <th class="px-4 py-3 text-left">Much</th>
                             <th class="px-4 py-3 text-left">Customer Name</th>
                             <th class="px-4 py-3 text-left">Buying Price</th>
@@ -207,6 +209,10 @@ unset($_SESSION['success'], $_SESSION['error']);
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap">
                                 <?= htmlspecialchars($row['namaBeras']) ?>
+                            </td>
+
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <?= htmlspecialchars($row['beratBeras']) ?> kg
                             </td>
 
                             <td class="px-4 py-3 whitespace-nowrap">
