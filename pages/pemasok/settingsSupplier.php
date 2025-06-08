@@ -40,7 +40,7 @@ unset($_SESSION['success'], $_SESSION['error']);
             <div class="relative inline-block text-left">
                 <button onclick="toggleDropdown()"
                     class="flex items-center gap-4 border-2 rounded-xl px-4 py-2 hover:ring-2 hover:ring-gray-500 transition">
-                    <img src="../../assets/gambar/pemilikUsaha/photoProfile/<?= $dataPemasok['fotoProfil'] ?? 'profil.jpeg' ?>"
+                    <img src="../../assets/gambar/pemasok/photoProfile/<?= $dataPemasok['fotoProfil'] ?? 'profil.jpeg' ?>"
                         alt="User" class="w-14 h-14 rounded-xl object-cover">
                     <div class="hidden sm:block text-left">
                         <span class="block text-lg font-bold"><?= $nama; ?></span>
@@ -52,9 +52,9 @@ unset($_SESSION['success'], $_SESSION['error']);
                 </button>
                 <div id="dropdownProfile"
                     class="hidden absolute right-0 mt-2 bg-white border rounded-t-lg rounded-b-lg shadow-md z-50 w-48">
-                    <a href="settingsCustomer.php"
+                    <a href="settingsSupplier.php"
                         class="block px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 text-center">Settings</a>
-                    <a href="../../assets/mysql/pemilikUsaha/proses.php?logout=true"
+                    <a href="../../assets/mysql/pemasok/proses.php?logout=true"
                         class="block px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600 rounded-b-lg text-center">Log Out</a>
                 </div>
             </div>

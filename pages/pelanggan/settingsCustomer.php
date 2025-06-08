@@ -107,12 +107,12 @@ unset($_SESSION['success'], $_SESSION['error']);
                         </div>
                         <div class="space-y-2">
                             <label class="text-sm font-semibold text-[#3D3D3D]">Zip Code</label>
-                            <input type="text" name="kodepos" value="<?= $dataPelanggan['kodeposPelanggan'] ?>" disabled
+                            <input type="text" name="kodepos" value="<?= $dataPelanggan['kodePos'] ?>" disabled
                                 class="w-full p-3 border rounded-lg bg-gray-100">
                         </div>
                         <div class="space-y-2">
                             <label class="text-sm font-semibold text-[#3D3D3D]">Telephone Number</label>
-                            <input type="tel" name="telepon" value="<?= $dataPelanggan['teleponPelanggan'] ?>" disabled
+                            <input type="tel" name="telepon" value="<?= $dataPelanggan['nomorHPPelanggan'] ?>" disabled
                                 class="w-full p-3 border rounded-lg bg-gray-100">
                         </div>
                         <div class="space-y-2 col-span-2">

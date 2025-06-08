@@ -26,7 +26,7 @@ if ($search !== '') {
     $where    .= " AND namaBeras LIKE '%{$escSearch}%'";
 }
 //Hitung total data & total halaman
-$totalQ = mysqli_query($conn, " SELECT COUNT(*) AS total FROM stokberas sb JOIN pemasok p ON sb.idPemasok = p.idPemasok {$where}");
+$totalQ = mysqli_query($conn, " SELECT COUNT(*) AS total FROM stokberaspemasok sb JOIN pemasok p ON sb.idPemasok = p.idPemasok {$where}");
 $totalRow  = mysqli_fetch_assoc($totalQ);
 $totalData = (int) $totalRow['total'];
 $totalPages= ($totalData > 0) ? ceil($totalData / $itemsPerPage) : 1;
@@ -36,7 +36,7 @@ $sql = "
   SELECT 
     sb.*,
     p.namaPemasok AS supplierName
-  FROM stokberas sb
+  FROM stokberaspemasok sb
   JOIN pemasok p 
     ON sb.idPemasok = p.idPemasok
   {$where}
@@ -78,6 +78,21 @@ unset($_SESSION['success'], $_SESSION['error']);
             </div>
 
             <div class="flex items-center gap-4">
+                <div class="relative flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                        class="absolute w-5 h-5 top-2.5 left-2.5 text-slate-600">
+                        <path fill-rule="evenodd"
+                            d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <form action="search.php" method="get">
+                        <input name="inputSearch"
+                            class="w-64 bg-transparent placeholder:text-[#16151C] text-[#16151C] text-sm border border-slate-400 rounded-md pl-10 pr-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                            placeholder="Search" />
+
+                    </form>
+                </div>
+
                 <svg width="40" height="40" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect width="50" height="50" rx="10" fill="#EFE9E2" />
                     <path
@@ -136,6 +151,18 @@ unset($_SESSION['success'], $_SESSION['error']);
                             class="w-64 bg-transparent placeholder:text-[#16151C] text-[#16151C] text-sm border border-slate-400 rounded-md pl-10 pr-3 py-2 transition focus:outline-none focus:border-slate-400" />
                     </form>
                 </div>
+                <div>
+                    <button type="button" onclick="openAddModal()"
+                        class="flex items-center gap-2 px-4 py-2 bg-[#A2845E] rounded-md hover:bg-[#8C6B42] focus:outline-none transition">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12 8V16M16 12H8M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                                stroke="#EFE9E2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+
+                        <span class="font-semibold text-sm text-white">Add Item</span>
+                    </button>
+                </div>
 
             </div>
 
@@ -157,8 +184,8 @@ unset($_SESSION['success'], $_SESSION['error']);
                     </thead>
                     <tbody class="divide-y divide-gray-200">
                         <?php
-        if (empty($dataBeras)):
-      ?>
+                            if (empty($dataBeras)):
+                        ?>
                         <tr>
                             <td colspan="9" class="px-4 py-3 text-center text-gray-500">No data found</td>
                         </tr>
@@ -195,7 +222,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                             </td>
 
                             <td class="px-4 py-3 whitespace-nowrap">
-                                Rp <?= number_format($beras['hargaJualBeras'], 2, ',', '.') ?>
+                                Rp <?= number_format($beras['hargaJual'], 2, ',', '.') ?>
                             </td>
 
                             <td class="px-4 py-3 whitespace-nowrap">
@@ -219,7 +246,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                             '<?= $beras['namaBeras'] ?>',
                             '<?= $beras['jenisBeras'] ?>',
                             '<?= $beras['beratBeras'] ?>',
-                            '<?= $beras['hargaJualBeras'] ?>',
+                            '<?= $beras['hargaJual'] ?>',
                             '<?= $beras['stokBeras'] ?>',
                             '<?= $beras['idPemasok'] ?>'
                         )" class="w-8 h-8 bg-blue-500 hover:bg-blue-600 text-white rounded-lg flex items-center justify-center transition">
@@ -298,6 +325,92 @@ unset($_SESSION['success'], $_SESSION['error']);
                 </a>
                 <?php endif; ?>
             </div>
+            <!-- Add Modal -->
+            <div id="addModal"
+                class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                <div class="bg-white rounded-lg p-6 w-full max-w-[600px] h-full">
+                    <div class="flex justify-between items-center pb-1">
+                        <h3 class="text-2xl font-bold mb-4 text-[#16151C]">Add Items</h3>
+                        <button onclick="closeAddModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M27.0708 12.929L12.9287 27.0712M27.0708 27.0711L12.9287 12.929"
+                                    stroke="#28303F" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+                    <form action="../../assets/mysql/pemasok/proses.php" method="POST" enctype="multipart/form-data"
+                        id="myForm">
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- <div>
+                                <label class="block text-sm font-semibold mb-2">ID Item</label>
+                                <input type="text" name="idBeras" placeholder="ID" required
+                                    class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
+                            </div> -->
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Item Name</label>
+                                <input type="text" name="namaBeras" placeholder="Name" required
+                                    class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Type</label>
+                                <input type="text" name="jenisBeras" placeholder="Item Type" required
+                                    class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Weight (kg)</label>
+                                <input type="text" name="beratBeras" placeholder="Item Weight" required
+                                    class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold mb-2"> Selling Price</label>
+                                <input type="number" name="hargaJual" placeholder="Item Selling Price" required
+                                    class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Stock</label>
+                                <input type="number" name="stokBeras" placeholder="Item Stock" required
+                                    class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-sm font-semibold mb-2">ID Supplier</label>
+                                <input type="text" name="idPemasok"
+                                    class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]"
+                                    value="<?= $_SESSION['idPemasok'] ?>" readonly>
+                                </select>
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block mb-2 text-sm font-semibold">Image</label>
+                                <input type="file" name="gambarBeras" required
+                                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-black focus:outline-none dark:border-gray-600 dark:placeholder-black">
+
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end gap-2 mt-2">
+                            <button type="button" onclick="closeAddModal()"
+                                class="px-4 py-2 border rounded-md hover:bg-gray-100">Cancel</button>
+                            <button type="submit" name="addBeras"
+                                class="flex items-center gap-2 px-4 py-2 bg-[#A2845E] rounded-md hover:bg-[#8C6B42] focus:outline-none transition">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M12 8V16M16 12H8M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                                        stroke="#EFE9E2" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+
+                                <span class="font-semibold text-sm text-white">Add Item</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
             <!-- Detail Modal -->
             <div id="detailModal"
                 class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
@@ -372,8 +485,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                 class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
                 <div class="bg-white rounded-lg p-6 w-full max-w-md">
                     <h3 class="text-2xl font-bold mb-4 text-[#16151C]">Edit Item</h3>
-                    <form action="../../assets/mysql/pemasok/proses.php" method="POST"
-                        enctype="multipart/form-data">
+                    <form action="../../assets/mysql/pemasok/proses.php" method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="idBeras" id="editId">
                         <div class="grid grid-cols-2 gap-4">
                             <div>
@@ -396,7 +508,7 @@ unset($_SESSION['success'], $_SESSION['error']);
 
                             <div>
                                 <label class="block text-sm font-semibold mb-2"> Selling Price</label>
-                                <input type="number" name="hargaJualBeras" id="editHargaJual"
+                                <input type="number" name="hargaJual" id="editHargaJual"
                                     class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
                             </div>
                             <div>
@@ -404,7 +516,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                                 <input type="number" name="stokBeras" id="editStok"
                                     class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
                             </div>
-                            <div class="col-span-2 justify-center">
+                            <div>
                                 <label class="block text-sm font-semibold mb-2">ID Supplier</label>
                                 <input type="text" name="supplierBeras" id="editPemasok" readonly
                                     class="w-full border rounded-md p-2">
@@ -426,6 +538,27 @@ unset($_SESSION['success'], $_SESSION['error']);
                     </form>
                 </div>
             </div>
+            <!-- Delete Modal -->
+            <div id="deleteModal"
+                class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                <div class="bg-white rounded-lg p-6 max-w-md w-full ">
+                    <h3 class="text-xl font-bold mb-4 text-center">Delete Confirmation</h3>
+                    <p class="mb-4 text-center">Are you sure you want to delete<br> <span id="deleteItemSpan"
+                            class="font-semibold"></span> <span id="deleteItemName" class="font-semibold"></span>?
+                    </p>
+                    <div class="flex justify-center gap-2">
+                        <form id="deleteForm" action="../../assets/mysql/pemasok/proses.php" method="POST">
+                            <input type="hidden" name="idBeras" id="deleteItemId">
+                            <div class="mx-auto justify-center flex space-x-2">
+                                <button type="button" onclick="closeDeleteModal()"
+                                    class="px-4 py-2 border rounded-md hover:bg-gray-100">Cancel</button>
+                                <button type="submit" name="deleteBeras"
+                                    class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">Delete</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
         </div>
 
@@ -437,6 +570,23 @@ unset($_SESSION['success'], $_SESSION['error']);
 <script src="../../assets/cdn/flowbite.min.js"></script>
 <script src="../../assets/cdn/flowbite.bundle.js"></script>
 <script>
+//add modal
+const modal = document.getElementById('addModal');
+
+function openAddModal() {
+    modal.classList.remove('hidden');
+}
+
+function closeAddModal() {
+    modal.classList.add('hidden');
+}
+
+window.onclick = function(event) {
+    if (event.target === modal) {
+        closeAddModal();
+    }
+}
+
 function toggleDropdown() {
     const dropdown = document.getElementById("dropdownProfile");
     dropdown.classList.toggle("hidden");
@@ -457,7 +607,7 @@ function showDetailModal(beras) {
     document.getElementById('detail-jenis').textContent = beras.jenisBeras;
     document.getElementById('detail-berat').textContent = beras.beratBeras;
     document.getElementById('detail-hargaJual').textContent = 'Rp ' +
-        new Intl.NumberFormat('id-ID').format(beras.hargaJualBeras);
+        new Intl.NumberFormat('id-ID').format(beras.hargaJual);
     document.getElementById('detail-stok').textContent = beras.stokBeras;
     document.getElementById('detail-supplierName').textContent = beras.supplierName;
     document.getElementById('detail-gambar').src = '../../assets/gambar/beras/' + beras.gambarBeras;
@@ -495,6 +645,24 @@ document.addEventListener('click', function(event) {
     const modal = document.getElementById('editModal');
     if (event.target === modal) {
         closeEditModal();
+    }
+});
+//delete modal
+function openDeleteModal(id, name) {
+    document.getElementById('deleteItemSpan').textContent = id;
+    document.getElementById('deleteItemId').value = id;
+    document.getElementById('deleteItemName').textContent = name;
+    document.getElementById('deleteModal').classList.remove('hidden');
+}
+
+function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.add('hidden');
+}
+
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('deleteModal');
+    if (event.target === modal) {
+        closeDeleteModal();
     }
 });
 </script>

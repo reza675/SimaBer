@@ -29,7 +29,7 @@ $dataPemasok = mysqli_fetch_assoc($q);
     <?php include '../../layout/sidebarSupplier.php'; ?>
     <div class="main-container ml-[300px] mt-4 mr-12">
         <div class="flex justify-between items-center gap-6">
-            <div class="flex-shrink-0">
+            <div class="flex-shrink-0"> 
                 <p class="text-2xl text-[#16151C] font-bold">Dashboard</p>
                 <p class="text-l text-[#5D5C61] font-regular">Dashboard Supplier</p>
             </div>
@@ -102,7 +102,7 @@ $dataPemasok = mysqli_fetch_assoc($q);
                     </div>  
                 </div>
             </a>
-            <a href="#" class="block">
+            <a href="orderStatusSupplier.php" class="block">
                 <div
                     class="rounded-2xl border border-[#A2A1A8] bg-[#F6F4F2] shadow-lg p-6 hover:shadow-xl transition duration-300 hover:scale-105   ">
                     <p class="text-[#16151C] text-2xl font-semibold mb-4">Order Status</p>

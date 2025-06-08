@@ -23,12 +23,12 @@ if ($search !== '') {
 }
 
 //Hitung total data & total halaman
-$totalQ = mysqli_query($conn, "SELECT COUNT(*) AS total FROM stokberas {$where}");
+$totalQ = mysqli_query($conn, "SELECT COUNT(*) AS total FROM stokberasPemilik {$where}");
 $totalData = mysqli_fetch_assoc($totalQ)['total'];
 $totalPages = ceil($totalData / $itemsPerPage);
 
 //Ambil data stok dengan filter & paginasi
-$sql   = "SELECT * FROM stokberas {$where} LIMIT {$itemsPerPage} OFFSET {$offset}";
+$sql   = "SELECT * FROM stokberasPemilik {$where} LIMIT {$itemsPerPage} OFFSET {$offset}";
 $query = mysqli_query($conn, $sql);
 $dataBeras = [];
 while ($row = mysqli_fetch_assoc($query)) {
