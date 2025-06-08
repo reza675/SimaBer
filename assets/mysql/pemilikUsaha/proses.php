@@ -65,24 +65,43 @@ if(isset($_POST['addBeras'])) {
     $idPemasok = $_POST['idPemasok'];
     $deskripsiBeras = $_POST['deskripsiBeras'];
 
-    $gambarBeras = '';
-    if(isset($_FILES['gambarBeras'])) {
-        $file = $_FILES['gambarBeras'];
-        $fileName = $file['name'];
-        $fileTmp = $file['tmp_name'];
-        $fileError = $file['error'];
-        $fileSize = $file['size'];
+    $cekSql = "SELECT COUNT(*) AS cnt FROM stokberaspemilik WHERE idBeras = '$idBeras'";
+    $cekRes = mysqli_query($conn, $cekSql);
+    $row    = mysqli_fetch_assoc($cekRes);
+    if ($row['cnt'] > 0) {
+        $_SESSION['error'] = "Rice ID '$idBeras' already exists!";
+        header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+        exit();
+    }
 
-        $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
-        $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-        
-        if($fileError === 0) {
-            if(in_array($fileExtension, $allowedExtensions)) {
-                if($fileSize < 5000000) {
-                    $newFileName = uniqid('IMG-', true).'.'.$fileExtension;
-                    $uploadPath = '../../gambar/beras/'.$newFileName;
-                    
-                    if(move_uploaded_file($fileTmp, $uploadPath)) {
+    // Cek apakah gambar sudah ada di stokberaspemasok
+    $gambarBeras = '';
+    $cekGambar = mysqli_query($conn, "
+        SELECT gambarBeras 
+        FROM stokberaspemasok 
+        WHERE namaBeras = '$namaBeras'
+        LIMIT 1
+    ");
+
+    if ($rowGambar = mysqli_fetch_assoc($cekGambar)) {
+        $gambarBeras = $rowGambar['gambarBeras'];
+    } else {
+        // Gambar tidak ada di stokberaspemasok, pakai gambar hasil upload
+        if (isset($_FILES['gambarBeras']) && $_FILES['gambarBeras']['error'] === 0) {
+            $file = $_FILES['gambarBeras'];
+            $fileName = $file['name'];
+            $fileTmp = $file['tmp_name'];
+            $fileSize = $file['size'];
+
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+            $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+            if (in_array($fileExtension, $allowedExtensions)) {
+                if ($fileSize < 5000000) {
+                    $newFileName = uniqid('IMG-', true) . '.' . $fileExtension;
+                    $uploadPath = '../../gambar/beras/' . $newFileName;
+
+                    if (move_uploaded_file($fileTmp, $uploadPath)) {
                         $gambarBeras = $newFileName;
                     } else {
                         $_SESSION['error'] = "Failed to upload image";
@@ -90,7 +109,7 @@ if(isset($_POST['addBeras'])) {
                         exit();
                     }
                 } else {
-                    $_SESSION['error'] = "Image size is too large (Max 5MB))";
+                    $_SESSION['error'] = "Image size is too large (Max 5MB)";
                     header("Location: ../../../pages/pemilikUsaha/riceStock.php");
                     exit();
                 }
@@ -100,7 +119,7 @@ if(isset($_POST['addBeras'])) {
                 exit();
             }
         } else {
-            $_SESSION['error'] = "An error occurred while uploading the image";
+            $_SESSION['error'] = "Image is required";
             header("Location: ../../../pages/pemilikUsaha/riceStock.php");
             exit();
         }
