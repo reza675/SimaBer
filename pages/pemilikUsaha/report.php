@@ -16,6 +16,9 @@ $dataPemilikUsaha = mysqli_fetch_assoc($q);
 $startDate = $_GET['start_date'] ?? date('Y-m-01');
 $endDate   = $_GET['end_date']   ?? date('Y-m-t');
 
+$startDateTime = $startDate . ' 00:00:00';
+$nextDate      = date('Y-m-d', strtotime($endDate . ' +1 day'));
+$endDateTime   = $nextDate . ' 00:00:00';
 // —— 1) Revenue per SKU ——
 $queryPendapatan = "
   SELECT
@@ -25,7 +28,7 @@ $queryPendapatan = "
   FROM pesananpemilik pp
   JOIN stokberaspemilik sb USING (idBeras)
   WHERE pp.idPemilik          = '$idPemilik'
-    AND pp.tanggalPesanan    BETWEEN '$startDate' AND '$endDate'
+    AND pp.tanggalPesanan >= '$startDateTime' AND pp.tanggalPesanan < '$endDateTime'
     AND pp.status_pengiriman = 'Completed'
   GROUP BY sb.idBeras, sb.namaBeras, sb.beratBeras
 ";
@@ -242,15 +245,27 @@ unset($_SESSION['success'], $_SESSION['error']);
                     <!-- Biaya Lain-lain -->
                     <p class="underline mt-3">2. Biaya Lain-lain:</p>
                     <?php
-                      $j = 1;
-                      while($b = mysqli_fetch_assoc($resultBiayaLain)):
-                        $totalPengeluaran += $b['total'];
-                    ?>
+                        $biayaAgg = [];
+                        while ($b = mysqli_fetch_assoc($resultBiayaLain)) {
+                            $nama = $b['namaBiaya'];
+                            $jumlah = $b['total'];
+                            if (isset($biayaAgg[$nama])) {
+                                $biayaAgg[$nama] += $jumlah;
+                            } else {
+                                $biayaAgg[$nama] = $jumlah;
+                            }
+                        }
+                        $j = 1;
+                        foreach ($biayaAgg as $nama => $jumlah) {
+                            $totalPengeluaran += $jumlah;
+                      ?>
                     <div class="flex justify-between py-1 text-sm ml-4">
-                        <span><?= $j++ ?>. <?= $b['namaBiaya'] ?></span>
-                        <span>Rp <?= number_format($b['total'],0,',','.'); ?></span>
+                        <span><?= $j++ ?>. <?= htmlspecialchars($nama) ?></span>
+                        <span>Rp <?= number_format($jumlah, 0, ',', '.') ?></span>
                     </div>
-                    <?php endwhile; ?>
+                    <?php
+                          }
+                        ?>
                     <div class="border-t mt-2 pt-2 font-bold flex justify-between">
                         <span>Total</span>
                         <span>Rp <?= number_format($totalPengeluaran,0,',','.'); ?></span>

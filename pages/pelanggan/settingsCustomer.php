@@ -44,7 +44,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                         alt="User" class="w-14 h-14 rounded-xl object-cover">
                     <div class="hidden sm:block text-left">
                         <span class="block text-lg font-bold"><?= $nama; ?></span>
-                        <span class="block text-sm text-[#A2A1A8]">Pelanggan</span>
+                        <span class="block text-sm text-[#A2A1A8]">Customer</span>
                     </div>
                     <svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />

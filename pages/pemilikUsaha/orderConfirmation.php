@@ -62,6 +62,7 @@ $sql = "
         pp.tanggalPesanan,
         pp.deliverNotes,
         pp.isDeliver,
+        pp.metode_pembayaran,
         sbp.namaBeras,
         sbp.beratBeras,
         p.alamatPelanggan,
@@ -129,10 +130,10 @@ unset($_SESSION['success'], $_SESSION['error']);
                             d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
                             clip-rule="evenodd" />
                     </svg>
-                    <form action="orderConfirmation.php" method="get">
-                        <input name="search"
+                    <form action="search.php" method="get">
+                        <input name="inputSearch"
                             class="w-64 bg-transparent placeholder:text-[#16151C] text-[#16151C] text-sm border border-slate-400 rounded-md pl-10 pr-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
-                            placeholder="Search" value="<?= htmlspecialchars($search) ?>" />
+                            placeholder="Search" />
                     </form>
                 </div>
 
@@ -152,7 +153,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                             alt="User" class="w-14 h-14 rounded-xl object-cover mix-blend-multiply" />
                         <div class="text-left hidden sm:block">
                             <span class="block text-lg font-bold text-black leading-5"><?= $nama; ?></span>
-                            <span class="block font-semibold text-sm text-[#A2A1A8] leading-4">Supplier</span>
+                            <span class="block font-semibold text-sm text-[#A2A1A8] leading-4">Business Owner</span>
                         </div>
                         <svg class="w-5 h-5 text-black ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -223,6 +224,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                             <th class="px-4 py-3 text-left">Order Date</th>
                             <th class="px-4 py-3 text-left">Delivery Note</th>
                             <th class="px-4 py-3 text-left">is Deliver</th>
+                            <th class="px-4 py-3 text-left">Payment Method</th>
                             <th class="px-4 py-3 text-center">Action</th>
                         </tr>
                     </thead>
@@ -278,7 +280,9 @@ unset($_SESSION['success'], $_SESSION['error']);
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap"><?= htmlspecialchars($pesanan['deliverNotes']) ?></td>
                             <td class="px-4 py-3 whitespace-nowrap"><?php if ($pesanan['isDeliver'] == 1) { echo 'Delivery'; } else {echo 'Self Pickup'; } ?>
-                        
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <?= htmlspecialchars($pesanan['metode_pembayaran']) ?>
                             </td>
                             <td class="px-4 py-3 text-center">
                                 <div class="inline-flex space-x-2 justify-center">

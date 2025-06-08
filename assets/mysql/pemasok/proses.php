@@ -52,156 +52,144 @@ if (isset($_POST['submitEdit'])) {
     exit();
 }
 //add data beras
-if(isset($_POST['addBeras'])) {
-    $namaBeras = $_POST['namaBeras'];
-    $tipeBeras = $_POST['jenisBeras'];
-    $beratBeras = $_POST['beratBeras'];
-    $hargaJual = $_POST['hargaJual'];
-    $stokBeras = $_POST['stokBeras'];
-    $idPemasok = $_POST['idPemasok'];
-
+if (isset($_POST['addBeras'])) {
+    $namaBeras   = $_POST['namaBeras'];
+    $tipeBeras   = $_POST['jenisBeras'];
+    $beratBeras  = $_POST['beratBeras'];
+    $hargaJual   = $_POST['hargaJual'];
+    $stokBeras   = $_POST['stokBeras'];
+    $idPemasok   = $_POST['idPemasok'];
     $gambarBeras = '';
-    if(isset($_FILES['gambarBeras'])) {
-        $file = $_FILES['gambarBeras'];
-        $fileName = $file['name'];
-        $fileTmp = $file['tmp_name'];
-        $fileError = $file['error'];
-        $fileSize = $file['size'];
 
-        $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
-        $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-        
-        if($fileError === 0) {
-            if(in_array($fileExtension, $allowedExtensions)) {
-                if($fileSize < 5000000) {
-                    $newFileName = uniqid('IMG-', true).'.'.$fileExtension;
-                    $uploadPath = '../../gambar/beras/'.$newFileName;
-                    
-                    if(move_uploaded_file($fileTmp, $uploadPath)) {
-                        $gambarBeras = $newFileName;
-                    } else {
-                        $_SESSION['error'] = "Failed to upload image";
-                        header("Location: ../../../pages/pemasok/riceManagement.php");
-                        exit();
-                    }
-                } else {
-                    $_SESSION['error'] = "Image size is too large (Max 5MB))";
-                    header("Location: ../../../pages/pemasok/riceManagement.php");
-                    exit();
-                }
-            } else {
-                $_SESSION['error'] = "Unsupported file formats (JPG, JPEG, PNG, WEBP only)";
-                header("Location: ../../../pages/pemasok/riceManagement.php");
-                exit();
-            }
-        } else {
-            $_SESSION['error'] = "An error occurred while uploading the image";
+    // 1. Cek kalau sudah ada gambar di tabel stokberaspemasok untuk namaBeras ini
+    $cekGambar = mysqli_query($conn, "
+        SELECT gambarBeras 
+        FROM stokberaspemasok 
+        WHERE namaBeras = '$namaBeras'
+        LIMIT 1
+    ");
+    if ($rowGambar = mysqli_fetch_assoc($cekGambar) and !empty($rowGambar['gambarBeras'])) {
+        // pakai gambar yang sudah ada
+        $gambarBeras = $rowGambar['gambarBeras'];
+    } else {
+        // belum ada, wajib upload
+        if (empty($_FILES['gambarBeras']['name'])) {
+            $_SESSION['error'] = "Image is required";
             header("Location: ../../../pages/pemasok/riceManagement.php");
             exit();
         }
+        $file = $_FILES['gambarBeras'];
+        $ext  = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $allowed = ['jpg','jpeg','png','webp'];
+        if ($file['error'] !== 0
+            || !in_array($ext, $allowed)
+            || $file['size'] > 5_000_000
+        ) {
+            $_SESSION['error'] = "Unsupported file, max 5MB JPG/PNG/WEBP only";
+            header("Location: ../../../pages/pemasok/riceManagement.php");
+            exit();
+        }
+        $newFile = uniqid('IMG-',true).'.'.$ext;
+        $dest    = "../../gambar/beras/".$newFile;
+        if (!move_uploaded_file($file['tmp_name'], $dest)) {
+            $_SESSION['error'] = "Failed to upload image";
+            header("Location: ../../../pages/pemasok/riceManagement.php");
+            exit();
+        }
+        $gambarBeras = $newFile;
     }
 
-    // 3. Query insert ke database
-    $query = "INSERT INTO stokberaspemasok  (
-        idBeras, 
-        namaBeras, 
-        jenisBeras, 
-        beratBeras, 
-        hargaJual,
-        stokBeras, 
-        idPemasok,
-        gambarBeras
+    // 2. Insert ke database
+    $query = "INSERT INTO stokberaspemasok (
+        namaBeras, jenisBeras, beratBeras, hargaJual, stokBeras, idPemasok, gambarBeras
     ) VALUES (
-        '',
-        '$namaBeras',
-        '$tipeBeras',
-        '$beratBeras',
-        '$hargaJual',
-        '$stokBeras',
-        '$idPemasok',
-        '$gambarBeras'
+        '$namaBeras', '$tipeBeras', '$beratBeras', '$hargaJual',
+        '$stokBeras', '$idPemasok', '$gambarBeras'
     )";
-
-    if(mysqli_query($conn, $query)) {
+    if (mysqli_query($conn, $query)) {
         $_SESSION['success'] = "Rice data successfully added";
     } else {
-        $_SESSION['error'] = "Failed to add data: " . mysqli_error($conn);
+        $_SESSION['error'] = "Failed to add data: ".mysqli_error($conn);
     }
     header("Location: ../../../pages/pemasok/riceManagement.php");
     exit();
 }
 
-//edit data beras
-if(isset($_POST['editBeras'])) {
-    $idBeras = $_POST['idBeras'];
-    $namaBeras = $_POST['namaBeras'];
-    $tipeBeras = $_POST['jenisBeras'];
-    $beratBeras = $_POST['beratBeras'];
-    $hargaJual = $_POST['hargaJual'];
-    $stokBeras = $_POST['stokBeras'];
-    $idPemasok = $_POST['supplierBeras'];
 
-    $queryGetGambar = "SELECT gambarBeras FROM stokberaspemasok WHERE idBeras = '$idBeras'";
-    $result = mysqli_query($conn, $queryGetGambar);
-    $row = mysqli_fetch_assoc($result);
-    $gambarLama = $row['gambarBeras'];
-    
-    $gambarBaru = $gambarLama;
+// edit data beras (role: pemasok)
+if (isset($_POST['editBeras'])) {
+    $idBeras        = $_POST['idBeras'];
+    $namaBeras      = $_POST['namaBeras'];
+    $tipeBeras      = $_POST['jenisBeras'];
+    $beratBeras     = $_POST['beratBeras'];
+    $hargaJual      = $_POST['hargaJual'];
+    $stokBeras      = $_POST['stokBeras'];
+    $idPemasok      = $_POST['supplierBeras'];
+
+    // ambil gambar lama
+    $res = mysqli_query($conn, "SELECT gambarBeras FROM stokberaspemasok WHERE idBeras='$idBeras'");
+    $old = mysqli_fetch_assoc($res)['gambarBeras'];
+    $gambarBaru = $old;
+
+    // jika user upload file baru
     if (!empty($_FILES['gambarBeras']['name'])) {
-    $targetDir = "../../gambar/beras/";
-    $ext = strtolower(pathinfo($_FILES['gambarBeras']['name'], PATHINFO_EXTENSION));
-    $newFileName = uniqid() . '_' . preg_replace('/\s+/', '_', $_FILES['gambarBeras']['name']);
-    $newFileName = preg_replace('/[^A-Za-z0-9_\-\.]/', '', $newFileName); 
-    $uploadPath = $targetDir . $newFileName;
-    $check     = getimagesize($_FILES['gambarBeras']['tmp_name']);
-
-    if ($check === false) {
-        $_SESSION['error'] = "File is not an image!";
-        header("Location: ../../../pages/pemasok/riceManagement.php");
-        exit();
-    }
-    if ($_FILES['gambarBeras']['size'] > 5000000) {
-        $_SESSION['error'] = "Ukuran file terlalu besar (max 5MB)!";
-        header("Location: ../../../pages/pemasok/riceManagement.php");
-        exit();
-    }
-    $allowed = ['jpg','jpeg','png','webp'];
-    if (!in_array($ext, $allowed)) {
-        $_SESSION['error'] = "Only JPG, JPEG, PNG,WEBP formats are allowed!";
-        header("Location: ../../../pages/pemasok/riceManagement.php");
-        exit();
-    }
-
-    if (move_uploaded_file($_FILES['gambarBeras']['tmp_name'], $uploadPath)) {
-        $oldPath = $targetDir . $gambarLama;
-        if (file_exists($oldPath) && is_file($oldPath)) {
-            unlink($oldPath);
+        // cek di tabel apakah namaBeras ini sudah punya gambar
+        $cekG = mysqli_query($conn, "
+            SELECT gambarBeras 
+            FROM stokberaspemasok 
+            WHERE namaBeras = '$namaBeras'
+            LIMIT 1
+        ");
+        if ($r = mysqli_fetch_assoc($cekG) and !empty($r['gambarBeras'])) {
+            // pakai yang di DB, hapus upload temp
+            $gambarBaru = $r['gambarBeras'];
+        } else {
+            // proses upload
+            $file = $_FILES['gambarBeras'];
+            $ext  = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            $allowed = ['jpg','jpeg','png','webp'];
+            if ($file['error'] !== 0
+                || !in_array($ext, $allowed)
+                || $file['size'] > 5_000_000
+            ) {
+                $_SESSION['error'] = "Unsupported file, max 5MB JPG/PNG/WEBP only";
+                header("Location: ../../../pages/pemasok/riceManagement.php");
+                exit();
+            }
+            $newFile = uniqid('IMG-',true).'.'.$ext;
+            $dest    = "../../gambar/beras/".$newFile;
+            if (!move_uploaded_file($file['tmp_name'], $dest)) {
+                $_SESSION['error'] = "Failed to upload image";
+                header("Location: ../../../pages/pemasok/riceManagement.php");
+                exit();
+            }
+            $gambarBaru = $newFile;
+            // hapus gambar lama
+            if ($old && file_exists("../../gambar/beras/".$old)) {
+                unlink("../../gambar/beras/".$old);
+            }
         }
-        $gambarBaru = $newFileName;
-    } else {
-        $_SESSION['error'] = "Failed to upload image!";
-        header("Location: ../../../pages/pemasok/riceManagement.php");
-        exit();
     }
-}
+
+    // edit data beras
     $q = "UPDATE stokberaspemasok SET
-          namaBeras='$namaBeras',
-          jenisBeras='$tipeBeras',
-          beratBeras='$beratBeras',
-          hargaJual='$hargaJual', 
-          stokBeras='$stokBeras',
-          idPemasok='$idPemasok',
-          gambarBeras='$gambarBaru' 
-          WHERE idBeras='$idBeras'";
-    if(mysqli_query($conn, $q)) {
+        namaBeras='$namaBeras',
+        jenisBeras='$tipeBeras',
+        beratBeras='$beratBeras',
+        hargaJual='$hargaJual',
+        stokBeras='$stokBeras',
+        idPemasok='$idPemasok',
+        gambarBeras='$gambarBaru'
+      WHERE idBeras='$idBeras'";
+    if (mysqli_query($conn, $q)) {
         $_SESSION['success'] = "Rice data successfully updated!";
     } else {
-        $_SESSION['error'] = "Error: " . mysqli_error($conn);
+        $_SESSION['error'] = "Error: ".mysqli_error($conn);
     }
-    
     header("Location: ../../../pages/pemasok/riceManagement.php");
     exit();
 }
+
 //delete beras
 if(isset($_POST['deleteBeras'])) {
     $idBeras = $_POST['idBeras'];

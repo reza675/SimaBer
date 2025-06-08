@@ -94,7 +94,7 @@ $dataPelanggan = mysqli_fetch_assoc($q);
                             alt="User" class="w-14 h-14 rounded-xl object-cover mix-blend-multiply" />
                         <div class="text-left hidden sm:block">
                             <span class="block text-lg font-bold text-black leading-5"><?= $nama; ?></span>
-                            <span class="block font-semibold text-sm text-[#A2A1A8] leading-4">Pelanggan</span>
+                            <span class="block font-semibold text-sm text-[#A2A1A8] leading-4">Customer</span>
                         </div>
                         <svg class="w-5 h-5 text-black ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />

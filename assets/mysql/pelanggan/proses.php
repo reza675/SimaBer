@@ -153,6 +153,7 @@ if (isset($_POST['checkout_action']) && $_POST['checkout_action'] === 'complete_
     $status          = 'pending';
     $isDeliver       = ($checkoutData['shippingMethod'] === 'delivery') ? 1 : 0;
     $idBeras = $checkoutData['idBeras'];
+    $paymentMethod = $_POST['payment_method'];
 
     $stokQuery = "SELECT idPemilik FROM stokberaspemilik WHERE idBeras = '$idBeras'";
     $stokResult = mysqli_query($conn, $stokQuery);
@@ -178,7 +179,8 @@ if (isset($_POST['checkout_action']) && $_POST['checkout_action'] === 'complete_
         jumlahPesanan,
         hargaBeli,
         isDeliver,
-        deliverNotes
+        deliverNotes,
+        metode_pembayaran
       ) VALUES (
         '$tanggalPesanan',
         '$status',
@@ -188,7 +190,8 @@ if (isset($_POST['checkout_action']) && $_POST['checkout_action'] === 'complete_
         '{$checkoutData['quantity']}',
         '{$checkoutData['finalTotal']}',
         '$isDeliver',
-        '$deliveryNotes'
+        '$deliveryNotes',
+        '$paymentMethod'
       )";
 
     if (mysqli_query($conn, $insertQuery)) {

@@ -69,7 +69,7 @@ if(isset($_POST['addBeras'])) {
 
     $cekSql = "SELECT COUNT(*) AS cnt FROM stokberaspemilik WHERE idBeras = '$idBeras'";
     $cekRes = mysqli_query($conn, $cekSql);
-    $row    = mysqli_fetch_assoc($cekRes);
+    $row = mysqli_fetch_assoc($cekRes);
     if ($row['cnt'] > 0) {
         $_SESSION['error'] = "Rice ID '$idBeras' already exists!";
         header("Location: ../../../pages/pemilikUsaha/riceStock.php");
@@ -88,35 +88,33 @@ if(isset($_POST['addBeras'])) {
     if ($rowGambar = mysqli_fetch_assoc($cekGambar)) {
         $gambarBeras = $rowGambar['gambarBeras'];
     } else {
-        // Gambar tidak ada di stokberaspemasok, pakai gambar hasil upload
         if (isset($_FILES['gambarBeras']) && $_FILES['gambarBeras']['error'] === 0) {
             $file = $_FILES['gambarBeras'];
             $fileName = $file['name'];
             $fileTmp = $file['tmp_name'];
             $fileSize = $file['size'];
-
-            $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
             $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
 
-            if (in_array($fileExtension, $allowedExtensions)) {
-                if ($fileSize < 5000000) {
-                    $newFileName = uniqid('IMG-', true) . '.' . $fileExtension;
-                    $uploadPath = '../../gambar/beras/' . $newFileName;
-
-                    if (move_uploaded_file($fileTmp, $uploadPath)) {
-                        $gambarBeras = $newFileName;
-                    } else {
-                        $_SESSION['error'] = "Failed to upload image";
-                        header("Location: ../../../pages/pemilikUsaha/riceStock.php");
-                        exit();
-                    }
-                } else {
-                    $_SESSION['error'] = "Image size is too large (Max 5MB)";
-                    header("Location: ../../../pages/pemilikUsaha/riceStock.php");
-                    exit();
-                }
-            } else {
+            if (!in_array($fileExtension, $allowedExtensions)) {
                 $_SESSION['error'] = "Unsupported file formats (JPG, JPEG, PNG, WEBP only)";
+                header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+                exit();
+            }
+
+            if ($fileSize > 5000000) {
+                $_SESSION['error'] = "Image size is too large (Max 5MB)";
+                header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+                exit();
+            }
+
+            $newFileName = uniqid('IMG-', true) . '.' . $fileExtension;
+            $uploadPath = '../../gambar/beras/' . $newFileName;
+
+            if (move_uploaded_file($fileTmp, $uploadPath)) {
+                $gambarBeras = $newFileName;
+            } else {
+                $_SESSION['error'] = "Failed to upload image";
                 header("Location: ../../../pages/pemilikUsaha/riceStock.php");
                 exit();
             }
@@ -166,112 +164,137 @@ if(isset($_POST['addBeras'])) {
 }
 
 //edit data beras
-if(isset($_POST['editBeras'])) {
-    $idBeras = $_POST['idBeras'];
-    $namaBeras = $_POST['namaBeras'];
-    $tipeBeras = $_POST['jenisBeras'];
-    $beratBeras = $_POST['beratBeras'];
-    $hargaJualBeras = $_POST['hargaJualBeras'];
-    $hargaBeliBeras = $_POST['hargaBeliBeras'];
-    $stokBeras = $_POST['stokBeras'];
-    $deskripsiBeras = $_POST['deskripsiBeras'];
-    $idPemasok = $_POST['supplierBeras'];
-    $tanggalInput = date('Y-m-d');
+if (isset($_POST['editBeras'])) {
+    $idBeras         = $_POST['idBeras'];
+    $namaBeras       = $_POST['namaBeras'];
+    $tipeBeras       = $_POST['jenisBeras'];
+    $beratBeras      = $_POST['beratBeras'];
+    $hargaJualBeras  = $_POST['hargaJualBeras'];
+    $hargaBeliBeras  = $_POST['hargaBeliBeras'];
+    $stokBeras       = $_POST['stokBeras'];
+    $deskripsiBeras  = $_POST['deskripsiBeras'];
+    $idPemasok       = $_POST['supplierBeras'];
+    $tanggalInput    = date('Y-m-d');
 
     $queryGetGambar = "SELECT gambarBeras FROM stokberaspemilik WHERE idBeras = '$idBeras'";
     $result = mysqli_query($conn, $queryGetGambar);
     $row = mysqli_fetch_assoc($result);
     $gambarLama = $row['gambarBeras'];
-    
     $gambarBaru = $gambarLama;
-    if(!empty($_FILES['gambarBeras']['name'])) {
-        $targetDir = "../../gambar/beras/";
-        $namaFile = basename($_FILES['gambarBeras']['name']);
-        $targetFile = $targetDir . uniqid() . '_' . $namaFile;
-        $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
-        // Validasi gambar
-        $check = getimagesize($_FILES['gambarBeras']['tmp_name']);
-        if($check === false) {
-            $_SESSION['error'] = "File is not an image!";
-            header("Location: ../../../pages/pemilikUsaha/riceStock.php");
-            exit();
-        }
-        // Cek ukuran file (contoh: maks 5MB)
-        if($_FILES['gambarBeras']['size'] > 5000000) {
-            $_SESSION['error'] = "Ukuran file terlalu besar (Maks 5MB)!";
-            header("Location: ../../../pages/pemilikUsaha/riceStock.php");
-            exit();
-        }
-        // Cek ekstensi file
-        $allowed = ['jpg', 'jpeg', 'png','webp'];
-        if(!in_array($fileType, $allowed)) {
-            $_SESSION['error'] = "Only JPG, JPEG, PNG, WEBP formats are allowed!";
-            header("Location: ../../../pages/pemilikUsaha/riceStock.php");
-            exit();
-        }
-        if(move_uploaded_file($_FILES['gambarBeras']['tmp_name'], $targetFile)) {
-            $gambarBaru = basename($targetFile);
-           if(file_exists("../../gambar/beras/" . $gambarLama)) {
-                unlink("../../gambar/beras/" . $gambarLama);
-            }
+
+    if (!empty($_FILES['gambarBeras']['name'])) {
+        $cekGambar = mysqli_query($conn, "
+            SELECT gambarBeras 
+            FROM stokberaspemasok 
+            WHERE namaBeras = '$namaBeras'
+            LIMIT 1
+        ");
+
+        if ($rowGambar = mysqli_fetch_assoc($cekGambar)) {
+            $gambarBaru = $rowGambar['gambarBeras'];
         } else {
-            $_SESSION['error'] = "Failed to upload image!";
-            header("Location: ../../../pages/pemilikUsaha/riceStock.php");
-            exit();
+            $targetDir = "../../gambar/beras/";
+            $namaFile = basename($_FILES['gambarBeras']['name']);
+            $fileExtension = strtolower(pathinfo($namaFile, PATHINFO_EXTENSION));
+            $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+
+            if (!in_array($fileExtension, $allowed)) {
+                $_SESSION['error'] = "Only JPG, JPEG, PNG, WEBP formats are allowed!";
+                header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+                exit();
+            }
+
+            if ($_FILES['gambarBeras']['size'] > 5000000) {
+                $_SESSION['error'] = "Ukuran file terlalu besar (Maks 5MB)!";
+                header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+                exit();
+            }
+
+            $newFileName = uniqid('IMG-', true) . '.' . $fileExtension;
+            $targetFile = $targetDir . $newFileName;
+
+            if (move_uploaded_file($_FILES['gambarBeras']['tmp_name'], $targetFile)) {
+                $gambarBaru = $newFileName;
+                if ($gambarLama && file_exists("../../gambar/beras/" . $gambarLama)) {
+                    unlink("../../gambar/beras/" . $gambarLama);
+                }
+            } else {
+                $_SESSION['error'] = "Failed to upload image!";
+                header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+                exit();
+            }
         }
     }
+
     $q = "UPDATE stokberaspemilik SET
-          namaBeras='$namaBeras',
-          jenisBeras='$tipeBeras',
-          beratBeras='$beratBeras',
-          hargaJualBeras='$hargaJualBeras',
-          hargaBeliBeras='$hargaBeliBeras',
-          stokBeras='$stokBeras',
-          idPemasok='$idPemasok',
-          tanggalMasuk='$tanggalInput',
-          deskripsiBeras='$deskripsiBeras',
-          gambarBeras='$gambarBaru' 
-          WHERE idBeras='$idBeras'";
-    if(mysqli_query($conn, $q)) {
+        namaBeras='$namaBeras',
+        jenisBeras='$tipeBeras',
+        beratBeras='$beratBeras',
+        hargaJualBeras='$hargaJualBeras',
+        hargaBeliBeras='$hargaBeliBeras',
+        stokBeras='$stokBeras',
+        idPemasok='$idPemasok',
+        tanggalMasuk='$tanggalInput',
+        deskripsiBeras='$deskripsiBeras',
+        gambarBeras='$gambarBaru' 
+        WHERE idBeras='$idBeras'";
+
+    if (mysqli_query($conn, $q)) {
         $_SESSION['success'] = "Rice data successfully updated!";
     } else {
         $_SESSION['error'] = "Error: " . mysqli_error($conn);
     }
-    
+
     header("Location: ../../../pages/pemilikUsaha/riceStock.php");
     exit();
 }
 
 //delete beras
-if(isset($_POST['deleteBeras'])) {
+if (isset($_POST['deleteBeras'])) {
     $idBeras = $_POST['idBeras'];
-    $query = "SELECT gambarBeras FROM stokberaspemilik WHERE idBeras = '$idBeras'";
-    $result = mysqli_query($conn, $query);
-    
-    if(mysqli_num_rows($result) > 0) {
-        $row = mysqli_fetch_assoc($result);
-        $gambarBeras = $row['gambarBeras'];
-        $deleteQuery = "DELETE FROM stokberaspemilik WHERE idBeras = '$idBeras'";
-        if(mysqli_query($conn, $deleteQuery)) {
-            $checkQuery = "SELECT COUNT(*) AS total FROM stokberaspemilik WHERE gambarBeras = '$gambarBeras'";
-            $checkResult = mysqli_query($conn, $checkQuery);
-            $checkData = mysqli_fetch_assoc($checkResult);
-            if($checkData['total'] == 0) {
-                $gambarPath = "../../gambar/beras/" . $gambarBeras;
-                if(file_exists($gambarPath) && is_file($gambarPath)) {
-                    if(!unlink($gambarPath)) {
-                        $_SESSION['error'] = "Failed to delete image!";
-                    }
-                }
-            }
-            
-            $_SESSION['success'] = "Rice data successfully deleted!";
-        } else {
-            $_SESSION['error'] = "Failed to delete data: " . mysqli_error($conn);
-        }
-    } else {
-        $_SESSION['error'] = "Data not found!";
+    $checkOrderSql = "SELECT COUNT(*) AS total 
+                      FROM pesananpemilik 
+                      WHERE idBeras = '$idBeras'";
+    $res1 = mysqli_query($conn, $checkOrderSql);
+    $data1 = mysqli_fetch_assoc($res1);
+    if ($data1['total'] > 0) {
+        $_SESSION['error'] = "Failed to delete: This rice is still associated with " . $data1['total'] . " order.";
+        header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+        exit();
     }
+
+    $getGambarSql = "SELECT gambarBeras 
+                     FROM stokberaspemilik 
+                     WHERE idBeras = '$idBeras'";
+    $res2 = mysqli_query($conn, $getGambarSql);
+    if (mysqli_num_rows($res2) === 0) {
+        $_SESSION['error'] = "Data beras tidak ditemukan!";
+        header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+        exit();
+    }
+    $row = mysqli_fetch_assoc($res2);
+    $gambarBeras = $row['gambarBeras'];
+
+    $deleteSql = "DELETE FROM stokberaspemilik WHERE idBeras = '$idBeras'";
+    if (!mysqli_query($conn, $deleteSql)) {
+        $_SESSION['error'] = "Gagal menghapus data beras: " . mysqli_error($conn);
+        header("Location: ../../../pages/pemilikUsaha/riceStock.php");
+        exit();
+    }
+
+    $checkFileSql = "SELECT COUNT(*) AS total 
+                     FROM stokberaspemilik 
+                     WHERE gambarBeras = '$gambarBeras'";
+    $res3 = mysqli_query($conn, $checkFileSql);
+    $data3 = mysqli_fetch_assoc($res3);
+    if ($data3['total'] == 0) {
+        $path = "../../gambar/beras/" . $gambarBeras;
+        if (is_file($path) && !@unlink($path)) {
+            $_SESSION['warning'] = "Rice data successfully deleted, but failed to delete image!";
+        }
+    }
+
+    $_SESSION['success'] = "Rice data successfully deleted!";
     header("Location: ../../../pages/pemilikUsaha/riceStock.php");
     exit();
 }
@@ -394,36 +417,83 @@ if (isset($_POST['editSupplier'])) {
 
 
 
-//delete pemasok
-if(isset($_POST['deletePemasok'])) {
-    $idPemasok = $_POST['idPemasok'];
-    $query = "SELECT fotoProfil FROM pemasok WHERE idPemasok = '$idPemasok'";
-    $result = mysqli_query($conn, $query);
-    
-    if(mysqli_num_rows($result) > 0) {
-        $row = mysqli_fetch_assoc($result);
-        $fotoProfil = $row['fotoProfil'];
-        $deleteQuery = "DELETE FROM pemasok WHERE idPemasok = '$idPemasok'";
-        if(mysqli_query($conn, $deleteQuery)) {
-            $checkQuery = "SELECT COUNT(*) AS total FROM pemasok WHERE fotoProfil = '$fotoProfil'";
-            $checkResult = mysqli_query($conn, $checkQuery);
-            $checkData = mysqli_fetch_assoc($checkResult);
-            if($checkData['total'] == 0) {
-                $gambarPath = "../../gambar/pemasok/photoProfile/" . $fotoProfil;
-                if(file_exists($gambarPath) && is_file($gambarPath)) {
-                    if(!unlink($gambarPath)) {
-                        $_SESSION['error'] = "Failed to delete image!";
-                    }
-                }
-            }
-            
-            $_SESSION['success'] = "Supplier data successfully deleted!";
-        } else {
-            $_SESSION['error'] = "Failed to delete data: " . mysqli_error($conn);
-        }
-    } else {
-        $_SESSION['error'] = "Data not found!";
+if (isset($_POST['deletePemasok'])) {
+    // Escape input agar aman
+    $idPemasok = mysqli_real_escape_string($conn, $_POST['idPemasok']);
+
+    // 1. Check pesananpemasok
+    $sql1 = "
+        SELECT COUNT(*) AS total
+        FROM pesananpemasok
+        WHERE idPemasok = '$idPemasok'
+    ";
+    $res1 = mysqli_query($conn, $sql1);
+    $d1 = mysqli_fetch_assoc($res1);
+    if ($d1['total'] > 0) {
+        $_SESSION['error'] = "Failed to delete: This supplier is still associated with "
+            . $d1['total'] . " order(s).";
+        header("Location: ../../../pages/pemilikUsaha/supplier.php");
+        exit();
     }
+
+    // 2. Check stokberaspemasok
+    $sql2 = "
+        SELECT COUNT(*) AS total
+        FROM stokberaspemasok
+        WHERE idPemasok = '$idPemasok'
+    ";
+    $res2 = mysqli_query($conn, $sql2);
+    $d2 = mysqli_fetch_assoc($res2);
+    if ($d2['total'] > 0) {
+        $_SESSION['error'] = "Failed to delete: This supplier still has "
+            . $d2['total'] . " stock item(s) linked.";
+        header("Location: ../../../pages/pemilikUsaha/supplier.php");
+        exit();
+    }
+
+    // 3. Retrieve profile-photo filename
+    $sql3 = "
+        SELECT fotoProfil
+        FROM pemasok
+        WHERE idPemasok = '$idPemasok'
+    ";
+    $res3 = mysqli_query($conn, $sql3);
+    if (mysqli_num_rows($res3) === 0) {
+        $_SESSION['error'] = "Supplier data not found!";
+        header("Location: ../../../pages/pemilikUsaha/supplier.php");
+        exit();
+    }
+    $row = mysqli_fetch_assoc($res3);
+    $fotoProfil = $row['fotoProfil'];
+
+    // 4. Delete the supplier record
+    $sqlDel = "
+        DELETE FROM pemasok
+        WHERE idPemasok = '$idPemasok'
+    ";
+    if (!mysqli_query($conn, $sqlDel)) {
+        $_SESSION['error'] = "Failed to delete supplier: " . mysqli_error($conn);
+        header("Location: ../../../pages/pemilikUsaha/supplier.php");
+        exit();
+    }
+
+    // 5. Check if any other supplier uses the same photo file
+    $sql5 = "
+        SELECT COUNT(*) AS total
+        FROM pemasok
+        WHERE fotoProfil = '" . mysqli_real_escape_string($conn, $fotoProfil) . "'
+    ";
+    $res5 = mysqli_query($conn, $sql5);
+    $d5 = mysqli_fetch_assoc($res5);
+    if ($d5['total'] == 0) {
+        $path = "../../gambar/pemasok/photoProfile/" . $fotoProfil;
+        if (is_file($path) && !@unlink($path)) {
+            $_SESSION['warning'] = "Supplier deleted, but profile photo could not be removed.";
+        }
+    }
+
+    // 6. Success
+    $_SESSION['success'] = "Supplier successfully deleted.";
     header("Location: ../../../pages/pemilikUsaha/supplier.php");
     exit();
 }
@@ -547,36 +617,63 @@ if (isset($_POST['editCustomer'])) {
     exit();
 }
 
-//delete pelanggan
-if(isset($_POST['deletePelanggan'])) {
-    $idPelanggan = $_POST['idPelanggan'];
-    $query = "SELECT fotoProfil FROM pelanggan WHERE idPelanggan = '$idPelanggan'";
-    $result = mysqli_query($conn, $query);
-    
-    if(mysqli_num_rows($result) > 0) {
-        $row = mysqli_fetch_assoc($result);
-        $fotoProfil = $row['fotoProfil'];
-        $deleteQuery = "DELETE FROM pelanggan WHERE idPelanggan = '$idPelanggan'";
-        if(mysqli_query($conn, $deleteQuery)) {
-            $checkQuery = "SELECT COUNT(*) AS total FROM pelanggan WHERE fotoProfil = '$fotoProfil'";
-            $checkResult = mysqli_query($conn, $checkQuery);
-            $checkData = mysqli_fetch_assoc($checkResult);
-            if($checkData['total'] == 0) {
-                $gambarPath = "../../gambar/pelanggan/photoProfile/" . $fotoProfil;
-                if(file_exists($gambarPath) && is_file($gambarPath)) {
-                    if(!unlink($gambarPath)) {
-                        $_SESSION['error'] = "Failed to delete image!";
-                    }
-                }
-            }
-            
-            $_SESSION['success'] = "Customer data successfully deleted!";
-        } else {
-            $_SESSION['error'] = "Failed to delete data: " . mysqli_error($conn);
-        }
-    } else {
-        $_SESSION['error'] = "Data not found!";
+if (isset($_POST['deletePelanggan'])) {
+    $idPelanggan = mysqli_real_escape_string($conn, $_POST['idPelanggan']);
+
+    $sql1 = "
+        SELECT COUNT(*) AS total
+        FROM pesananpemilik
+        WHERE idPelanggan = '$idPelanggan'
+    ";
+    $res1 = mysqli_query($conn, $sql1);
+    $d1 = mysqli_fetch_assoc($res1);
+    if ($d1['total'] > 0) {
+        $_SESSION['error'] = "Failed to delete: This customer is still associated with "
+            . $d1['total'] . " order(s).";
+        header("Location: ../../../pages/pemilikUsaha/customer.php");
+        exit();
     }
+
+    $sql2 = "
+        SELECT fotoProfil
+        FROM pelanggan
+        WHERE idPelanggan = '$idPelanggan'
+    ";
+    $res2 = mysqli_query($conn, $sql2);
+    if (mysqli_num_rows($res2) === 0) {
+        $_SESSION['error'] = "Customer data not found!";
+        header("Location: ../../../pages/pemilikUsaha/customer.php");
+        exit();
+    }
+    $row = mysqli_fetch_assoc($res2);
+    $fotoProfil = $row['fotoProfil'];
+
+    $sqlDel = "
+        DELETE FROM pelanggan
+        WHERE idPelanggan = '$idPelanggan'
+    ";
+    if (!mysqli_query($conn, $sqlDel)) {
+        $_SESSION['error'] = "Failed to delete customer: " . mysqli_error($conn);
+        header("Location: ../../../pages/pemilikUsaha/customer.php");
+        exit();
+    }
+
+    $escapedFoto = mysqli_real_escape_string($conn, $fotoProfil);
+    $sql4 = "
+        SELECT COUNT(*) AS total
+        FROM pelanggan
+        WHERE fotoProfil = '$escapedFoto'
+    ";
+    $res4 = mysqli_query($conn, $sql4);
+    $d4 = mysqli_fetch_assoc($res4);
+    if ($d4['total'] == 0) {
+        $path = "../../gambar/pelanggan/photoProfile/" . $fotoProfil;
+        if (is_file($path) && !@unlink($path)) {
+            $_SESSION['warning'] = "Customer deleted, but profile photo could not be removed.";
+        }
+    }
+
+    $_SESSION['success'] = "Customer successfully deleted.";
     header("Location: ../../../pages/pemilikUsaha/customer.php");
     exit();
 }
