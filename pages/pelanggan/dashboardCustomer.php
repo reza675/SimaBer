@@ -9,7 +9,7 @@ $idPelanggan = $_SESSION['idPelanggan'];
 $currentPage = 'dashboardCustomer.php';
 
 include '../../assets/mysql/connect.php';
-$query = mysqli_query($conn, "SELECT * FROM stokberaspemilik WHERE idBeras = '1M' or idBeras = '2M' or idBeras = '3M' or idBeras = '4SP' AND stokBeras > 0 AND beratBeras = 5 or beratBeras = 10");
+$query = mysqli_query($conn, "SELECT * FROM stokberaspemilik WHERE idBeras = '1M' or idBeras = '2M' or idBeras = '3M' or idBeras = '4M' AND stokBeras > 0 AND beratBeras = 5 or beratBeras = 10");
 $dataBeras = [];
 while ($data = mysqli_fetch_array($query)) {
     $dataBeras[] = $data;
