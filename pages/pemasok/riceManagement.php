@@ -140,7 +140,7 @@ unset($_SESSION['success'], $_SESSION['error']);
         <div class="rounded-2xl border border-[#A2A1A8] shadow-lg p-8 mt-4 mb-4">
             <div class="relative flex justify-between items-center gap-4">
                 <div class="relative flex-grow">
-                    <form action="orderCustomer.php" method="get" class="relative">
+                    <form action="riceManagement.php" method="get" class="relative">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                             class="absolute w-5 h-5 top-2.5 left-2.5 text-slate-600">
                             <path fill-rule="evenodd"

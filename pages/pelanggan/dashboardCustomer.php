@@ -209,7 +209,7 @@ $dataPelanggan = mysqli_fetch_assoc($q);
 
                 <div class="flex-shrink-0 space-y-4">
                     <h2 class="text-2xl font-semibold text-white mx-6">Why Choose SimaBer?</h2>
-                    <a href="OrderCustomer.php" class="inline-flex items-center bg-black text-white font-semibold 
+                    <a href="orderCustomer.php" class="inline-flex items-center bg-black text-white font-semibold 
                 py-3 px-6 rounded-full hover:bg-gray-800 transition mx-6">
                         Get Started
                         <svg class="ml-2" width="10" height="12" viewBox="0 0 10 16" fill="none"

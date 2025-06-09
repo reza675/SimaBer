@@ -13,7 +13,7 @@
                     High level experience in web design and<br>
                     development knowledge, producing quality work.
                 </p>
-                <a href="OrderCustomer.php" class="inline-flex items-center bg-black text-white font-semibold 
+                <a href="orderCustomer.php" class="inline-flex items-center bg-black text-white font-semibold 
                     py-3 px-6 rounded-full hover:bg-gray-800 transition">
                     Get Started
                     <svg class="ml-2" width="10" height="12" viewBox="0 0 10 16" fill="none"

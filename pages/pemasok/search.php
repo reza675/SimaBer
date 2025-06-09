@@ -18,15 +18,13 @@ if (isset($_GET['inputSearch'])) {
         header("Location: riceManagement.php");
         exit();
 
-    } elseif (
-        (strpos($keyword, 'order') !== false && strpos($keyword, 'confirmation') !== false)
-        || strpos($keyword, 'confirmation') !== false
+    } elseif ((strpos($keyword, 'order') !== false && strpos($keyword, 'confirmation') !== false) || strpos($keyword, 'confirmation') !== false
     ) {
         header("Location: orderConfirmation.php");
         exit();
 
-    } elseif (strpos($keyword, 'order') !== false && strpos($keyword, 'status') !== false) {
-        header("Location: OrderStatusSupplier.php");
+    } elseif ((strpos($keyword, 'order') !== false && strpos($keyword, 'status') !== false) || strpos($keyword, 'status') !== false) {
+        header("Location: orderStatusSupplier.php");
         exit();
 
     } elseif (

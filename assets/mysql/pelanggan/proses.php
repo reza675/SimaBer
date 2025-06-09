@@ -44,9 +44,9 @@ if (isset($_POST['submitEdit'])) {
     $q = "UPDATE pelanggan SET
           emailPelanggan='$email',
           namaPelanggan='$nama',
-          teleponPelanggan='$telepon',
+          nomorHPPelanggan='$telepon',
           alamatPelanggan='$alamat',
-          kodeposPelanggan='$kodepos'
+          kodePos='$kodepos'
           WHERE idPelanggan='$id'";
     if (mysqli_query($conn, $q)) {
         $_SESSION['success'] = "Profile data successfully updated!";

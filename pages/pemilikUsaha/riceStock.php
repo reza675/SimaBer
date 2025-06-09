@@ -140,7 +140,7 @@ unset($_SESSION['success'], $_SESSION['error']);
 
                     <div id="dropdownProfile"
                         class="hidden absolute right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-md z-50 w-48">
-                        <a href="settingsCustomer.php"
+                        <a href="settingsBusinessOwner.php"
                             class="block font-semibold px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-center">Settings</a>
                         <a href="../../assets/mysql/pemilikUsaha/proses.php?logout=true"
                             class="block px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600 text-center rounded-b-lg">Log

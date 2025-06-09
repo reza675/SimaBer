@@ -65,7 +65,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="OrderStatusSupplier.php" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-black hover:bg-gray-100 dark:hover:bg-[#FFEEDB] group
+                        <a href="orderStatusSupplier.php" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-black hover:bg-gray-100 dark:hover:bg-[#FFEEDB] group
                             <?php echo $currentPage === 'orderStatusSupplier.php' 
                                 ? 'bg-[#FFEEDB] font-semibold text-black border-l-4 border-black rounded-l-none' 
                                 : 'text-gray-900 hover:bg-gray-100 dark:hover:bg-[#FFEEDB]'; ?>">

@@ -309,7 +309,7 @@ if (isset($_POST['deleteBeras'])) {
     $alamatPemasok   = $_POST['alamatPemasok'];
     
     $passwordHash = password_hash($passwordPemasok, PASSWORD_DEFAULT);
-    $fotoProfil = 'profil.jpeg';
+    $fotoProfil = 'profil.png';
     
     $cekQ = mysqli_query($conn, "SELECT COUNT(*) AS jumlah FROM pemasok WHERE idPemasok = '$idPemasok'");
     $row  = mysqli_fetch_assoc($cekQ);

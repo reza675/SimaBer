@@ -514,7 +514,7 @@ while ($row = mysqli_fetch_assoc($query)) {
                 formData.append('idPesanan', currentOrderId);
                 formData.append('status', newStatusMapped);
 
-                fetch('../../assets/mysql/pemilikusaha/proses.php', {
+                fetch('../../assets/mysql/pemilikUsaha/proses.php', {
                         method: 'POST',
                         body: formData
                     })
@@ -580,7 +580,7 @@ while ($row = mysqli_fetch_assoc($query)) {
                 formData.append('idPesanan', currentOrderId);
                 formData.append('status', newStatusMapped);
 
-                fetch('../../assets/mysql/pemilikusaha/proses.php', {
+                fetch('../../assets/mysql/pemilikUsaha/proses.php', {
                         method: 'POST',
                         body: formData
                     })
@@ -635,7 +635,7 @@ while ($row = mysqli_fetch_assoc($query)) {
             formData.append('idPesanan', currentOrderId);
             formData.append('status', 'Completed');
 
-            fetch('../../assets/mysql/pemilikusaha/proses.php', {
+            fetch('../../assets/mysql/pemilikUsaha/proses.php', {
                     method: 'POST',
                     body: formData
                 })
