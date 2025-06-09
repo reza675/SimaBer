@@ -149,7 +149,7 @@ if (isset($_POST['checkout_action']) && $_POST['checkout_action'] === 'complete_
     $deliveryNotes   = isset($_POST['delivery_notes'])
                        ? mysqli_real_escape_string($conn, $_POST['delivery_notes'])
                        : '';
-    $tanggalPesanan  = date('Y-m-d H:i:s');
+    // $tanggalPesanan  = date('Y-m-d H:i:s');
     $status          = 'pending';
     $isDeliver       = ($checkoutData['shippingMethod'] === 'delivery') ? 1 : 0;
     $idBeras = $checkoutData['idBeras'];
@@ -182,7 +182,7 @@ if (isset($_POST['checkout_action']) && $_POST['checkout_action'] === 'complete_
         deliverNotes,
         metode_pembayaran
       ) VALUES (
-        '$tanggalPesanan',
+        NOW(),
         '$status',
         '$idPemilik',
         '{$_SESSION['idPelanggan']}',

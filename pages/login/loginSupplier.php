@@ -82,18 +82,20 @@
                 </form>
 
                 <div class="mt-4 space-y-1">
-                    <button
-                        class="w-full py-3 px-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium">
-                        <a href="../login/loginCustomer.php">
+                    <a href="../login/loginCustomer.php">
+                        <button
+                            class="w-full py-3 px-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium">
+
                             Login as Customer
-                        </a>
-                    </button>
-                    <button
-                        class="w-full py-3 px-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium">
-                        <a href="../login/loginBusinessOwner.php">
+
+                        </button>
+                    </a>
+                    <a href="../login/loginBusinessOwner.php">
+                        <button
+                            class="w-full py-3 px-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium">
                             Login as Business Owner
-                        </a>
-                    </button>
+                        </button>
+                    </a>
                 </div>
             </div>
         </div>

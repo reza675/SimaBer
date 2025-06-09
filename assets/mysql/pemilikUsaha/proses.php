@@ -173,7 +173,7 @@ if (isset($_POST['editBeras'])) {
     $hargaBeliBeras  = $_POST['hargaBeliBeras'];
     $stokBeras       = $_POST['stokBeras'];
     $deskripsiBeras  = $_POST['deskripsiBeras'];
-    $idPemasok       = $_POST['supplierBeras'];
+    $idPemasok       = $_POST['idPemasok'];
     $tanggalInput    = date('Y-m-d');
 
     $queryGetGambar = "SELECT gambarBeras FROM stokberaspemilik WHERE idBeras = '$idBeras'";
@@ -684,8 +684,7 @@ if (isset($_POST["submitOrder"])) {
     $idBeras       = $_POST['idBeras'];
     $idPemasok     = $_POST['idPemasok'];
     $jumlahPesanan = $_POST['jumlahPesanan'];
-    $hargaBeli     = $_POST['hargaBeli']; 
-    $tanggalPesanan = date('Y-m-d');
+    $hargaBeli     = $_POST['hargaBeli'];
     $status        = "pending";
     
     $idBeras = mysqli_real_escape_string($conn, $idBeras);
@@ -697,7 +696,7 @@ if (isset($_POST["submitOrder"])) {
         "INSERT INTO pesananpemasok 
            (tanggalPesanan, status, idPemasok, idBeras, jumlahPesanan, hargaBeli,idPemilik) 
          VALUES 
-           ('$tanggalPesanan', '$status', '$idPemasok', '$idBeras', '$jumlahPesanan', '$hargaBeli','$idPemilik')"   
+           (NOW(), '$status', '$idPemasok', '$idBeras', '$jumlahPesanan', '$hargaBeli','$idPemilik')"   
     );  
 
     if ($queryInsert) {

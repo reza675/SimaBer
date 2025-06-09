@@ -133,7 +133,6 @@ if (isset($_POST['editBeras'])) {
 
     // jika user upload file baru
     if (!empty($_FILES['gambarBeras']['name'])) {
-        // cek di tabel apakah namaBeras ini sudah punya gambar
         $cekG = mysqli_query($conn, "
             SELECT gambarBeras 
             FROM stokberaspemasok 
@@ -229,8 +228,6 @@ if(isset($_POST['deleteBeras'])) {
 if (isset($_POST['action']) && $_POST['action'] === 'confirm_order') {
     $idPesanan = intval($_POST['idPesanan']);
     $status    = $_POST['status'];
-
-    // Validasi dasar
     if ($idPesanan <= 0 || ($status !== 'approved' && $status !== 'rejected')) {
         echo json_encode([
             'success' => false,
@@ -239,9 +236,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'confirm_order') {
         exit;
     }
 
-    // Mulai transaksi
     mysqli_begin_transaction($conn);
-
     try {
         if ($status === 'approved') {
             $query = "SELECT idBeras, jumlahPesanan 

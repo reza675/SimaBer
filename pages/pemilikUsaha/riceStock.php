@@ -758,8 +758,15 @@ unset($_SESSION['success'], $_SESSION['error']);
                         </div>
                         <div class="col-span-2 justify-center">
                             <label class="block text-sm font-semibold mb-2">ID Supplier</label>
-                            <input type="text" name="supplierBeras" id="editPemasok" readonly
-                                class="w-full border rounded-md p-2">
+                            <select name="idPemasok" id="editPemasok" required
+                                class="w-full border rounded-md p-2 focus:ring-2 focus:ring-[#A2845E]">
+                                <?php $query = "SELECT * FROM pemasok"; 
+                                    $result = mysqli_query($conn, $query);
+                                    while ($row = mysqli_fetch_assoc($result)) {
+                                        echo '<option value="' . $row['idPemasok'] . '">' . $row['idPemasok'] . '</option>';
+                                    }
+                                ?>
+                            </select>
                         </div>
                         <div class="col-span-2">
                             <label class="block text-sm font-semibold mb-2">Description</label>

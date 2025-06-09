@@ -28,7 +28,7 @@
     JOIN stokberaspemasok b ON pp.idBeras = b.idBeras
     JOIN pemasok p ON pp.idPemasok = p.idPemasok
     JOIN pemilikusaha po ON pp.idPemilik = po.idPemilik
-    WHERE pp.status = 'approved'
+    WHERE pp.status = 'approved' AND pp.idPemasok = '$idPemasok'
     ORDER BY pp.tanggalPesanan DESC
 ");
 
