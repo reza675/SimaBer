@@ -1,10 +1,10 @@
 <?php
 session_start();
-if (!isset($_SESSION['namaPemilik'], $_SESSION['idPemilik'])) {
+if (!isset($_SESSION['namaPemilik']) || !isset($_SESSION['idPemilik'])) {
     header("Location:../login/loginBusinessOwner.php?login=error");
     exit();
 }
-$nama      = $_SESSION['namaPemilik'];
+$nama = $_SESSION['namaPemilik'];
 $idPemilik = $_SESSION['idPemilik'];
 $currentPage = 'report.php';
 include '../../assets/mysql/connect.php';
@@ -50,11 +50,13 @@ $queryPembelianBeras = "
 $resultPembelianBeras = mysqli_query($conn, $queryPembelianBeras);
 
 $queryBiayaLain = "
-  SELECT namaBiaya, SUM(jumlahBiaya) AS total
-    FROM biaya_lain
-   WHERE idPemilik  = '$idPemilik'
-     AND tanggalBiaya BETWEEN '$startDate' AND '$endDate'
-   GROUP BY idBiaya, namaBiaya
+  SELECT idBiaya,
+         namaBiaya,
+         SUM(jumlahBiaya) AS total
+  FROM biaya_lain
+  WHERE idPemilik  = '$idPemilik'
+    AND tanggalBiaya BETWEEN '$startDate' AND '$endDate'
+  GROUP BY idBiaya, namaBiaya
 ";
 $resultBiayaLain = mysqli_query($conn, $queryBiayaLain);
 
@@ -232,11 +234,11 @@ unset($_SESSION['success'], $_SESSION['error']);
                     <p class="font-semibold mb-2">Rincian Pengeluaran:</p>
                     <p class="underline">1. Pembelian Beras:</p>
                     <?php
-            $i = 1; $totalPengeluaran = 0;
-            mysqli_data_seek($resultPembelianBeras, 0);
-            while($r = mysqli_fetch_assoc($resultPembelianBeras)):
-              $totalPengeluaran += $r['total_pengeluaran'];
-          ?>
+                        $i = 1; $totalPengeluaran = 0;
+                        mysqli_data_seek($resultPembelianBeras, 0);
+                        while($r = mysqli_fetch_assoc($resultPembelianBeras)):
+                        $totalPengeluaran += $r['total_pengeluaran'];
+                    ?>
                     <div class="flex justify-between py-1 text-sm ml-4">
                         <span><?= $i++ ?>. <?= "{$r['namaBeras']} {$r['beratBeras']} kg"; ?></span>
                         <span>Rp <?= number_format($r['total_pengeluaran'],0,',','.'); ?></span>
@@ -247,25 +249,39 @@ unset($_SESSION['success'], $_SESSION['error']);
                     <?php
                         $biayaAgg = [];
                         while ($b = mysqli_fetch_assoc($resultBiayaLain)) {
-                            $nama = $b['namaBiaya'];
-                            $jumlah = $b['total'];
+                            $nama  = $b['namaBiaya'];
+                            $jumlah= $b['total'];
                             if (isset($biayaAgg[$nama])) {
                                 $biayaAgg[$nama] += $jumlah;
                             } else {
-                                $biayaAgg[$nama] = $jumlah;
+                                $biayaAgg[$nama]  = $jumlah;
                             }
                         }
                         $j = 1;
                         foreach ($biayaAgg as $nama => $jumlah) {
                             $totalPengeluaran += $jumlah;
-                      ?>
-                    <div class="flex justify-between py-1 text-sm ml-4">
+                        ?>
+                    <div class="flex justify-between items-center py-1 text-sm ml-4">
                         <span><?= $j++ ?>. <?= htmlspecialchars($nama) ?></span>
-                        <span>Rp <?= number_format($jumlah, 0, ',', '.') ?></span>
+                        <div class="flex items-center space-x-2">
+                            <span>Rp <?= number_format($jumlah, 0, ',', '.') ?></span>
+                            <form action="../../assets/mysql/pemilikUsaha/proses.php" method="POST"
+                                onsubmit="return confirm('Are you sure you want to delete “<?= addslashes($nama) ?>”?');">
+                                <input type="hidden" name="action" value="hapusBiayaNama">
+                                <input type="hidden" name="namaBiaya" value="<?= htmlspecialchars($nama) ?>">
+                                <input type="hidden" name="start_date" value="<?= htmlspecialchars($startDate) ?>">
+                                <input type="hidden" name="end_date" value="<?= htmlspecialchars($endDate) ?>">
+                                <input type="hidden" name="idPemilik" value="<?= $idPemilik ?>">
+                                <button type="submit" name="hapusBiayaLain"
+                                    class="border border-red-500 text-red-500 rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-100">
+                                    &minus;
+                                </button>
+                            </form>
+                        </div>
                     </div>
                     <?php
-                          }
-                        ?>
+  }
+?>
                     <div class="border-t mt-2 pt-2 font-bold flex justify-between">
                         <span>Total</span>
                         <span>Rp <?= number_format($totalPengeluaran,0,',','.'); ?></span>
