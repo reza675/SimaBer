@@ -267,13 +267,12 @@ unset($_SESSION['success'], $_SESSION['error']);
                             <span>Rp <?= number_format($jumlah, 0, ',', '.') ?></span>
                             <form action="../../assets/mysql/pemilikUsaha/proses.php" method="POST"
                                 onsubmit="return confirm('Are you sure you want to delete “<?= addslashes($nama) ?>”?');">
-                                <input type="hidden" name="action" value="hapusBiayaNama">
                                 <input type="hidden" name="namaBiaya" value="<?= htmlspecialchars($nama) ?>">
                                 <input type="hidden" name="start_date" value="<?= htmlspecialchars($startDate) ?>">
                                 <input type="hidden" name="end_date" value="<?= htmlspecialchars($endDate) ?>">
                                 <input type="hidden" name="idPemilik" value="<?= $idPemilik ?>">
                                 <button type="submit" name="hapusBiayaLain"
-                                    class="border border-red-500 text-red-500 rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-100">
+                                    class="border border-red-700 text-red-900 rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-400">
                                     &minus;
                                 </button>
                             </form>

@@ -165,7 +165,7 @@ $topSelling = mysqli_query($conn, $topSellingQuery);
                     </div>
                 </div>
             </a>
-            <a href="riceManagement.php">
+            <a href="orderConfirmation.php">
                 <div
                     class="bg-white rounded-2xl border border-[#A2A1A8] shadow-lg p-6 hover:shadow-xl transition duration-300 hover:scale-105">
                     <div class="flex items-center justify-between">

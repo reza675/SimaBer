@@ -18,7 +18,7 @@ $offset = ($page - 1) * $itemsPerPage;
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $where  = '';
 if ($search !== '') {
-    $escSearch = mysqli_real_escape_string($conn, $search); //cegah sql injection
+    $escSearch = mysqli_real_escape_string($conn, $search);
     $where = "WHERE namaPemasok LIKE '%{$escSearch}%'";
 }
 
