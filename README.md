@@ -1,4 +1,4 @@
-# Projek RPL SimaBer
+# Projek RPL SimaBer (Sistem Manajemen Bisnis Beras)
 # Kelas: IF-D
 ## Valentino Abinata         (123230013)
 ## Reza Rasendriya Adi Putra (123230030)
