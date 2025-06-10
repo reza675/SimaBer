@@ -28,7 +28,6 @@ HTML;
     exit;
 }
 
-// 3b) Kalau UA tidak mobile → redirect ke login
 header("Location: pages/login/loginCustomer.php");
 exit;
 ?>
